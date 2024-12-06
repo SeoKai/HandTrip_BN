@@ -1,5 +1,5 @@
 ## WORKSPACE
-- [Notion](https://seong-kai.notion.site/PROJECT-14dfcab0377c80ae8e20e6d8f35d869c?pvs=4)
+- [**Notion**](https://seong-kai.notion.site/PROJECT-14dfcab0377c80ae8e20e6d8f35d869c?pvs=4)
 
 ## 프로젝트 이름 (미정)
 
