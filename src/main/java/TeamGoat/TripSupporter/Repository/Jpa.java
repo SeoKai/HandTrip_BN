@@ -1,4 +1,4 @@
 package TeamGoat.TripSupporter.Repository;
 
-public class Jpa {
+public class Jpa{
 }
