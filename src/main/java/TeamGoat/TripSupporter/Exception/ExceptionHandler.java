@@ -1,4 +1,4 @@
 package TeamGoat.TripSupporter.Exception;
 
-public class Exception {
+public interface ExceptionHandler {
 }
