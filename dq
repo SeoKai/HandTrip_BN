@@ -1,0 +1,111 @@
+[33mcommit 86c4a3bf992f4014a112ace3586ef3d4fff9adbf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat-dto[m[33m, [m[1;31morigin/feat-dto[m[33m)[m
+Merge: 3c9f7b5 4223378
+Author: Gotchun <qkreogo1@naver.com>
+Date:   Tue Dec 10 10:08:48 2024 +0900
+
+    feat:add Dto and Entity
+
+[33mcommit 3c9f7b555b751d0825f752b929d8f4d374c5c95f[m[33m ([m[1;31mmyfork/feat-dto[m[33m)[m
+Author: Gotchun <qkreogo1@naver.com>
+Date:   Tue Dec 10 09:24:43 2024 +0900
+
+    feat: add Dto and Entity
+
+[33mcommit 4389fa2d2ab8efbc354e18f12972c9bd583c6df5[m[33m ([m[1;32mmaster[m[33m)[m
+Author: Gotchun <qkreogo1@naver.com>
+Date:   Tue Dec 10 09:20:11 2024 +0900
+
+    feat:dto,entity add
+
+[33mcommit 4223378e61bbc0d9ff848faf3ffe7ddc43e423ee[m[33m ([m[1;31morigin/develop[m[33m)[m
+Merge: 1f2dcf8 959bf42
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Mon Dec 9 15:38:24 2024 +0900
+
+    Merge pull request #17 from SeoKai/feature-DTO
+    
+    entity
+
+[33mcommit 959bf4269fa587eca5c1d6d7e6819ad29f186154[m
+Author: Angelo <jyhhmj38@gmail.com>
+Date:   Mon Dec 9 15:25:28 2024 +0900
+
+    entity
+
+[33mcommit 1f2dcf8240cf3050a0897ebfb7c53365fce67b3c[m
+Merge: 34e0912 940b5d6
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Fri Dec 6 16:06:53 2024 +0900
+
+    Merge pull request #10 from SeoKai/feature-end-point
+    
+    TESTF
+
+[33mcommit 940b5d6ad08e11539d9857c846903b9cab938570[m
+Author: SeoKai <ssw123c@gmail.com>
+Date:   Fri Dec 6 16:04:21 2024 +0900
+
+    TESTF
+
+[33mcommit 34e0912f0e5d48d204b6f9d25670462fe7a45375[m
+Merge: ff38669 f3fb286
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Fri Dec 6 15:40:36 2024 +0900
+
+    Merge pull request #8 from SeoKai/feature-end-point
+    
+    Feature end point
+
+[33mcommit f3fb286ebb3a78770413de475e20eb9cf7609f3a[m
+Author: SeoKai <ssw123c@gmail.com>
+Date:   Fri Dec 6 15:29:08 2024 +0900
+
+    test
+
+[33mcommit b8380cca7bb0d4ae759f1307c45f7dc9dcaa1931[m
+Merge: 11864bb 5ea7aa8
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Fri Dec 6 09:15:48 2024 +0900
+
+    Merge pull request #2 from SeoKai/SeoKai-patch-1
+    
+    Update README.md
+
+[33mcommit 5ea7aa8560901e9125f2b3f9cedf720377a53519[m
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Fri Dec 6 09:15:33 2024 +0900
+
+    Update README.md
+
+[33mcommit 11864bb88125167b60497811b74de1563638166c[m
+Merge: a4fa1ba e6f0864
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Fri Dec 6 01:43:32 2024 +0900
+
+    Merge pull request #1 from SeoKai/SeoKai-patch-1
+    
+    Create README.md
+
+[33mcommit e6f086400a99790256577ae13c2c495ddf4ffd58[m
+Author: 데헷 . <154957742+SeoKai@users.noreply.github.com>
+Date:   Fri Dec 6 01:42:42 2024 +0900
+
+    Create README.md
+
+[33mcommit a4fa1baf73ffc17c57c2eeffa4cf5664ab0a85fe[m
+Author: Seongwan <ssw123c@gamil.com>
+Date:   Fri Dec 6 01:25:46 2024 +0900
+
+    V0.0
+
+[33mcommit 6f98e031fed228e1494ec1f966d324cd44d7f9bc[m
+Author: Seongwan <ssw123c@gamil.com>
+Date:   Fri Dec 6 01:17:39 2024 +0900
+
+    TEST
+
+[33mcommit ff38669174b743b3c8f025f41aec8b5e9c89245c[m
+Author: Seongwan <ssw123c@gamil.com>
+Date:   Fri Dec 6 00:32:52 2024 +0900
+
+    V0.0
