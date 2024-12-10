@@ -21,8 +21,8 @@ public class Location {
     @Column(name = "location_id")
     private Long locationId; // 위치 ID
 
-    @Column(name = "name", length = 100)
-    private String name; // 위치 이름
+    @Column(name = "city_name", length = 100)
+    private String cityName; // 위치 이름
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description; // 위치 설명

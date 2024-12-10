@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class LocationDto {
     private Long locationId;
 
-    private String name;
+    private String cityName;
 
     private String description;
 
