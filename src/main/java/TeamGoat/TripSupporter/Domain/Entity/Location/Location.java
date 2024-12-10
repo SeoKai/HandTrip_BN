@@ -1,7 +1,14 @@
 package TeamGoat.TripSupporter.Domain.Entity.Location;
 
 import jakarta.persistence.*;
+<<<<<<< HEAD
 import lombok.*;
+=======
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,7 +17,11 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_location")
 @Getter
 @ToString
+<<<<<<< HEAD
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+=======
+@Builder
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class Location {
 
     @Id
@@ -30,7 +41,11 @@ public class Location {
     @Column(name = "longitude", precision = 11, scale = 8)
     private BigDecimal longitude; // 경도 11자리표시, 소수점이하는 8자리
 
+<<<<<<< HEAD
     @Column(name = "location_create_at")
+=======
+    @Column(name = "location_created_at")
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
     private LocalDateTime locationCreatedAt; // 위치 생성 시각
 
     @Column(name = "location_updated_at")
@@ -39,6 +54,7 @@ public class Location {
     @Column(name = "image_url", length = 255)
     private String imageUrl; // 이미지 URL
 
+<<<<<<< HEAD
     @Builder
     public Location(Long loactionId,String cityName, String description,
                     BigDecimal latitude, BigDecimal longitude, String imageUrl,
@@ -53,4 +69,6 @@ public class Location {
         this.locationUpdatedAt = locationUpdatedAt;
     }
 
+=======
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 }

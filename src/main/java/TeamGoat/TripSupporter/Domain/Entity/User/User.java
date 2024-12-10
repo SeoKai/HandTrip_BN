@@ -15,7 +15,11 @@ import java.util.Set;
 @Table(name = "TBL_USER")
 @Getter
 @ToString
+<<<<<<< HEAD
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+=======
+@Builder
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class User {
 
     @Id
@@ -52,8 +56,13 @@ public class User {
     @Column(name = "LAST_LOGIN")
     private LocalDateTime lastLogin;
 
+<<<<<<< HEAD
     @Column(name = "PLANNER_CREATED_AT", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime userCreatedAt;  //생성일자 - 수정불가
+=======
+    @Column(name = "USER_CREATED_AT", updatable = false)
+    private LocalDateTime userCreatedAt = LocalDateTime.now();  //생성일자 - 수정불가
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 
     @Column(name = "SNS_TYPE")
     private String snsType;
@@ -65,6 +74,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BookmarkPlanner> bookmarkPlanner = new HashSet<>(); // 북마크한 플래너들
 
+<<<<<<< HEAD
     @Builder
     public User(Long userId, String userEmail, String userPassword,
                 UserRole userRole, UserStatus userStatus, String userNickname, int failedLoginAttempts,
@@ -83,5 +93,8 @@ public class User {
         this.snsType = snsType;
         this.snsConnectDate = snsConnectDate;
     }
+=======
+    public void User(String userEmail, String userPassword) {}
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 
 }
