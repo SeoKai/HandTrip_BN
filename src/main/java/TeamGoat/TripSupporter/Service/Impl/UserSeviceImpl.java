@@ -1,6 +1,8 @@
 package TeamGoat.TripSupporter.Service.Impl;
 
-import TeamGoat.TripSupporter.Domain.Entity.User;
+
+import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
+import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Repository.UserRepository;
 import TeamGoat.TripSupporter.Service.UserService;
 import org.springframework.stereotype.Service;
