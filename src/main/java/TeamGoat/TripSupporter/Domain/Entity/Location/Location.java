@@ -2,14 +2,9 @@ package TeamGoat.TripSupporter.Domain.Entity.Location;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_location")
@@ -19,43 +14,48 @@ import java.time.LocalDateTime;
 public class Location {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "location_id")
-    private Long locationId; // 위치 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
+    @Column(name = "location_id") // 테이블 컬럼 이름 매핑
+    private int locationId; // 고유 ID
 
-    @Column(name = "city_name", length = 100)
-    private String cityName; // 위치 이름
+    @Column(name = "place_id", nullable = false, unique = true) // NOT NULL, UNIQUE
+    private String placeId; // Google Places 고유 ID
+
+    @Column(name = "location_name")
+    private String locationName; // 장소 이름
 
     @Column(name = "description", columnDefinition = "TEXT")
-    private String description; // 위치 설명
+    private String description; // 장소 설명
 
-    @Column(name = "latitude", precision = 11, scale = 8)
-    private BigDecimal latitude; // 위도 11자리표시, 소수점이하는 8자리
+    @Column(name = "latitude")
+    private double latitude; // 위도
 
-    @Column(name = "longitude", precision = 11, scale = 8)
-    private BigDecimal longitude; // 경도 11자리표시, 소수점이하는 8자리
+    @Column(name = "longitude")
+    private double longitude; // 경도
 
-    @Column(name = "location_created_at")
-    private LocalDateTime locationCreatedAt; // 위치 생성 시각
+    @Column(name = "address")
+    private String address; // 주소
 
-    @Column(name = "location_updated_at")
-    private LocalDateTime locationUpdatedAt; // 위치 수정 시각
+    @Column(name = "google_rating")
+    private float googleRating; // 평점 (0.0~5.0)
 
-    @Column(name = "image_url", length = 255)
-    private String imageUrl; // 이미지 URL
+    @Column(name = "types")
+    private String types; // 장소 유형
+
+    @Column(name = "place_img_url", columnDefinition = "TEXT")
+    private String placeImgUrl; // 장소 이미지 URL
 
     @Builder
-    public Location(Long loactionId,String cityName, String description,
-                    BigDecimal latitude, BigDecimal longitude, String imageUrl,
-                    LocalDateTime locationCreatedAt,LocalDateTime locationUpdatedAt) {
-        this.locationId = loactionId;
-        this.cityName = cityName;
+    public Location(int locationId, String placeId, String locationName, String description, double latitude, double longitude, String address, float googleRating, String types, String placeImgUrl) {
+        this.locationId = locationId;
+        this.placeId = placeId;
+        this.locationName = locationName;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.imageUrl = imageUrl;
-        this.locationCreatedAt = locationCreatedAt;
-        this.locationUpdatedAt = locationUpdatedAt;
+        this.address = address;
+        this.googleRating = googleRating;
+        this.types = types;
+        this.placeImgUrl = placeImgUrl;
     }
-
 }
