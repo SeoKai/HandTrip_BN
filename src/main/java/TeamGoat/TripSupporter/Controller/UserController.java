@@ -1,6 +1,5 @@
 package TeamGoat.TripSupporter.Controller;
 
-
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
 import TeamGoat.TripSupporter.Service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private finalf UserService userService;
+    private final UserService userService;
 
     @PostMapping("/join")
     public ResponseEntity<?> joinUser(@RequestBody UserDto userDto) {
