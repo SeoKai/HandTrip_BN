@@ -1,6 +1,8 @@
 package TeamGoat.TripSupporter.Service;
 
-import TeamGoat.TripSupporter.Domain.Dto.UserDto;
+
+import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
+
 
 public interface UserService {
     void createUser(UserDto userDTO);
