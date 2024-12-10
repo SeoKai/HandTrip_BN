@@ -1,5 +1,7 @@
 package TeamGoat.TripSupporter.Service;
 
+import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
+
 /**
  * 사용자 관련 비즈니스 로직을 정의하는 서비스 인터페이스.
  */
