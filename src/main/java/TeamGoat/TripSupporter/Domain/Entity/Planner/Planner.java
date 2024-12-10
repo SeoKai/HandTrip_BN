@@ -16,7 +16,11 @@ import java.util.Set;
 @Table(name = "TBL_PLANNER")
 @Getter
 @ToString
+<<<<<<< HEAD
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+=======
 @Builder
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class Planner {
 
     @Id
@@ -36,7 +40,11 @@ public class Planner {
     private LocalDateTime plannerCreatedAt; // 계획 생성 시각
 
     @Column(name = "PLANNER_UPDATED_AT", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+<<<<<<< HEAD
+    private LocalDateTime plannerUpdatedAt; // 계획 수정 시각
+=======
     private LocalDateTime plannerUpdatedAt; // 계정 수정 시각
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", foreignKey = @ForeignKey(name = "FK_USER_PLANNER_IDX"))
@@ -50,4 +58,18 @@ public class Planner {
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BookmarkPlanner> bookmarks = new HashSet<>(); // 북마크 정보
     // set을 사용하여 동일planner와 동일 user쌍의 연결을 방지
+<<<<<<< HEAD
+
+    @Builder
+    public Planner(Long plannerId, String plannerTitle, LocalDate plannerStartDate, LocalDate plannerEndDate, User user) {
+        this.plannerId = plannerId;
+        this.plannerTitle = plannerTitle;
+        this.plannerStartDate = plannerStartDate;
+        this.plannerEndDate = plannerEndDate;
+        this.user = user;
+        this.plannerCreatedAt = LocalDateTime.now();
+        this.plannerUpdatedAt = LocalDateTime.now();
+    }
+=======
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 }

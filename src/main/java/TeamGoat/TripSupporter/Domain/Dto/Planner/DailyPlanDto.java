@@ -10,6 +10,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+<<<<<<< HEAD
+@ToString
+=======
+>>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class DailyPlanDto {
     private Long dailyPlanId;
 
