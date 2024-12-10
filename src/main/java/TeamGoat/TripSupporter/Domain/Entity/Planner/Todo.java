@@ -2,13 +2,11 @@ package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import jakarta.persistence.*;
-<<<<<<< HEAD
 import lombok.*;
-=======
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
->>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
+
 
 import java.time.LocalTime;
 
@@ -16,11 +14,7 @@ import java.time.LocalTime;
 @Table(name = "TBL_TODO")
 @Getter
 @ToString
-<<<<<<< HEAD
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-=======
-@Builder
->>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class Todo {
 
     @Id
@@ -45,7 +39,7 @@ public class Todo {
     @JoinColumn(name = "LOCATION_ID", referencedColumnName = "LOCATION_ID", nullable = true)
     private Location locationId;      // 위치 참조 (Location fk)
 
-<<<<<<< HEAD
+
     @Builder
     public Todo(Long todoId, DailyPlan dailyPlan, LocalTime startTime, LocalTime endTime, String description, Location locationId) {
         this.todoId = todoId;
@@ -56,7 +50,4 @@ public class Todo {
         this.locationId = locationId;
     }
 
-
-=======
->>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 }
