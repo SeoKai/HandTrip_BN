@@ -1,8 +1,6 @@
 package TeamGoat.TripSupporter.Service;
 
-/**
- * 사용자 프로필 관련 비즈니스 로직을 정의하는 서비스 인터페이스.
- */
+
 public interface UserProfileService {
 
     /**
