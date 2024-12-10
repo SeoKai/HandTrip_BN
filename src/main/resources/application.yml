@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: TripSupporter
+server:
+  port: '5050'
