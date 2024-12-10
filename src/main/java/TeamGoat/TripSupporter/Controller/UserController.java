@@ -1,6 +1,7 @@
 package TeamGoat.TripSupporter.Controller;
 
-import TeamGoat.TripSupporter.Domain.Dto.UserDto;
+
+import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
 import TeamGoat.TripSupporter.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
