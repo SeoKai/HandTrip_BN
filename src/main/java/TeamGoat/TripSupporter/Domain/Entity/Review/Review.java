@@ -12,11 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_review")
 @Getter
 @ToString
-<<<<<<< HEAD
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-=======
-@Builder
->>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class Review {
 
     @Id
@@ -38,7 +34,6 @@ public class Review {
     @Column(name = "comment")
     private String comment; // 리뷰 코멘트
 
-<<<<<<< HEAD
     @Column(name = "PLANNER_CREATED_AT", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime reviewCreatedAt; // 리뷰 생성 시각
 
@@ -55,11 +50,6 @@ public class Review {
         this.reviewCreatedAt = reviewCreatedAt;
         this.reviewUpdatedAt = reviewUpdatedAt;
     }
-=======
-    @Column(name = "review_created_at", updatable = false)
-    private LocalDateTime reviewCreatedAt; // 리뷰 생성 시각
 
-    @Column(name = "review_updated_at")
-    private LocalDateTime reviewUpdatedAt; // 리뷰 수정 시각
->>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
+
 }

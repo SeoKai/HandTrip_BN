@@ -12,10 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-<<<<<<< HEAD
 @ToString
-=======
->>>>>>> eb2400e6ef8985be4db8b9249b3db945c5ea5104
 public class UserDto {
 
     private Long userId;
