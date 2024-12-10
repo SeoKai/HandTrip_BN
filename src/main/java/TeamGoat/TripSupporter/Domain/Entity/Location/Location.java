@@ -16,7 +16,7 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
     @Column(name = "location_id") // 테이블 컬럼 이름 매핑
-    private int locationId; // 고유 ID
+    private Long locationId; // 고유 ID
 
     @Column(name = "place_id", nullable = false, unique = true) // NOT NULL, UNIQUE
     private String placeId; // Google Places 고유 ID
@@ -46,7 +46,7 @@ public class Location {
     private String placeImgUrl; // 장소 이미지 URL
 
     @Builder
-    public Location(int locationId, String placeId, String locationName, String description, double latitude, double longitude, String address, float googleRating, String types, String placeImgUrl) {
+    public Location(Long locationId, String placeId, String locationName, String description, double latitude, double longitude, String address, float googleRating, String types, String placeImgUrl) {
         this.locationId = locationId;
         this.placeId = placeId;
         this.locationName = locationName;
