@@ -25,8 +25,6 @@ public class UserDto {
 
     private UserStatus userStatus; // enum : ACTIVE, SUSPENDED, DEACTIVATED
 
-    private String userNickname;
-
     private String userPhone;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )

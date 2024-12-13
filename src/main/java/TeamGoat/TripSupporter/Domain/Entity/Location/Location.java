@@ -2,9 +2,6 @@ package TeamGoat.TripSupporter.Domain.Entity.Location;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "tbl_location")
@@ -14,11 +11,11 @@ import lombok.ToString;
 public class Location {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
-    @Column(name = "location_id") // 테이블 컬럼 이름 매핑
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id")
     private Long locationId; // 고유 ID
 
-    @Column(name = "place_id", nullable = false, unique = true) // NOT NULL, UNIQUE
+    @Column(name = "place_id", nullable = false, unique = true)
     private String placeId; // Google Places 고유 ID
 
     @Column(name = "location_name")
@@ -37,16 +34,17 @@ public class Location {
     private String address; // 주소
 
     @Column(name = "google_rating")
-    private float googleRating; // 평점 (0.0~5.0)
-
-    @Column(name = "types")
-    private String types; // 장소 유형
+    private float googleRating; // 평점
 
     @Column(name = "place_img_url", columnDefinition = "TEXT")
     private String placeImgUrl; // 장소 이미지 URL
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false) // 외래키 매핑
+    private Region region; // 해당 관광지가 속한 지역
+
     @Builder
-    public Location(Long locationId, String placeId, String locationName, String description, double latitude, double longitude, String address, float googleRating, String types, String placeImgUrl) {
+    public Location(Long locationId, String placeId, String locationName, String description, double latitude, double longitude, String address, float googleRating, String placeImgUrl, Region region) {
         this.locationId = locationId;
         this.placeId = placeId;
         this.locationName = locationName;
@@ -55,7 +53,7 @@ public class Location {
         this.longitude = longitude;
         this.address = address;
         this.googleRating = googleRating;
-        this.types = types;
         this.placeImgUrl = placeImgUrl;
+        this.region = region;
     }
 }
