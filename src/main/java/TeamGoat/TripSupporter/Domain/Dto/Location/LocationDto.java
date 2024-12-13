@@ -29,8 +29,7 @@ public class LocationDto {
 
     private float googleRating;      // 구글 평점
 
-    private String types;            // 장소 유형
-
     private String placeImgUrl;      // 장소 이미지 URL
 
+    private Long regionId;           // 관광지가 속한 지역의 ID
 }
