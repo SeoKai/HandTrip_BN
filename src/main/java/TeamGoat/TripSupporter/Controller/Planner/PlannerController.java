@@ -1,16 +1,13 @@
 package TeamGoat.TripSupporter.Controller.Planner;
 
-import TeamGoat.TripSupporter.Repository.PlannerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/planners")
+@RequestMapping("/api/planner")
+@RequiredArgsConstructor
 public class PlannerController {
-
-    @Autowired
-    PlannerRepository plannerRepository;
 
     /**
      * 새로운 플래너 생성
