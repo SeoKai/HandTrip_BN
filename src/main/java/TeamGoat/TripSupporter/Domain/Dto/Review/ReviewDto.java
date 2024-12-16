@@ -9,9 +9,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -72,4 +72,5 @@ public class ReviewDto {
         this.reviewStatus = reviewStatus;
         this.imageUrls = List.of(); // 기본값: 빈 리스트
     }
+
 }
