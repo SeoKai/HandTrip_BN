@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "TBL_USER_PROFILE")
 @Getter
 @ToString
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class UserProfile {
     @Id
     @Column(name = "USER_ID")
@@ -33,4 +34,15 @@ public class UserProfile {
     @ManyToOne  // User의 USER_NICKNAME fk
     @JoinColumn(name = "USER_NICKNAME", referencedColumnName = "USER_NICKNAME", foreignKey = @ForeignKey(name = "FK_USER_PROFILE_USER_NICKNAME"), nullable = false)
     private User userByNickname;
+
+
+    @Builder
+    public UserProfile(Long userId, String userNickname, String profileImageUrl, String userBio, User user, User userByNickname) {
+        this.userId = userId;
+        this.userNickname = userNickname;
+        this.profileImageUrl = profileImageUrl;
+        this.userBio = userBio;
+        this.user = user;
+        this.userByNickname = userByNickname;
+    }
 }

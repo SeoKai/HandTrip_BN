@@ -1,10 +1,12 @@
 package TeamGoat.TripSupporter.Domain.Entity.Location;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_location")
 @Getter
 @ToString
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
     @Id
@@ -41,5 +43,19 @@ public class Location {
 
     @Column(name = "image_url", length = 255)
     private String imageUrl; // 이미지 URL
+
+    @Builder
+    public Location(Long loactionId,String cityName, String description,
+                    BigDecimal latitude, BigDecimal longitude, String imageUrl,
+                    LocalDateTime locationCreatedAt,LocalDateTime locationUpdatedAt) {
+        this.locationId = loactionId;
+        this.cityName = cityName;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.imageUrl = imageUrl;
+        this.locationCreatedAt = locationCreatedAt;
+        this.locationUpdatedAt = locationUpdatedAt;
+    }
 
 }
