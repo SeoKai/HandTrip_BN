@@ -1,8 +1,12 @@
 package TeamGoat.TripSupporter.Repository;
 
+import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
@@ -19,5 +23,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email 중복 확인하려는 이메일
      * @return 이메일이 이미 존재하면 true, 그렇지 않으면 false
      */
-    boolean existsByEmail(String email);
+    boolean existsByUserEmail(String email);
+
+
+
+    Optional<User> findByEmailAndPhone(String email, String phone);
+    /**
+     * 닉네임 중복 확인 메서드.
+     * 닉네임이 데이터베이스에 존재하는지 확인.
+     *
+     * @param nickname 확인할 닉네임
+     * @return 닉네임이 이미 존재하면 true, 아니면 false
+     */
+    boolean existsByNickname(String nickname);
 }

@@ -38,9 +38,6 @@ public class User {
     @Column(name = "USER_STATUS", nullable = false)
     private UserStatus userStatus = UserStatus.ACTIVE;  //enum : ACTIVE, SUSPENDED, DEACTIVATED
 
-    @Column(name = "USER_NICKNAME", nullable = false, unique = true)
-    private String userNickname;
-
     @Column(name = "FAILED_LOGIN_ATTEMPTS", nullable = false)
     private int failedLoginAttempts = 0;
 
@@ -68,16 +65,16 @@ public class User {
 
 
     @Builder
-    public User(Long userId, String userEmail, String userPassword,
+    public User(Long userId, String userEmail, String userPassword,String userPhone,
                 UserRole userRole, UserStatus userStatus, String userNickname, int failedLoginAttempts,
                 LocalDateTime lockedUntil, LocalDateTime lastLogin, LocalDateTime userCreatedAt,
                 String snsType, LocalDateTime snsConnectDate) {
         this.userId = userId;
         this.userEmail = userEmail;
+        this.userPhone = userPhone;
         this.userPassword = userPassword;
         this.userRole = userRole;
         this.userStatus = userStatus;
-        this.userNickname = userNickname;
         this.failedLoginAttempts = failedLoginAttempts;
         this.lockedUntil = lockedUntil;
         this.lastLogin = lastLogin;
