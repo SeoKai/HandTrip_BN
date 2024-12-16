@@ -1,5 +1,18 @@
 spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/plannerdb
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
   application:
     name: TripSupporter
+
+
 server:
   port: '5050'
