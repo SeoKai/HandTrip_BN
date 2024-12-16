@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
 @Entity
 @Table(name = "tbl_review")
 @Getter
@@ -29,6 +30,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", foreignKey = @ForeignKey(name = "tbl_review_ibfk_2"))
+
     private Location location; // 위치 외래키
 
     @Column(name = "rating", nullable = false)
