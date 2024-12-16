@@ -9,8 +9,7 @@ import java.time.LocalDate;
 @Table(name = "TBL_DAILYPLAN")
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-
+@Builder
 public class DailyPlan {
 
     @Id
@@ -24,12 +23,4 @@ public class DailyPlan {
 
     @Column(name = "DAILYPLAN_SCHEDULE_DATE", nullable = false)
     private LocalDate scheduleDate; // 일정 날짜
-
-    @Builder
-    public DailyPlan(Long dailyPlanId, Planner planner, LocalDate scheduleDate) {
-        this.dailyPlanId = dailyPlanId;
-        this.planner = planner;
-        this.scheduleDate = scheduleDate;
-    }
-
 }

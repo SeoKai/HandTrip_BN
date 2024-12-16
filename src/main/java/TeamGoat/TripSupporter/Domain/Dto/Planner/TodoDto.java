@@ -10,7 +10,6 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class TodoDto {
     private Long todoId;
 

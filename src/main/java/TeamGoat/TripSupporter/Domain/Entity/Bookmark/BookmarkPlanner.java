@@ -12,7 +12,9 @@ import lombok.*;
 @Table(name = "TBL_BOOKMARK")
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookmarkPlanner {
 
     @Id
@@ -28,13 +30,6 @@ public class BookmarkPlanner {
     @JoinColumn(name = "PLANNER_ID", foreignKey = @ForeignKey(name = "FK_PLANNER_BOOKMARK"))
     private Planner planner;  // 북마크한 플래너
 
-
-    @Builder
-    public BookmarkPlanner(Long bookmarkId, User user, Planner planner) {
-        this.bookmarkId = bookmarkId;
-        this.user = user;
-        this.planner = planner;
-    }
 
 
 }
