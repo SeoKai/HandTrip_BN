@@ -1,10 +1,8 @@
 package TeamGoat.TripSupporter.Domain.Dto.Planner;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,21 +11,18 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class PlannerDto {
-    private Long plannerId;
 
-    private String plannerTitle;
+    private Long plannerId;          // 플래너 ID
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate plannerStartDate;
+    private String plannerTitle;     // 플래너 제목
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate plannerEndDate;
+    private LocalDate plannerStartDate; // 출발일
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private LocalDateTime plannerCreatedDate;
+    private LocalDate plannerEndDate;   // 도착일
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private LocalDateTime plannerUpdatedDate;
+    private Long regionId;           // 연결된 지역 ID
 
-    private Long userId;
+    private String regionName;       // 연결된 지역 이름
+
+    private List<TodoDto> todos;     // 일정 목록
 }
