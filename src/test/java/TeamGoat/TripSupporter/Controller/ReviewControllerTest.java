@@ -1,5 +1,6 @@
-package TeamGoat.TripSupporter.Controller.Review;
+package TeamGoat.TripSupporter.Controller;
 
+import TeamGoat.TripSupporter.Controller.Review.ReviewController;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithLocationDto;

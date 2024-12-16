@@ -1,3 +1,4 @@
+
 package TeamGoat.TripSupporter.Service.Review;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
@@ -32,3 +33,4 @@ public interface ReviewService {
      */
     Page<ReviewDto> getSortedReviews(Long placeId, String sortType);
 }
+

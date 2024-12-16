@@ -31,10 +31,6 @@ public class UserProfile {
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", foreignKey = @ForeignKey(name = "FK_USER_PROFILE_USER_ID"), nullable = false)
     private User user;
 
-    @ManyToOne  // User의 USER_NICKNAME fk
-    @JoinColumn(name = "USER_NICKNAME", referencedColumnName = "USER_NICKNAME", foreignKey = @ForeignKey(name = "FK_USER_PROFILE_USER_NICKNAME"), nullable = false)
-    private User userByNickname;
-
 
     @Builder
     public UserProfile(Long userId, String userNickname, String profileImageUrl, String userBio, User user, User userByNickname) {
@@ -43,6 +39,5 @@ public class UserProfile {
         this.profileImageUrl = profileImageUrl;
         this.userBio = userBio;
         this.user = user;
-        this.userByNickname = userByNickname;
     }
 }
