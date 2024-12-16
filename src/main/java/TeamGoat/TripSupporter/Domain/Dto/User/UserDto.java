@@ -2,8 +2,12 @@ package TeamGoat.TripSupporter.Domain.Dto.User;
 
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
@@ -15,18 +19,24 @@ import java.time.LocalDateTime;
 @ToString
 public class UserDto {
 
+    @NotBlank
     private Long userId;
 
+    @NotBlank(message = "이메일은 필수 입력 값입니다")
     private String userEmail;
 
+    @NotBlank(message = "비밀번호를 입력 해 주세요")
     private String userPassword;
 
+    @NotBlank(message = " 필수 입력 값입니다")
     private UserRole userRole;  // enum : user,admin
 
     private UserStatus userStatus; // enum : ACTIVE, SUSPENDED, DEACTIVATED
 
+    @NotBlank(message = "닉네임은 필수 입력 값 입니다")
     private String userNickname;
 
+    @NotBlank(message = "휴대폰 번호는 필수 입력 값입니다")
     private String userPhone;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
