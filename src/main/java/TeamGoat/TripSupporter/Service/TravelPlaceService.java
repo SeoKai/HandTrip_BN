@@ -1,3 +1,4 @@
+
 //package TeamGoat.TripSupporter.Service;
 //
 //public interface TravelPlaceService {

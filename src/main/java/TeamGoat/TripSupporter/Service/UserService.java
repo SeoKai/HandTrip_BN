@@ -1,3 +1,5 @@
+
+
 package TeamGoat.TripSupporter.Service;
 
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
@@ -77,3 +79,4 @@ public interface UserService {
 
 //    void updateUser(UserDto userDTO);
 }
+
