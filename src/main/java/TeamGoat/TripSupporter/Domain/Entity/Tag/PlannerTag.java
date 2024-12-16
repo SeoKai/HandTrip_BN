@@ -7,8 +7,10 @@ import lombok.*;
 @Entity
 @Table(name = "TBL_PLANNER_TAG")
 @Getter
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PlannerTag {   // planner - tag N:M관계를 위한 중계테이블
 
     @Id
@@ -23,13 +25,4 @@ public class PlannerTag {   // planner - tag N:M관계를 위한 중계테이블
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TAG_ID", foreignKey = @ForeignKey(name = "FK_PLANNER_TAG_TAG"))
     private Tag tag;    // tag로부터 fk 받아옴
-
-
-    @Builder
-    public PlannerTag(Long plannerTagId, Planner planner, Tag tag) {
-        this.plannerTagId = plannerTagId;
-        this.planner = planner;
-        this.tag = tag;
-    }
-
 }
