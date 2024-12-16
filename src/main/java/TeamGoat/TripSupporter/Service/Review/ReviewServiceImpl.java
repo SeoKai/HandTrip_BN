@@ -67,13 +67,15 @@ public class ReviewServiceImpl{
     private LocationDto LocationConvertToDto(Location location){
         return new LocationDto(
                 location.getLocationId(),
-                location.getCityName(),
+                location.getPlaceId(),
+                location.getLocationName(),
                 location.getDescription(),
                 location.getLatitude(),
                 location.getLongitude(),
-                location.getLocationCreatedAt(),
-                location.getLocationUpdatedAt(),
-                location.getImageUrl()
+                location.getAddress(),
+                location.getGoogleRating(),
+                location.getTypes(),
+                location.getPlaceImgUrl()
         );
     }
 

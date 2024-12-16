@@ -13,22 +13,24 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class LocationDto {
-    private Long locationId;
+    private Long locationId;          // 고유 ID
 
-    private String cityName;
+    private String placeId;          // Google Places 고유 ID
 
-    private String description;
+    private String locationName;     // 장소 이름
 
-    private BigDecimal latitude;
+    private String description;      // 장소 설명
 
-    private BigDecimal longitude;
+    private double latitude;         // 위도
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private LocalDateTime locationCreatedAt;
+    private double longitude;        // 경도
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private LocalDateTime locationUpdatedAt;
+    private String address;          // 주소
 
-    private String imageUrl;
+    private float googleRating;      // 구글 평점
+
+    private String types;            // 장소 유형
+
+    private String placeImgUrl;      // 장소 이미지 URL
 
 }

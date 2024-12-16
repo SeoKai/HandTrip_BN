@@ -1,6 +1,5 @@
 
 //package TeamGoat.TripSupporter.Service;
-//import java.util.List;
 //
 //public interface TravelPlaceService {
 //    // 여행지 탐색 및 검색 인터페이스
