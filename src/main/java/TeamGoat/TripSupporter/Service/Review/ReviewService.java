@@ -1,6 +1,7 @@
-package TeamGoat.TripSupporter.Service;
+package TeamGoat.TripSupporter.Service.Review;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ReviewService {
      * @param placeId 여행지 ID
      * @return 리뷰 목록
      */
-    List<ReviewDto> getReviewsByPlaceId(Long placeId);
+    Page<ReviewDto> getReviewsByPlaceId(Long placeId);
 
     /**
      * 리뷰를 작성합니다.
@@ -29,5 +30,5 @@ public interface ReviewService {
      * @param sortType 정렬 기준 (예: 최신순, 별점순, 좋아요순)
      * @return 정렬된 리뷰 목록
      */
-    List<ReviewDto> getSortedReviews(Long placeId, String sortType);
+    Page<ReviewDto> getSortedReviews(Long placeId, String sortType);
 }
