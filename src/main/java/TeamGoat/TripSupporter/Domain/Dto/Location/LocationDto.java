@@ -1,35 +1,30 @@
 package TeamGoat.TripSupporter.Domain.Dto.Location;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class LocationDto {
-    private Long locationId;          // 고유 ID
 
-    private String placeId;          // Google Places 고유 ID
-
-    private String locationName;     // 장소 이름
-
-    private String description;      // 장소 설명
-
-    private double latitude;         // 위도
-
-    private double longitude;        // 경도
-
-    private String address;          // 주소
-
-    private float googleRating;      // 구글 평점
-
-    private String placeImgUrl;      // 장소 이미지 URL
-
-    private Long regionId;           // 관광지가 속한 지역의 ID
+    private Long locationId; // 고유 ID
+    private String placeId; // Google Places 고유 ID
+    private String locationName; // 장소 이름
+    private String description; // 장소 설명
+    private Double latitude; // 위도
+    private Double longitude; // 경도
+    private Float googleRating; // Google 평점
+    private Integer userRatingsTotal; // 총 리뷰 수
+    private String placeImgUrl; // 장소 이미지 URL
+    private String formattedAddress; // 주소
+    private String openingHours; // 운영 시간
+    private String website; // 웹사이트 URL
+    private String phoneNumber; // 전화번호
+    private String regionName; // 지역 이름
+    private Set<String> tags; // 태그 이름 목록
 }
