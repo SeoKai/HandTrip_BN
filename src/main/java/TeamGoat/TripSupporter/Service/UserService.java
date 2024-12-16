@@ -1,10 +1,12 @@
 package TeamGoat.TripSupporter.Service;
 
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
+import org.springframework.stereotype.Service;
 
 /**
  * 사용자 관련 비즈니스 로직을 정의하는 서비스 인터페이스.
  */
+@Service
 public interface UserService {
 
     /**
@@ -70,4 +72,8 @@ public interface UserService {
      * @return 로그아웃 성공 여부
      */
     boolean logout();
+
+
+
+//    void updateUser(UserDto userDTO);
 }
