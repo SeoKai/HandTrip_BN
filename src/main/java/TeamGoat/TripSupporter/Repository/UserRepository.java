@@ -1,5 +1,6 @@
 package TeamGoat.TripSupporter.Repository;
 
+import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

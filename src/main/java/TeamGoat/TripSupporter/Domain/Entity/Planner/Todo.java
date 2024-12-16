@@ -2,9 +2,11 @@ package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+
 
 import java.time.LocalTime;
 
@@ -12,7 +14,7 @@ import java.time.LocalTime;
 @Table(name = "TBL_TODO")
 @Getter
 @ToString
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Todo {
 
     @Id
@@ -36,5 +38,16 @@ public class Todo {
     @OneToOne  // 1:1 관계 매핑
     @JoinColumn(name = "LOCATION_ID", referencedColumnName = "LOCATION_ID", nullable = true)
     private Location locationId;      // 위치 참조 (Location fk)
+
+
+    @Builder
+    public Todo(Long todoId, DailyPlan dailyPlan, LocalTime startTime, LocalTime endTime, String description, Location locationId) {
+        this.todoId = todoId;
+        this.dailyPlan = dailyPlan;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.description = description;
+        this.locationId = locationId;
+    }
 
 }
