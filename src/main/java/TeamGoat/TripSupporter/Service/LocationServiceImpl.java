@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class LocationService {
+public class LocationServiceImpl {
 
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
 
     // 생성자 주입
-    public LocationService(LocationRepository locationRepository, LocationMapper locationMapper) {
+    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
     }
