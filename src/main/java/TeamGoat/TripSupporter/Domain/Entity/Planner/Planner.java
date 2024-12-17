@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "tbl_planner")
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class Planner {
@@ -31,6 +30,9 @@ public class Planner {
     @Column(name = "planner_end_date", nullable = false)
     private LocalDate plannerEndDate; // 도착일
 
+    @Column(name = "email", nullable = false)
+    private String email; // 사용자 이메일
+
     @Column(name = "planner_created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime plannerCreatedAt; // 생성 시간
 
@@ -42,15 +44,17 @@ public class Planner {
     private Region region; // 연결된 지역(도시)
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Todo> todos = new ArrayList<>(); // 포함된 일정 목록
+    private List<DailyPlan> dailyPlans = new ArrayList<>();
 
     @Builder
-    public Planner(String plannerTitle, LocalDate plannerStartDate, LocalDate plannerEndDate, Region region) {
+    public Planner(String plannerTitle, LocalDate plannerStartDate, LocalDate plannerEndDate, String email, Region region) {
         this.plannerTitle = plannerTitle;
         this.plannerStartDate = plannerStartDate;
         this.plannerEndDate = plannerEndDate;
+        this.email = email;
         this.region = region;
         this.plannerCreatedAt = LocalDateTime.now();
         this.plannerUpdatedAt = LocalDateTime.now();
     }
+
 }

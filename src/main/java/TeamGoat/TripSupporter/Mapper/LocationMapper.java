@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class LocationMapper {
-    public LocationDto toDto(Location location) {
+    public LocationDto toLocationDto(Location location) {
         return LocationDto.builder()
                 .locationId(location.getLocationId())
                 .placeId(location.getPlaceId())
