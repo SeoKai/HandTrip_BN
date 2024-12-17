@@ -21,10 +21,11 @@ public class LocationServiceImpl {
         this.locationMapper = locationMapper;
     }
 
-    public List<LocationDto> getLocationsByRegion(String regionName) {
-        List<Location> locations = locationRepository.findByRegionRegionName(regionName);
+    // regionId를 기반으로 장소 조회
+    public List<LocationDto> getLocationsByRegion(Long regionId) {
+        List<Location> locations = locationRepository.findByRegionRegionId(regionId); // Repository 메서드 호출
         return locations.stream()
-                .map(locationMapper::toDto) // 인스턴스 메서드 참조
+                .map(locationMapper::toLocationDto) // 엔티티를 DTO로 변환
                 .collect(Collectors.toList());
     }
 }

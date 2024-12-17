@@ -22,9 +22,8 @@ public class LocationController {
     }
 
     @GetMapping("/by-region")
-    public List<LocationDto> getLocationsByRegion(@RequestParam("region") String regionName) {
-        log.info("GET /by-region");
-        return locationServiceImpl.getLocationsByRegion(regionName);
+    public List<LocationDto> getLocationsByRegion(@RequestParam("regionId") Long regionId) {
+        log.info("GET /by-region with regionId: {}", regionId);
+        return locationServiceImpl.getLocationsByRegion(regionId);
     }
-
 }

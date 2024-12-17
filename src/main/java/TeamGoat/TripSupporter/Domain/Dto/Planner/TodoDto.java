@@ -11,19 +11,12 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 @ToString
-public class TodoDto {
+public class ToDoDto {
 
-    private Long todoId;              // 일정 고유 ID
-
-    private Long dailyPlanId;         // 연결된 DailyPlan의 ID
-
-    @DateTimeFormat(pattern = "HH:mm:ss") // 시간 형식 지정
-    private LocalTime startTime;      // 일정 시작 시간
-
-    @DateTimeFormat(pattern = "HH:mm:ss") // 시간 형식 지정
-    private LocalTime endTime;        // 일정 종료 시간
-
-    private String description;       // 일정 설명
-
-    private Long locationId;          // 연결된 Location의 ID
+    private Long toDoId;         // ToDo ID
+    private Long locationId;     // 장소 ID
+    private String locationName; // 장소 이름
+    private String formattedAddress; // 장소 주소
+    private Double latitude;     // 위도
+    private Double longitude;    // 경도
 }
