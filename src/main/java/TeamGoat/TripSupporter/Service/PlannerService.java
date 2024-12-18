@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class PlannerService {
@@ -66,4 +68,31 @@ public class PlannerService {
 
         return savedPlanner.getPlannerId(); // 저장된 Planner의 ID 반환
     }
+
+    @Transactional(readOnly = true)
+    public PlannerDto getPlannerDetails(Long id) {
+        Planner planner = plannerRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 플랜이 존재하지 않습니다."));
+
+        return PlannerDto.builder()
+                .plannerId(planner.getPlannerId())
+                .plannerTitle(planner.getPlannerTitle())
+                .plannerStartDate(planner.getPlannerStartDate())
+                .plannerEndDate(planner.getPlannerEndDate())
+                .regionName(planner.getRegion().getRegionName())
+                .dailyPlans(planner.getDailyPlans().stream()
+                        .map(dailyPlan -> DailyPlanDto.builder()
+                                .planDate(dailyPlan.getPlanDate())
+                                .toDos(dailyPlan.getToDos().stream()
+                                        .map(toDo -> ToDoDto.builder()
+                                                .locationId(toDo.getLocation().getLocationId())
+                                                .locationName(toDo.getLocation().getLocationName())
+                                                .formattedAddress(toDo.getLocation().getFormattedAddress())
+                                                .build())
+                                        .collect(Collectors.toList()))
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
 }
