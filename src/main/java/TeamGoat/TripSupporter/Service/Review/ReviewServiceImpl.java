@@ -160,7 +160,7 @@ public class ReviewServiceImpl{
      */
     public ReviewWithLocationDto getReviewWithLocationById(Long userId, Long reviewId) {
         // reviewId로 review 가져옴
-        Review review = reviewRepository.findByIdAndReviewStatus(reviewId, ReviewStatus.ACTIVE)
+        Review review = reviewRepository.findByReviewIdAndReviewStatus(reviewId, ReviewStatus.ACTIVE)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
         // 가져온 review로부터 userId를 추출하여 입력받은 userId와 같은지 확인함
         ReviewServiceValidator.validateUserAndAuthor(review.getUser().getUserId(),userId);

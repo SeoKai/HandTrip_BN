@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean login(String email, String password) {
-        Optional<User> User = userRepository.findByEmail(email);
+        Optional<User> User = userRepository.findByUserEmail(email);
         if (User.isEmpty()) {
             throw new IllegalArgumentException("이메일이 존재하지 않습니다.");
         }
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String findId(String phone) {
-        Optional<User> optionalUser = userRepository.findByEmail(phone);
+        Optional<User> optionalUser = userRepository.findByUserEmail(phone);
         return optionalUser.map(User::getUserEmail).orElse(null);
     }
 
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String findPassword(String email, String phone) {
-        Optional<User> optionalUser = userRepository.findByEmailAndPhone(email, phone);
+        Optional<User> optionalUser = userRepository.findByUserEmailAndUserPhone(email, phone);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException("사용자 정보가 일치하지 않습니다.");
         }
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean isNicknameDuplicate(String nickname) {
-        return userRepository.existsByNickname(nickname);
+        return userRepository.existsByUserNickname(nickname);
     }
 
     /**

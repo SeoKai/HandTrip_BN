@@ -1,6 +1,5 @@
 package TeamGoat.TripSupporter.Domain.Entity.User;
 
-import TeamGoat.TripSupporter.Domain.Entity.Bookmark.BookmarkPlanner;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.persistence.*;
@@ -58,9 +57,9 @@ public class User {
     @Column(name = "SNS_CONNECT_DATE")
     private LocalDateTime snsConnectDate;
 
-//  중계테이블 bookmark와 1:M 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BookmarkPlanner> bookmarkPlanner = new HashSet<>(); // 북마크한 플래너들
+////  중계테이블 bookmark와 1:M 관계
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<BookmarkPlanner> bookmarkPlanner = new HashSet<>(); // 북마크한 플래너들
 
 
     @Builder
