@@ -12,7 +12,6 @@ import TeamGoat.TripSupporter.Exception.Review.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.UserNotFoundException;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
 import TeamGoat.TripSupporter.Repository.ReviewRepository;
 import TeamGoat.TripSupporter.Repository.UserRepository;
 import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;
