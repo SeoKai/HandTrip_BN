@@ -1,9 +1,9 @@
-package TeamGoat.TripSupporter.Service;
+package TeamGoat.TripSupporter.Service.Planner;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
-import TeamGoat.TripSupporter.Mapper.LocationMapper;
+import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

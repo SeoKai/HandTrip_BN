@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Mapper;
+package TeamGoat.TripSupporter.Mapper.Location;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;

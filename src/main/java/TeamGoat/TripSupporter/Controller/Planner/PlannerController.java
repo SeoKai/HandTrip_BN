@@ -1,14 +1,11 @@
-package TeamGoat.TripSupporter.Controller;
+package TeamGoat.TripSupporter.Controller.Planner;
 
 import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
-import TeamGoat.TripSupporter.Service.PlannerService;
+import TeamGoat.TripSupporter.Service.Planner.PlannerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/planner")

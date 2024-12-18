@@ -1,8 +1,8 @@
-package TeamGoat.TripSupporter.Controller.Planner;
+package TeamGoat.TripSupporter.Controller.Location;
 
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
-import TeamGoat.TripSupporter.Service.LocationServiceImpl;
+import TeamGoat.TripSupporter.Service.Planner.LocationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
