@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Repository.PlanRepository;
+package TeamGoat.TripSupporter.Repository.Location;
 
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import org.springframework.data.jpa.repository.JpaRepository;

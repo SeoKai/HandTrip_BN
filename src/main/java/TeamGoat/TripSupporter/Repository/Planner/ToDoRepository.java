@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Repository.PlanRepository;
+package TeamGoat.TripSupporter.Repository.Planner;
 
 import TeamGoat.TripSupporter.Domain.Entity.Planner.ToDo;
 import org.springframework.data.jpa.repository.JpaRepository;
