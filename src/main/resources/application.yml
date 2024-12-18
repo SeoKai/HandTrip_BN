@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver          # MySQL 드라이버 클래스
   jpa:
     hibernate:
-      ddl-auto: validate                                   # 스키마 자동 업데이트
+      ddl-auto: update                                   # 스키마 자동 업데이트
     show-sql: true                                       # SQL 쿼리 로깅
     properties:
       hibernate:

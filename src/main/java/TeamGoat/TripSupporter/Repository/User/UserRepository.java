@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email 조회하려는 사용자의 이메일
      * @return 해당 이메일을 가진 사용자의 Optional 객체
      */
-    Optional<User> findByEmail(String email);
+    Optional<User> findByUserEmail(String email);
 
     /**
      * 이메일 중복 여부 확인
@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 
-    Optional<User> findByEmailAndPhone(String email, String phone);
+    Optional<User> findByUserEmailAndUserPhone(String email, String phone);
     /**
      * 닉네임 중복 확인 메서드.
      * 닉네임이 데이터베이스에 존재하는지 확인.
@@ -35,5 +35,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param nickname 확인할 닉네임
      * @return 닉네임이 이미 존재하면 true, 아니면 false
      */
-    boolean existsByNickname(String nickname);
+    boolean existsByUserNickname(String nickname);
 }
