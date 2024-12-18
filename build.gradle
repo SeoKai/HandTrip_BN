@@ -44,7 +44,7 @@ dependencies {
 
 	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'com.h2database:h2'
+	//implementation 'com.h2database:h2'
 
 	// REST
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
@@ -71,4 +71,8 @@ test {
 tasks.named('test') {
 	useJUnitPlatform()
 	jvmArgs '-javaagent:' + configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ['-parameters']
 }

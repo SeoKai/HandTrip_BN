@@ -6,6 +6,10 @@ import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
+<<<<<<< HEAD
+=======
+import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
+>>>>>>> 243e3c2ac442cdc635f1797f245435de2ce7e7f9
 import TeamGoat.TripSupporter.Repository.ReviewRepository;
 import TeamGoat.TripSupporter.Repository.UserRepository;
 import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;

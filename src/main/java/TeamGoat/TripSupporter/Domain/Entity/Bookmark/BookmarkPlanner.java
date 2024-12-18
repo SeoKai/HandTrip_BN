@@ -1,8 +1,5 @@
 package TeamGoat.TripSupporter.Domain.Entity.Bookmark;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import jakarta.persistence.*;

@@ -4,10 +4,7 @@ import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
