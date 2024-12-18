@@ -6,7 +6,6 @@ import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
 import TeamGoat.TripSupporter.Repository.ReviewRepository;
 import TeamGoat.TripSupporter.Repository.UserRepository;
 import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
