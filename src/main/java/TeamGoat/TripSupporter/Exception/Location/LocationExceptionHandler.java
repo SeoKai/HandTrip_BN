@@ -1,6 +1,7 @@
 package TeamGoat.TripSupporter.Exception.Location;
 
-import TeamGoat.TripSupporter.Controller.Planner.LocationController;
+
+import TeamGoat.TripSupporter.Controller.Location.LocationController;
 import TeamGoat.TripSupporter.Exception.ExceptionHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

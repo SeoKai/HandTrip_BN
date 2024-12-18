@@ -1,11 +1,7 @@
 package TeamGoat.TripSupporter.Domain.Entity.User;
 
-import TeamGoat.TripSupporter.Domain.Enum.UserRole;
-import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TBL_USER_PROFILE")

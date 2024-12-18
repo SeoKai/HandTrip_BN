@@ -1,7 +1,6 @@
 package TeamGoat.TripSupporter.Domain.Entity.User;
 
 import TeamGoat.TripSupporter.Domain.Entity.Bookmark.BookmarkPlanner;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.persistence.*;

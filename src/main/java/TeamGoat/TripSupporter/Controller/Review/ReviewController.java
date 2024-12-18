@@ -14,8 +14,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.hibernate.validator.internal.util.ReflectionHelper.typeOf;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
