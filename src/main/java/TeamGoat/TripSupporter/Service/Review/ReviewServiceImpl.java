@@ -8,10 +8,12 @@ import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
 import TeamGoat.TripSupporter.Domain.Entity.Review.ReviewImage;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
-import TeamGoat.TripSupporter.Mapper.Review.LocationNotFoundException;
-import TeamGoat.TripSupporter.Mapper.Review.ReviewException;
-import TeamGoat.TripSupporter.Mapper.Review.ReviewNotFoundException;
-import TeamGoat.TripSupporter.Mapper.Review.UserNotFoundException;
+import TeamGoat.TripSupporter.Exception.Review.LocationNotFoundException;
+import TeamGoat.TripSupporter.Exception.Review.ReviewException;
+import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
+import TeamGoat.TripSupporter.Exception.Review.UserNotFoundException;
+import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
+import TeamGoat.TripSupporter.Mapper.Review.ReviewMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Repository.Review.ReviewRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,82 +40,10 @@ public class ReviewServiceImpl{
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+    private final LocationMapper locationMapper;
+    private final ReviewMapper reviewMapper;
 
-    /**
-     * review엔티티를 넣으면 reviewDto를 반환
-     * @param review review엔티티
-     * @return reviewDto
-     */
-    private ReviewDto ReviewConvertToDto(Review review) {
-        return new ReviewDto(
-                review.getReviewId(),
-                review.getUser().getUserId(),           // user객체로부터 userid가져옴
-                review.getLocation().getLocationId(),   // planner객체로부터 plannerid 가져옴
-                review.getRating(),
-                review.getComment(),
-                review.getReviewCreatedAt(),
-                review.getReviewUpdatedAt(),
-                review.getReviewStatus(),
-                review.getImages().stream() // 이미지 URL 리스트로 변환
-                        .map(ReviewImage::getImageUrl)
-                        .toList()
-        );
-    }
 
-    /**
-     * location엔티티를 넣으면 locationDto를 반환
-     * @param location location엔티티
-     * @return locationDto
-     */
-    private LocationDto LocationConvertToDto(Location location){
-        return new LocationDto(
-                location.getLocationId(),
-                location.getPlaceId(),
-                location.getLocationName(),
-                location.getDescription(),
-                location.getLatitude(),
-                location.getLongitude(),
-                location.getAddress(),
-                location.getGoogleRating(),
-                location.getTypes(),
-                location.getPlaceImgUrl()
-        );
-    }
-
-    /**
-     * reviewDto를 넣으면 review 엔티티를 반환 (단 Review 엔티티에는 user,location 객체가 포함됨)
-     * @param reviewDto reviewDto
-     * @return review엔티티
-     */
-    private Review convertToEntity(ReviewDto reviewDto) {
-        // User저장소에서 id로 user객체를 찾음
-        User user = userRepository
-                .findById(reviewDto.getUserId())
-                .orElseThrow(()-> new UserNotFoundException("해당 Id에 일치하는 User가 존재하지 않습니다."+reviewDto.getUserId())
-        );
-        // Location저장소에서 id로 location객체를 찾음
-        Location location = locationRepository
-                .findById(reviewDto.getLocationId())
-                .orElseThrow(()->new LocationNotFoundException("해당 Id에 일치하는 Location이 존재하지 않습니다."+reviewDto.getLocationId())
-        );
-        Review review =  new Review(
-                reviewDto.getReviewId(),
-                user,
-                location,
-                reviewDto.getRating(),
-                reviewDto.getComment(),
-                reviewDto.getReviewCreatedAt(),
-                reviewDto.getReviewUpdatedAt(),
-                reviewDto.getReviewStatus()
-        );
-
-        // ReviewDto의 이미지 URL 목록을 Review 엔티티에 추가
-        if (reviewDto.getImageUrls() != null) {
-            reviewDto.getImageUrls().forEach(review::addImage);
-        }
-
-        return review;
-    }
 
 
     /**
@@ -160,7 +91,7 @@ public class ReviewServiceImpl{
 
         log.info("모든 리뷰를 "+sortValue+" 기준으로" + sortDirection + " 방향으로 정렬합니다.");
         // 페이징 처리된 review를 Dto로 변환하여 반환
-        return reviews.map(this::ReviewConvertToDto);
+        return reviews.map(reviewMapper::ReviewConvertToDto);
     }
 
     /**
@@ -181,7 +112,7 @@ public class ReviewServiceImpl{
 
         log.info("Location에서 " + locationId + "로 검색한 결과를 "+sortValue+"기준으로 " + sortDirection + "방향으로 정렬합니다.");
         // 페이징 처리된 review를 Dto로 변환하여 반환
-        return reviews.map(this::ReviewConvertToDto);
+        return reviews.map(reviewMapper::ReviewConvertToDto);
     }
 
     /**
@@ -202,7 +133,7 @@ public class ReviewServiceImpl{
 
         log.info("User에서 " + userId + "로 검색한 결과를 " + sortValue + " 기준으로" + sortDirection + " 방향으로 정렬합니다.");
         // 페이징 처리된 review를 Dto로 변환하여 반환
-        return reviews.map(this::ReviewConvertToDto);
+        return reviews.map(reviewMapper::ReviewConvertToDto);
     }
 
     /**
@@ -217,7 +148,7 @@ public class ReviewServiceImpl{
         // 가져온 review의 상태가 유효한지 검사
         ReviewServiceValidator.isReviewStatusActive(review);
         // 가져온 리뷰를 dto로 변환해서 반환
-        return ReviewConvertToDto(review);
+        return reviewMapper.ReviewConvertToDto(review);
     }
 
     /**
@@ -240,8 +171,8 @@ public class ReviewServiceImpl{
         // 잘 가져왔는지 확인
         ReviewServiceValidator.validateLocationId(location.getLocationId());
         // 가져온 review와 location를 dto로 변환
-        ReviewDto reviewDto = ReviewConvertToDto(review);
-        LocationDto locationDto = LocationConvertToDto(location);
+        ReviewDto reviewDto = reviewMapper.ReviewConvertToDto(review);
+        LocationDto locationDto = locationMapper.toLocationDto(location);
 
         // 가져온 리뷰를 dto로 변환해서 반환
         return new ReviewWithLocationDto(reviewDto, locationDto);
@@ -254,7 +185,7 @@ public class ReviewServiceImpl{
     public void createReview(ReviewDto reviewDto){
         try {
             // dto를 review객체로 변환
-            Review review = convertToEntity(reviewDto);
+            Review review = reviewMapper.ReviewDtoConvertToEntity(reviewDto);
 
             // 외래키 제대로 불러왔는지 확인
             ReviewServiceValidator.validateUserId(review.getUser().getUserId());

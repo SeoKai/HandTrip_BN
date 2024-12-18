@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Mapper.Review;
+package TeamGoat.TripSupporter.Exception.Review;
 
 public class ReviewNotFoundException extends RuntimeException {
 

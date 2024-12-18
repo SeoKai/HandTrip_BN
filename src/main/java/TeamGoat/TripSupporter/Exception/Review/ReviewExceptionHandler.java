@@ -1,7 +1,7 @@
-package TeamGoat.TripSupporter.Mapper.Review;
+package TeamGoat.TripSupporter.Exception.Review;
 
 import TeamGoat.TripSupporter.Controller.Review.ReviewController;
-import TeamGoat.TripSupporter.Mapper.ExceptionHandler;
+import TeamGoat.TripSupporter.Exception.ExceptionHandler;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Mapper;
+package TeamGoat.TripSupporter.Exception;
 
 // 예외 처리를 위한 인터페이스입니다.
 public interface ExceptionHandler {

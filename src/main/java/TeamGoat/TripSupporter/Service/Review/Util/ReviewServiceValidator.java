@@ -2,7 +2,7 @@ package TeamGoat.TripSupporter.Service.Review.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
-import TeamGoat.TripSupporter.Mapper.Review.*;
+import TeamGoat.TripSupporter.Exception.Review.*;
 
 public class ReviewServiceValidator {
 
