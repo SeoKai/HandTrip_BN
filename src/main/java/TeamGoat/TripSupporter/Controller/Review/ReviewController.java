@@ -3,7 +3,7 @@ package TeamGoat.TripSupporter.Controller.Review;
 import TeamGoat.TripSupporter.Controller.Review.Util.ReviewContollerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithLocationDto;
-import TeamGoat.TripSupporter.Mapper.Review.*;
+import TeamGoat.TripSupporter.Exception.Review.*;
 import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

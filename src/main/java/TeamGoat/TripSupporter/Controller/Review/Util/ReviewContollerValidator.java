@@ -1,7 +1,7 @@
 package TeamGoat.TripSupporter.Controller.Review.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
-import TeamGoat.TripSupporter.Mapper.Review.*;
+import TeamGoat.TripSupporter.Exception.Review.*;
 
 public class ReviewContollerValidator {
 
