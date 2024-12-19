@@ -1,12 +1,19 @@
 package TeamGoat.TripSupporter.Service.User;
 
+import TeamGoat.TripSupporter.Domain.Dto.User.UserAndProfileDto;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
+import TeamGoat.TripSupporter.Exception.User.UserException;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
+import TeamGoat.TripSupporter.Mapper.User.UserMapper;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
+import TeamGoat.TripSupporter.Service.User.Util.RandomStringGenerator;
+import TeamGoat.TripSupporter.Service.User.Util.UserServiceValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -14,151 +21,85 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * 회원 가입 메서드.
-     * 사용자 정보를 저장하고 비밀번호를 암호화하여 저장.
-     *
-     * @param userDto 회원 가입에 필요한 사용자 정보
-     * @return 회원 가입 성공 여부
-     */
-    @Override
-    public boolean register(UserDto userDto) {
-        if (userDto == null){
-            throw new IllegalArgumentException("사용자 정보는 빈 값 일 수 없습니다.");
+    public void registerUser(UserAndProfileDto userAndProfileDto) {
+        try{
+            // UserAndProfileDto에서 UserDto를 추출하여 user로 변환하고 유효성 검사
+            User user = userMapper.toUserEntity(userAndProfileDto.getUserDto());
+            UserServiceValidator.validateConvert(user);
+            // password를 인코딩하여 업데이트
+            user.updatePassword(passwordEncoder.encode(user.getPassword()));
+
+            userRepository.save(user);
+        }catch(Exception e){
+            throw new UserException("회원가입 실패", e);
         }
-        if (isEmailDuplicate(userDto.getUserEmail())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        } if (isNicknameDuplicate(userDto.getUserNickname())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+
+    }
+
+    public void updatePassword(Long userId , String password){
+        try{
+            // 사용자 id로 User정보를 불러와 새로운 password를 인코딩하여 update 후 저장
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자"));
+            user.updatePassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+        }catch(Exception e){
+            throw new UserException("비밀번호 변경 실패", e);
         }
-        User user = User.builder()
-                .userEmail(userDto.getUserEmail())
-                .userPassword(passwordEncoder.encode(userDto.getUserPassword()))
-                .userNickname(userDto.getUserNickname())
-                .userPhone(userDto.getUserPhone())
-                .build();
-        userRepository.save(user);
-        return true;
     }
 
-    /**
-     * 로그인 메서드.
-     * 이메일과 비밀번호를 확인하여 로그인 성공 여부를 반환.
-     *
-     * @param email    사용자 이메일
-     * @param password 사용자 비밀번호
-     * @return 로그인 성공 여부
-     */
-    @Override
-    public boolean login(String email, String password) {
-        Optional<User> User = userRepository.findByUserEmail(email);
-        if (User.isEmpty()) {
-            throw new IllegalArgumentException("이메일이 존재하지 않습니다.");
+    public String findUserByKeyword(String keyword) {
+        try{
+            String response = null;
+
+            if(UserServiceValidator.isEmailAddress(keyword)){
+                // keyword email 형식이면 - email로 유저 엔티티를 찾음
+                User user = userRepository.findByUserEmail(keyword)
+                        .orElseThrow(()-> new UserNotFoundException("이메일에 해당하는 사용자가 존재하지 않습니다."));
+                // 특수문자 2자리가 포함된 12자리 난수생성
+                String newPassword = RandomStringGenerator.generateRandomString(12,2);
+                // 생성된 비밀번호가 회원가입 시 비밀번호 조건에 맞는지 확인하는 메서드 추가 해야됨
+                // UserServiceValidator.비밀번호조건유효성확인메서드()
+                // 생성된 비밀번호를 암호화하여 저장
+                user.updatePassword(passwordEncoder.encode(newPassword));
+                // 생성된 비밀번호를 반환값에 저장
+                response = newPassword;
+
+            }else if(UserServiceValidator.isPhoneNumber(keyword)){
+                // keyword가 휴대폰번호면 - 번호로 email reponse에 email 담음
+                User user = userRepository.findByUserProfilePhoneNumber(keyword)
+                        .orElseThrow(() -> new UserNotFoundException("휴대폰 번호에 해당하는 사용자가 존재하지 않습니다."));
+                response = user.getUserEmail();
+            }
+
+            UserServiceValidator.validateKeyword(response);
+            return response;
+        }catch(Exception e){
+            throw new UserException("회원정보 찾기 실패", e);
+
         }
-        User user = User.get();
-        if (!passwordEncoder.matches(password, user.getUserPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
+
+    public void deleteUser(Long userId) {
+        try{
+            // 사용자 id로 User를 찾아 존재하는지 확인
+            User user = userRepository.findById(userId)
+                   .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자"));
+            // 삭제
+            userRepository.delete(user);
+
+        }catch(Exception e){
+            throw new UserException("회원 탈퇴 실패", e);
         }
-        return true;
+
     }
 
-    /**
-     * 아이디(이메일) 찾기 메서드.
-     * 전화번호로 이메일을 조회하여 반환.
-     *
-     * @param phone 사용자 전화번호
-     * @return 등록된 이메일 주소 (없을 경우 null)
-     */
-    @Override
-    public String findId(String phone) {
-        Optional<User> optionalUser = userRepository.findByUserEmail(phone);
-        return optionalUser.map(User::getUserEmail).orElse(null);
-    }
-
-    /**
-     * 이메일 중복 확인 메서드.
-     * 이메일이 데이터베이스에 존재하는지 확인.
-     *
-     * @param email 확인할 이메일
-     * @return 이메일이 이미 존재하면 true, 아니면 false
-     */
-    @Override
-    public boolean isEmailDuplicate(String email) {
-        return userRepository.existsByUserEmail(email);
-    }
-
-    /**
-     * 비밀번호 찾기 메서드.
-     * 이메일과 전화번호로 사용자를 조회한 후 임시 비밀번호를 생성하여 반환.
-     *
-     * @param email 사용자 이메일
-     * @param phone 사용자 전화번호
-     * @return 비밀번호 재설정 링크 또는 상태 메시지
-     */
-    @Override
-    public String findPassword(String email, String phone) {
-        Optional<User> optionalUser = userRepository.findByUserEmailAndUserPhone(email, phone);
-        if (optionalUser.isEmpty()) {
-            throw new IllegalArgumentException("사용자 정보가 일치하지 않습니다.");
-        }
-        User user = optionalUser.get();
-        String tempPassword = generateTempPassword();
-        User.builder().userPassword(passwordEncoder.encode(tempPassword));
-        userRepository.save(user);
-        return tempPassword;
-    }
-
-    /**
-     * 닉네임 중복 확인 메서드.
-     * 닉네임이 데이터베이스에 존재하는지 확인.
-     *
-     * @param nickname 확인할 닉네임
-     * @return 닉네임이 이미 존재하면 true, 아니면 false
-     */
-    @Override
-    public boolean isNicknameDuplicate(String nickname) {
-        return userRepository.existsByUserNickname(nickname);
-    }
-
-    /**
-     * 회원 탈퇴 메서드.
-     * 사용자 정보를 삭제.
-     *
-     * @return 탈퇴 성공 여부
-     */
-    @Override
-    public boolean deleteUser() {
-        // 예시: 현재 인증된 사용자의 정보를 받아 처리
-        throw new UnsupportedOperationException("구현 필요");
-    }
-
-    /**
-     * 로그아웃 메서드.
-     * 사용자 세션 또는 인증 정보를 무효화.
-     *
-     * @return 로그아웃 성공 여부
-     */
-    @Override
-    public boolean logout() {
-        // 예시: 세션 관리 또는 인증 토큰 무효화
-        throw new UnsupportedOperationException("구현 필요");
-    }
-
-
-    /**
-     * 임시 비밀번호 생성 메서드.
-     *
-     * @return 랜덤으로 생성된 임시 비밀번호
-     */
-    private String generateTempPassword() {
-        return "Temp1234!"; // 실제 구현에서는 난수 생성 로직 필요
-    }
-    
 
 }
 

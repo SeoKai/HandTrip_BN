@@ -3,6 +3,8 @@ package TeamGoat.TripSupporter.Exception.Review;
 import TeamGoat.TripSupporter.Controller.Review.ReviewController;
 import TeamGoat.TripSupporter.Exception.ExceptionHandler;
 import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
+import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;

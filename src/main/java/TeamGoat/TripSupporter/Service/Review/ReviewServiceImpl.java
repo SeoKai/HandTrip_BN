@@ -5,13 +5,9 @@ import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithLocationDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
-import TeamGoat.TripSupporter.Domain.Entity.Review.ReviewImage;
-import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
-import TeamGoat.TripSupporter.Exception.Review.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
-import TeamGoat.TripSupporter.Exception.Review.UserNotFoundException;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Mapper.Review.ReviewMapper;
 import TeamGoat.TripSupporter.Repository.LocationRepository;
@@ -30,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -205,7 +200,7 @@ public class ReviewServiceImpl{
 
         }catch (Exception e) {
             // 데이터베이스 관련 예외
-            ReviewException("Review 생성중 오류 발생",e);
+            throw new ReviewException("Review 생성중 오류 발생",e);
         }
     }
 
@@ -242,7 +237,7 @@ public class ReviewServiceImpl{
 
         }catch (Exception e) {
             // 데이터베이스 관련 예외
-            ReviewException("Review 수정중 오류 발생",e);
+            throw new ReviewException("Review 수정중 오류 발생",e);
         }
 
     }
@@ -267,7 +262,7 @@ public class ReviewServiceImpl{
 
         }catch (Exception e) {
             // 데이터베이스 관련 예외
-            ReviewException("Review 삭제중 오류 발생",e);
+            throw new ReviewException("Review 삭제중 오류 발생",e);
         }
     }
 
@@ -289,8 +284,7 @@ public class ReviewServiceImpl{
                 return 0.0; // 리뷰가 존재하지 않는 경우
             }
         }catch(Exception e){
-            ReviewException("rating 평균 계산중 오류 발생",e);
-            throw e;
+            throw new ReviewException("rating 평균 계산중 오류 발생",e);
         }
     }
 

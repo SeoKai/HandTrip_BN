@@ -2,6 +2,8 @@ package TeamGoat.TripSupporter.Repository.User;
 
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
@@ -18,6 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByUserEmail(String email);
 
+
     /**
      * 이메일 중복 여부 확인
      *
@@ -26,7 +29,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByUserEmail(String email);
 
-    Optional<User> findByUserProfile_PhoneNumber(String phoneNumber);
+    /**
+     * 유저 profile의 phone_number로 유저 엔티티 찾기
+     * @param phoneNumber 유저 profile의 phone_number
+     * @return user 엔티티
+     */
+    @Query("SELECT u FROM User u JOIN u.userProfile p WHERE p.phoneNumber = :phoneNumber")
+    Optional<User> findByUserProfilePhoneNumber(@Param("phoneNumber") String phoneNumber);
 
 
 
