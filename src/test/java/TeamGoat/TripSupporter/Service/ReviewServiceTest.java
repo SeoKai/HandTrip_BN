@@ -6,12 +6,9 @@ import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
-<<<<<<< HEAD
-=======
-import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
->>>>>>> 243e3c2ac442cdc635f1797f245435de2ce7e7f9
-import TeamGoat.TripSupporter.Repository.ReviewRepository;
-import TeamGoat.TripSupporter.Repository.UserRepository;
+import TeamGoat.TripSupporter.Repository.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Review.ReviewRepository;
+import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -234,7 +231,7 @@ public class ReviewServiceTest {
 
 
         // ReviewRepository의 findById 모킹
-        Mockito.when(reviewRepository.findByIdAndReviewStatus(reviewId,ReviewStatus.ACTIVE)).thenReturn(Optional.of(review));
+        Mockito.when(reviewRepository.findByReviewIdAndReviewStatus(reviewId,ReviewStatus.ACTIVE)).thenReturn(Optional.of(review));
 
         // 서비스 메서드 호출
         ReviewWithLocationDto result = reviewService.getReviewWithLocationById(userId,reviewId);

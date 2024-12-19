@@ -23,6 +23,8 @@ import java.util.List;
 public class LocationController {
 
     private final LocationServiceImpl locationServiceImpl;
+    private static final String DEFAULT_SORT_VALUE = "googleRating";
+    private static final String DEFAULT_SORT_DIRECTION = "desc";
 
     @GetMapping("/by-region")
     public List<LocationDto> getLocationsByRegion(@RequestParam("regionId") Long regionId) {
@@ -43,8 +45,8 @@ public class LocationController {
             @RequestParam(name = "regionId") Long regionId,
             @RequestParam(name = "tagNames") String[] tagNames,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "sortValue", defaultValue = "googleRating") String sortValue,
-            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection
+            @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
+            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
         log.info("GET /by-region1 - tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
                 tagNames, page, sortValue, sortDirection);
@@ -68,8 +70,8 @@ public class LocationController {
             @RequestParam(name = "regionId") Long regionId,
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "sortValue", defaultValue = "googleRating") String sortValue,
-            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection
+            @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
+            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
         log.info("GET /by-region2 - keyword: {}, page: {}, sortValue: {}, sortDirection: {}",
                 keyword, page, sortValue, sortDirection);
@@ -135,16 +137,15 @@ public class LocationController {
             @RequestParam(name = "latitude") Double latitude,
             @RequestParam(name = "longitude") Double longitude,
             @RequestParam(name = "distance") Double distance,
-            @RequestParam(name = "sortValue", defaultValue = "googleRating") String sortValue,  // 정렬 기준
-            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection // 정렬 방향
+            @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,  // 정렬 기준
+            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection // 정렬 방향
     ){
         log.info("GET /by-region5 - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
                 latitude, longitude, distance, sortValue, sortDirection);
         LocationControllerValidator.validateLatAndLon(latitude,longitude);
         LocationControllerValidator.validateDistance(distance);
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
-        Sort sort = Sort.by(Sort.Order.by(sortValue).with(Sort.Direction.fromString(sortDirection)));
 
-        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sort);
+        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection);
     }
 }
