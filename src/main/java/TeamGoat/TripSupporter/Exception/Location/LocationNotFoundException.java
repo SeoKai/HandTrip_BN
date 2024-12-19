@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Exception.Review;
+package TeamGoat.TripSupporter.Exception.Location;
 
 public class LocationNotFoundException extends RuntimeException {
 

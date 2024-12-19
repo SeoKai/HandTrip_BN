@@ -3,6 +3,7 @@ package TeamGoat.TripSupporter.Service.Location.Util;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationMappingException;
+import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNullException;
 import TeamGoat.TripSupporter.Exception.Location.LocationSortNullException;
 import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
@@ -18,14 +19,14 @@ public class LocationServiceValidator {
     @ExceptionHandler
     public static void validateLocationEntity(List<Location> locationList) {
         if (locationList == null || locationList.isEmpty()) {
-            throw new LocationNullException("해당 지역에 대한 정보를 찾을 수 없습니다.");
+            throw new LocationNotFoundException("해당 지역에 대한 정보를 찾을 수 없습니다.");
         }
     }
 
     @ExceptionHandler
     public static void validateLocationEntity(Page<Location> locationPage) {
         if (locationPage == null || locationPage.isEmpty()) {
-            throw new LocationNullException("해당 지역에 대한 정보를 찾을 수 없습니다.");
+            throw new LocationNotFoundException("해당 지역에 대한 정보를 찾을 수 없습니다.");
         }
     }
 

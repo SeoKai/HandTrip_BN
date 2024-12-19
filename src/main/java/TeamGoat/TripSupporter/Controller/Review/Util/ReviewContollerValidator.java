@@ -2,7 +2,9 @@ package TeamGoat.TripSupporter.Controller.Review.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Exception.IllegalSortRequestException;
+import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.*;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
 
 public class ReviewContollerValidator {
 

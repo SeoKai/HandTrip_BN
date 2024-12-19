@@ -3,7 +3,9 @@ package TeamGoat.TripSupporter.Service.Review.Util;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
 import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
+import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.*;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
 import org.springframework.data.domain.Pageable;
 
 public class ReviewServiceValidator {
