@@ -1,6 +1,7 @@
 package TeamGoat.TripSupporter.Controller.Review.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
+import TeamGoat.TripSupporter.Exception.IllegalSortRequestException;
 import TeamGoat.TripSupporter.Exception.Review.*;
 
 public class ReviewContollerValidator {
@@ -81,7 +82,7 @@ public class ReviewContollerValidator {
      */
     public static void validateSortValue(String sortValue) {
         if (!"reviewCreatedAt".equals(sortValue) && !"rating".equals(sortValue)) {
-            throw new IllegalArgumentException("잘못된 정렬 기준입니다.");
+            throw new IllegalSortRequestException("잘못된 정렬 기준입니다.");
         }
     }
 
@@ -91,7 +92,7 @@ public class ReviewContollerValidator {
      */
     public static void validateSortDirection(String sortDirection) {
         if (!"asc".equals(sortDirection) && !"desc".equals(sortDirection)) {
-            throw new IllegalArgumentException("잘못된 정렬 방향입니다.");
+            throw new IllegalSortRequestException("잘못된 정렬 방향입니다.");
         }
     }
 

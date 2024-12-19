@@ -5,7 +5,9 @@ import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationMappingException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNullException;
 import TeamGoat.TripSupporter.Exception.Location.LocationSortNullException;
+import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -42,6 +44,21 @@ public class LocationServiceValidator {
     public static void validateLocationSort(Sort sort){
         if(sort == null || sort.isEmpty()){
             throw new LocationSortNullException("정렬 기준이 잘못되었습니다.");
+        }
+    }
+
+    public static void validatePageable(Pageable pageable) {
+
+        if (pageable == null) {
+            throw new IllegalPageRequestException("pageable이 null입니다.");
+        }
+
+        if (pageable.getPageNumber() < 0) {
+            throw new IllegalPageRequestException("현재 페이지는 0 이상이어야 합니다.");
+        }
+
+        if (pageable.getOffset() < 0) {
+            throw new IllegalPageRequestException("조회 위치는 0 이상이어야 합니다.");
         }
     }
 

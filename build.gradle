@@ -55,12 +55,12 @@ dependencies {
 	// HATEOAS
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '3.4.0'
 
-	// 단위테스트를 위한 mockito
-	testImplementation 'org.mockito:mockito-core:4.5.1'  // 최신 버전을 사용
-	testImplementation 'org.mockito:mockito-junit-jupiter:4.5.1'  // JUnit5와 호환되는 Mockito 버전
-	// 최신버전임 review 테스트는 아래버전으로 진행되었음
-//	testImplementation 'org.mockito:mockito-core:5.2.0'
-//	testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
+//	// 단위테스트를 위한 mockito
+//	testImplementation 'org.mockito:mockito-core:4.5.1'  // 최신 버전을 사용
+//	testImplementation 'org.mockito:mockito-junit-jupiter:4.5.1'  // JUnit5와 호환되는 Mockito 버전
+//	 최신버전임 review 테스트는 아래버전으로 진행되었음
+	testImplementation 'org.mockito:mockito-core:5.2.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
 
 }
 

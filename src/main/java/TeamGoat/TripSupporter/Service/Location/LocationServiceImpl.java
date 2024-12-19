@@ -98,9 +98,11 @@ public class LocationServiceImpl {
         return locationResponseDtos;
     }
 
-    public List<LocationResponseDto> getLocationWithinDistance(Double latitude, Double longitude, Double distance, Sort sort){
-        log.info("getLocationWithinDistance service Param = latitude : "+latitude+", longitude : "+longitude+", distance : "+distance+", sort : "+sort);
+    public List<LocationResponseDto> getLocationWithinDistance(Double latitude, Double longitude, Double distance, String sortValue, String sortDirection){
+        log.info("getLocationWithinDistance service");
+
         // sort객체에 대한 유효성 검사
+        Sort sort = Sort.by(Sort.Order.by(sortValue).with(Sort.Direction.fromString(sortDirection)));
         LocationServiceValidator.validateLocationSort(sort);
 
         // 위도, 경도, 반경, sort객체를 받아 중심위도경도로부터 반경내의 location을 정렬하여 가져오고 유효성 검사
@@ -135,6 +137,9 @@ public class LocationServiceImpl {
 
         log.info("현재 Page : " + page + ",정렬 기준 : " + sortValue + ",정렬 방향 : " +sortDirection);
 
-        return PageRequest.of(page, 15, sort);
+        Pageable pageable = PageRequest.of(page,5,sort);
+        LocationServiceValidator.validatePageable(pageable);
+
+        return pageable;
     }
 }

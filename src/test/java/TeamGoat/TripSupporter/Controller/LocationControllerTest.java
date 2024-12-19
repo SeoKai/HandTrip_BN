@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Contoller;
+package TeamGoat.TripSupporter.Controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

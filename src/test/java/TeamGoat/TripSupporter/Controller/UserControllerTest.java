@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Contoller;
+package TeamGoat.TripSupporter.Controller;
 
 
 import TeamGoat.TripSupporter.Controller.User.UserController;
