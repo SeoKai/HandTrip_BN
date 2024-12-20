@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,12 +38,12 @@ public class LocationServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    public Page<LocationResponseDto> getLocationByTagNames(Long regionId,String[] tagNames, int page, String sortValue, String sortDirection) {
+    public Page<LocationResponseDto> getLocationByTagNames(Long regionId, Set<String> tagNames, int page, String sortValue, String sortDirection) {
         //입력받은 페이징정보들로 페이징 객체 생성
         Pageable pageable = getPageable(page,sortValue,sortDirection);
 
         //페이징객체와 tagName리스트를 입력받아 페이징처리된 location객체를 받고 유효성 검사
-        Page<Location> locations = locationRepository.findByTags_TagNameInAndRegion_RegionId(regionId,tagNames,pageable);
+        Page<Location> locations = locationRepository.findByTags_TagNameInAndRegion_RegionId(tagNames,regionId,pageable);
         LocationServiceValidator.validateLocationEntity(locations);
 
         //페이징처리된 location객체들을 반환용Dto로 변환하고 변환이 잘 되었는지 확인

@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/locations")
@@ -50,10 +53,16 @@ public class LocationController {
     ){
         log.info("GET /by-region1 - tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
                 tagNames, page, sortValue, sortDirection);
-        LocationControllerValidator.validateRegion(regionId);
+
+        // 유효성 검사
         LocationControllerValidator.validateTagNames(tagNames);
+        // String 배열을 Set으로 변환
+        Set<String> tagNameSet = new HashSet<>(Arrays.asList(tagNames));
+        // 유효성 검사
+        LocationControllerValidator.validateRegion(regionId);
         LocationControllerValidator.validatePageRequest(page,sortValue,sortDirection);
-        return locationServiceImpl.getLocationByTagNames(regionId, tagNames, page, sortValue, sortDirection);
+
+        return locationServiceImpl.getLocationByTagNames(regionId, tagNameSet, page, sortValue, sortDirection);
     }
 //
 //
