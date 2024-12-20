@@ -4,7 +4,7 @@ import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Service.Location.Util.LocationServiceValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
