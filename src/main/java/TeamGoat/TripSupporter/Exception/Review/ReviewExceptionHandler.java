@@ -2,6 +2,9 @@ package TeamGoat.TripSupporter.Exception.Review;
 
 import TeamGoat.TripSupporter.Controller.Review.ReviewController;
 import TeamGoat.TripSupporter.Exception.ExceptionHandler;
+import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
+import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -139,6 +142,17 @@ public class ReviewExceptionHandler implements ExceptionHandler {
         return ResponseEntity.status(500).body("데이터베이스 오류: " + e.getMessage());
     }
 
+
+
+    /**
+     * DataAccessException 처리
+     * @param e 페이징객체 생성에 문제가 생겼을때 발생하는 예외
+     * @return 400 상태 코드와 예외 메시지
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler
+    public ResponseEntity<String> handleIllegalPageRequestException(IllegalPageRequestException e) {
+        return ResponseEntity.status(400).body("페이징 객체 생성 오류: " + e.getMessage());
+    }
 
 
 }

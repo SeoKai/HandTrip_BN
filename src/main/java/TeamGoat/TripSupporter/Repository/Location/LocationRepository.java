@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Repository.Location;
+package TeamGoat.TripSupporter.Repository;
 
 
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
@@ -23,7 +23,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
      * @return tags필드에 List<>tagNames를 가지고 있는 Location 데이터 (페이징 처리된 결과)
      */
-    Page<Location> findByTags_TagNameIn(String[] tagNames, Pageable pageable);  // 여러 태그 이름으로 장소 조회
+    Page<Location> findByTags_TagNameInAndRegion_RegionId(Long regionId, String[] tagNames, Pageable pageable);  // 여러 태그 이름으로 장소 조회
 
     /**
      * locationName에 keyword가 포함된 Location 데이터를 페이징 처리하여 반환
@@ -32,7 +32,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
      * @return locationName에 keyword가 포함된 Location 데이터 (페이징 처리된 결과)
      */
-    Page<Location> findByLocationNameContaining(String keyword, Pageable pageable);
+    Page<Location> findByLocationNameContaining(Long regionId, String keyword, Pageable pageable);
 
     /**
      * regionName에 해당하는 Region을 기준으로 Location 데이터를 페이징 처리하여 반환
@@ -98,6 +98,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 //                                                              @Param("longitude") Double longitude,
 //                                                              @Param("distance") Double distance,
 //                                                              Sort sort);
+
+
 
 
 }
