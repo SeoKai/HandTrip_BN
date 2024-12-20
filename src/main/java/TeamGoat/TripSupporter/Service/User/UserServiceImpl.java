@@ -80,6 +80,7 @@ public class UserServiceImpl {
 
             UserServiceValidator.validateKeyword(response);
             return response;
+
         }catch(Exception e){
             throw new UserException("회원정보 찾기 실패", e);
 
