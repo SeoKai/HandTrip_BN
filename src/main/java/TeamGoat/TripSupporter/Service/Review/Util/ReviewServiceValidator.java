@@ -2,7 +2,11 @@ package TeamGoat.TripSupporter.Service.Review.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
+import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
+import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.*;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
+import org.springframework.data.domain.Pageable;
 
 public class ReviewServiceValidator {
 
@@ -88,6 +92,21 @@ public class ReviewServiceValidator {
     public static void isReviewStatusPending(Review review){
         if(!review.isPending()){
             throw new ReviewStatusMismatchException("이 Review는 Pending 상태가 아닙니다." + review.getReviewStatus());
+        }
+    }
+
+    public static void validatePageable(Pageable pageable){
+
+        if(pageable == null) {
+            throw new IllegalPageRequestException("pageable이 null입니다.");
+        }
+
+        if(pageable.getPageNumber() < 0){
+            throw new IllegalPageRequestException("현재 페이지는 0 이상이어야 합니다.");
+        }
+
+        if(pageable.getOffset() < 0){
+            throw new IllegalPageRequestException("조회 위치는 0 이상이어야 합니다.");
         }
     }
 

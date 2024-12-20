@@ -2,8 +2,11 @@ package TeamGoat.TripSupporter.Repository.User;
 
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository
@@ -15,7 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email 조회하려는 사용자의 이메일
      * @return 해당 이메일을 가진 사용자의 Optional 객체
      */
-    Optional<User> findByEmail(String email);
+    Optional<User> findByUserEmail(String email);
+
 
     /**
      * 이메일 중복 여부 확인
@@ -25,15 +29,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByUserEmail(String email);
 
-
-
-    Optional<User> findByEmailAndPhone(String email, String phone);
     /**
-     * 닉네임 중복 확인 메서드.
-     * 닉네임이 데이터베이스에 존재하는지 확인.
-     *
-     * @param nickname 확인할 닉네임
-     * @return 닉네임이 이미 존재하면 true, 아니면 false
+     * 유저 profile의 phone_number로 유저 엔티티 찾기
+     * @param phoneNumber 유저 profile의 phone_number
+     * @return user 엔티티
      */
-    boolean existsByNickname(String nickname);
+    @Query("SELECT u FROM User u JOIN u.userProfile p WHERE p.phoneNumber = :phoneNumber")
+    Optional<User> findByUserProfilePhoneNumber(@Param("phoneNumber") String phoneNumber);
+
+
+
+
+
+
+
+
 }

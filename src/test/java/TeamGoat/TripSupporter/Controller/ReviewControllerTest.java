@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Contoller;
+package TeamGoat.TripSupporter.Controller;
 
 import TeamGoat.TripSupporter.Controller.Review.ReviewController;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
@@ -26,6 +26,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,9 +51,9 @@ public class ReviewControllerTest {
     @Test
     @WithMockUser(username = "testuser", roles = {"USER"}) // Mock 사용자 설정
     public void createReview_Success() throws Exception {
-        // 리뷰 생성 성공 시나리오 테스트
+        // 리뷰 생성 성공 테스트
         // 1. ReviewDto 객체를 설정
-        // 2. reviewService의 createReview 메서드가 호출될 때 성공적으로 처리되도록 mock 설정
+        // 2. reviewService의 createReview는 성공처리
         // 3. POST 요청을 보내 리뷰 생성이 성공했을 때 "리뷰를 성공적으로 작성하였습니다." 메시지가 반환되는지 확인
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setReviewId(1L);
@@ -75,6 +76,7 @@ public class ReviewControllerTest {
                         .header("userId", 1L) // 헤더로 userId 전달
                         .content(reviewDtoJson)
                         .with(csrf())) // CSRF 토큰 추가
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("리뷰를 성공적으로 작성하였습니다."));
     }

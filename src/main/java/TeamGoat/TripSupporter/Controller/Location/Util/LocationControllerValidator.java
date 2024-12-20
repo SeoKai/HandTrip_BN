@@ -1,8 +1,8 @@
 package TeamGoat.TripSupporter.Controller.Location.Util;
 
 import TeamGoat.TripSupporter.Exception.Location.*;
-
-import java.util.List;
+import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
+import TeamGoat.TripSupporter.Exception.IllegalSortRequestException;
 
 public class LocationControllerValidator {
 
@@ -13,10 +13,17 @@ public class LocationControllerValidator {
     }
 
     public static void validatePageRequest(int page, String sortValue, String sortDirection) {
-        if(page < 0 || sortValue == null || sortDirection == null){
-            throw new LocationPageRequestNullException("페이지또는 정렬값이 잘못되었습니다.");
+        if(page < 0 ){
+            throw new IllegalPageRequestException("페이지값이 잘못되었습니다.");
+        }
+        if (!"reviewCreatedAt".equals(sortValue) && !"rating".equals(sortValue)) {
+            throw new IllegalSortRequestException("잘못된 정렬 기준입니다.");
+        }
+        if (!"asc".equals(sortDirection) && !"desc".equals(sortDirection)) {
+            throw new IllegalSortRequestException("잘못된 정렬 방향입니다.");
         }
     }
+
 
     public static void validateRegion(Long regionId) {
         if(regionId < 0){
@@ -43,11 +50,7 @@ public class LocationControllerValidator {
         }
     }
 
-    public static void validateSortRequest(String sortValue, String sortDirection) {
-        if(sortValue == null || sortDirection == null){
-            throw new LocationSortNullException("정렬값이 잘못되었습니다.");
-        }
-    }
+
 
     public static void validateTagNames(String[] tagNames) {
         if(tagNames == null || tagNames.length == 0){
@@ -55,6 +58,15 @@ public class LocationControllerValidator {
         }
         if(tagNames.length > 3){
             throw new LocationInvalidTagNamesException("태그 값이 너무 많습니다. 태그는 최대 3개까지만 가능합니다.");
+        }
+    }
+
+    public static void validateSortRequest(String sortValue, String sortDirection) {
+        if (!"reviewCreatedAt".equals(sortValue) && !"rating".equals(sortValue)) {
+            throw new IllegalSortRequestException("잘못된 정렬 기준입니다.");
+        }
+        if (!"asc".equals(sortDirection) && !"desc".equals(sortDirection)) {
+            throw new IllegalSortRequestException("잘못된 정렬 방향입니다.");
         }
     }
 }
