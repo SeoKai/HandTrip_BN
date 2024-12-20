@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
@@ -19,11 +20,11 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     /**
      * 여러가지 태그로 Location을 검색함 단일태그 검색도 가능
      * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
-     * @param tagNames  List<String>으로 tagName을 받으므로 동적으로 값을 입력 받음
+     * @param tagNames  Set<String>으로 tagName을 받으므로 동적으로 값을 입력 받음
      * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
      * @return tags필드에 List<>tagNames를 가지고 있는 Location 데이터 (페이징 처리된 결과)
      */
-    Page<Location> findByTags_TagNameInAndRegion_RegionId(Long regionId, String[] tagNames, Pageable pageable);  // 여러 태그 이름으로 장소 조회
+    Page<Location> findByTags_TagNameInAndRegion_RegionId(Set<String> tagNames,Long regionId, Pageable pageable);  // 여러 태그 이름으로 장소 조회
 
     /**
      * locationName에 keyword가 포함된 Location 데이터를 페이징 처리하여 반환
