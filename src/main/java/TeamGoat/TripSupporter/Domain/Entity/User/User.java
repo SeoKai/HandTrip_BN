@@ -1,21 +1,16 @@
 package TeamGoat.TripSupporter.Domain.Entity.User;
 
-import TeamGoat.TripSupporter.Domain.Entity.Bookmark.BookmarkPlanner;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "TBL_USER")
 @Getter
-@ToString
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -37,34 +32,51 @@ public class User {
     @Column(name = "USER_STATUS", nullable = false)
     private UserStatus userStatus = UserStatus.ACTIVE;  //enum : ACTIVE, SUSPENDED, DEACTIVATED
 
-    @Column(name = "USER_NICKNAME", nullable = false, unique = true)
-    private String userNickname;
-
-    @Column(name = "FAILED_LOGIN_ATTEMPTS", nullable = false)
-    private int failedLoginAttempts = 0;
-
     @Column(name = "USER_PHONE")
     private String userPhone;
 
-    @Column(name = "LOCKED_UNTIL")
-    private LocalDateTime lockedUntil;
+    @Column(name = "PLANNER_CREATED_AT", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    private LocalDateTime userCreatedAt;  //생성일자 - 수정불가
 
-    @Column(name = "LAST_LOGIN")
-    private LocalDateTime lastLogin;
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ToString.Exclude
+    private UserProfile userProfile;
 
-    @Column(name = "USER_CREATED_AT", updatable = false)
-    private LocalDateTime userCreatedAt = LocalDateTime.now();  //생성일자 - 수정불가
+    @Column(name = "PROVIDER")
+    private String provider;
 
-    @Column(name = "SNS_TYPE")
-    private String snsType;
+    @Column(name = "PROVIDER_ID")
+    private String providerId;
 
-    @Column(name = "SNS_CONNECT_DATE")
-    private LocalDateTime snsConnectDate;
+    @Builder
+    public User(Long userId, String userEmail, String userPassword, String userPhone,
+                UserRole userRole, UserStatus userStatus,
+                LocalDateTime userCreatedAt,
+                String provider, String providerId) {
+        this.userId = userId;
+        this.userEmail = userEmail;
+        this.userPhone = userPhone;
+        this.userPassword = userPassword;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
+        this.userCreatedAt = userCreatedAt;
+        this.provider = provider;
+        this.providerId = providerId;
+//        this.snsType = snsType;
+//        this.snsConnectDate = snsConnectDate;
+    }
 
-//  중계테이블 bookmark와 1:M 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BookmarkPlanner> bookmarkPlanner = new HashSet<>(); // 북마크한 플래너들
+    @PrePersist
+    protected void onCreate() {
+        this.userCreatedAt = LocalDateTime.now();
+    }
 
-    public void User(String userEmail, String userPassword) {}
+    public void updatePassword(String newPassword) {
+        this.userPassword = newPassword;
+    }
+
+    public void updatePhone(String newPhone) {
+        this.userPhone = newPhone;
+    }
 
 }

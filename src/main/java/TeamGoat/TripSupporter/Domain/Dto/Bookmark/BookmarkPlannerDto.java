@@ -1,7 +1,6 @@
 package TeamGoat.TripSupporter.Domain.Dto.Bookmark;
 
 
-import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
 import lombok.*;
 
 @Getter
@@ -9,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class BookmarkPlannerDto {
     
     private Long bookmarkId;

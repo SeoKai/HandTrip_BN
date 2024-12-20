@@ -1,26 +1,39 @@
 package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "TBL_DAILYPLAN")
+@Table(name = "tbl_daily_plan")
 @Getter
-@ToString
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DailyPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "DAILYPLAN_ID")
-    private Long dailyPlanId;
+    @Column(name = "daily_plan_id")
+    private Long dailyPlanId; // 하루 일정 ID
+
+    @Column(name = "plan_date", nullable = false)
+    private LocalDate planDate; // 하루 날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PLANNER_ID", nullable = false)
-    private Planner planner;    // 외래키
+    @JoinColumn(name = "planner_id", nullable = false)
+    private Planner planner; // 상위 플래너
 
-    @Column(name = "DAILYPLAN_SCHEDULE_DATE", nullable = false)
-    private LocalDate scheduleDate; // 일정 날짜
+    @OneToMany(mappedBy = "dailyPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ToDo> toDos = new ArrayList<>(); // 하루의 일정(ToDo) 목록
+
+    @Builder
+    public DailyPlan(LocalDate planDate, Planner planner) {
+        this.planDate = planDate;
+        this.planner = planner;
+    }
 }
