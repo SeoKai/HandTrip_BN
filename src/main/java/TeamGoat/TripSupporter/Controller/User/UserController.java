@@ -6,6 +6,7 @@ package TeamGoat.TripSupporter.Controller.User;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
 import TeamGoat.TripSupporter.Service.User.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,24 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController // restController 사용으로 ResponseBody 와 RequestBody 함께 사용 (보통 RESTfull API 에서는 restController 사용)
+@RestController
 @RequestMapping("/user")
 @Validated
-// Controller, Service, Repository, Validator, Converter, and ProceedingJoinPoint에 @Valid, @NotNull, @Min, @Max, @Pattern, @Size, @Email, @Past, @Future, @PastOrPresent, @NotNullOrEmpty, @Positive, @PositiveOrZero, @Negative, @NegativeOrZero, @DecimalMin, @DecimalMax, @Digits, @FutureOrPresent, @NotNullOrBlank, @Size(min =)
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
 
-    //@ControllerAdvice 사용 생각 . . .
-    //@ControllerAdvice란 애플리케이션 전역에서 컨트롤러의 공통적인 예외 처리, 데이터 바인딩, 모델 객체 처리를 담당하는 기능을 제공
-
-    // UserService의 구현체를 스프링 컨테이너에서 주입받음
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     /**
      * 회원가입 요청 처리
