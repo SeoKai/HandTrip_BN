@@ -24,7 +24,6 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -32,13 +31,56 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.3.0'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.1.0'
+	implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.1.Final'
+
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//implementation 'com.h2database:h2'
+
+	// REST
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
+	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.18.1'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
+
+	// HATEOAS
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '3.4.0'
+
+//	// 단위테스트를 위한 mockito
+//	testImplementation 'org.mockito:mockito-core:4.5.1'  // 최신 버전을 사용
+//	testImplementation 'org.mockito:mockito-junit-jupiter:4.5.1'  // JUnit5와 호환되는 Mockito 버전
+//	 최신버전임 review 테스트는 아래버전으로 진행되었음
+	testImplementation 'org.mockito:mockito-core:5.2.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
+
+	//OAUTH2-CLIENT
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	//JWT
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+}
+
+test {
+	jvmArgs += "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('byte-buddy-agent') }}"
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	jvmArgs '-javaagent:' + configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ['-parameters']
 }

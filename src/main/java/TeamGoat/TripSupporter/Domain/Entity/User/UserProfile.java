@@ -1,21 +1,17 @@
 package TeamGoat.TripSupporter.Domain.Entity.User;
 
-import TeamGoat.TripSupporter.Domain.Enum.UserRole;
-import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TBL_USER_PROFILE")
 @Getter
-@ToString
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class UserProfile {
     @Id
-    @Column(name = "USER_ID")
-    private Long userId;
+    @Column(name = "USER_PROFILE_ID")
+    private Long userProfileId;
 
     @Column(name = "USER_NICKNAME", nullable = false)
     private String userNickname;
@@ -30,7 +26,13 @@ public class UserProfile {
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", foreignKey = @ForeignKey(name = "FK_USER_PROFILE_USER_ID"), nullable = false)
     private User user;
 
-    @ManyToOne  // User의 USER_NICKNAME fk
-    @JoinColumn(name = "USER_NICKNAME", referencedColumnName = "USER_NICKNAME", foreignKey = @ForeignKey(name = "FK_USER_PROFILE_USER_NICKNAME"), nullable = false)
-    private User userByNickname;
+    @Builder
+    public UserProfile(Long userProfileId, String userNickname, String profileImageUrl, String userBio, User user) {
+        this.userProfileId = userProfileId;
+        this.userNickname = userNickname;
+        this.profileImageUrl = profileImageUrl;
+        this.userBio = userBio;
+        this.user = user;
+    }
+
 }

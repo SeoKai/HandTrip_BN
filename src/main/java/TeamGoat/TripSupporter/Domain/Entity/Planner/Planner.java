@@ -1,53 +1,60 @@
 package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
-import TeamGoat.TripSupporter.Domain.Entity.Bookmark.BookmarkPlanner;
-import TeamGoat.TripSupporter.Domain.Entity.Tag.PlannerTag;
-import TeamGoat.TripSupporter.Domain.Entity.Tag.Tag;
-import TeamGoat.TripSupporter.Domain.Entity.User.User;
+import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "TBL_PLANNER")
+@Table(name = "tbl_planner")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-@Builder
 public class Planner {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long plannerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
+    @Column(name = "planner_id")
+    private Long plannerId; // 고유 ID
 
-    @Column(name = "PLANNER_TITLE", nullable = false, length = 50)
-    private String plannerTitle;    //플래너 제목
+    @Column(name = "planner_title", nullable = false, length = 100)
+    private String plannerTitle; // 플래너 제목
 
-    @Column(name = "PLANNER_START_DATE", nullable = false)
-    private LocalDate plannerStartDate; // 계획 시작 날짜
+    @Column(name = "planner_start_date", nullable = false)
+    private LocalDate plannerStartDate; // 출발일
 
-    @Column(name = "PLANNER_END_DATE", nullable = false)
-    private LocalDate plannerEndDate; // 계획 종료 날짜
+    @Column(name = "planner_end_date", nullable = false)
+    private LocalDate plannerEndDate; // 도착일
 
-    @Column(name = "PLANNER_CREATED_AT", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
-    private LocalDateTime plannerCreatedAt; // 계획 생성 시각
+    @Column(name = "email", nullable = false)
+    private String email; // 사용자 이메일
 
-    @Column(name = "PLANNER_UPDATED_AT", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    private LocalDateTime plannerUpdatedAt; // 계정 수정 시각
+    @Column(name = "planner_created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime plannerCreatedAt; // 생성 시간
+
+    @Column(name = "planner_updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    private LocalDateTime plannerUpdatedAt; // 수정 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", foreignKey = @ForeignKey(name = "FK_USER_PLANNER_IDX"))
-    private User user;
+    @JoinColumn(name = "region_id", nullable = false) // 외래키 연결
+    private Region region; // 연결된 지역(도시)
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlannerTag> tags = new HashSet<>(); // 태그 정보
-    // set을 사용하여 동일planner와 동일 tag쌍의 연결을 방지
+    private List<DailyPlan> dailyPlans = new ArrayList<>();
 
+    @Builder
+    public Planner(String plannerTitle, LocalDate plannerStartDate, LocalDate plannerEndDate, String email, Region region) {
+        this.plannerTitle = plannerTitle;
+        this.plannerStartDate = plannerStartDate;
+        this.plannerEndDate = plannerEndDate;
+        this.email = email;
+        this.region = region;
+        this.plannerCreatedAt = LocalDateTime.now();
+        this.plannerUpdatedAt = LocalDateTime.now();
+    }
 
-    @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BookmarkPlanner> bookmarks = new HashSet<>(); // 북마크 정보
-    // set을 사용하여 동일planner와 동일 user쌍의 연결을 방지
 }
