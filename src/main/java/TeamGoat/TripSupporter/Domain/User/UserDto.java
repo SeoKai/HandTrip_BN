@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Domain.Dto.User;
+package TeamGoat.TripSupporter.Domain.User;
 
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;

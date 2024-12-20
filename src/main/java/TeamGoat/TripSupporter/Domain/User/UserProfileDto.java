@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Domain.Dto.User;
+package TeamGoat.TripSupporter.Domain.User;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

@@ -1,6 +1,6 @@
 package TeamGoat.TripSupporter.Repository.User;
 
-import TeamGoat.TripSupporter.Domain.Entity.User.User;
+
 import TeamGoat.TripSupporter.Domain.Entity.User.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,28 +8,24 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
+public interface UserProfileRepository extends JpaRepository<UserProfile,Long> {
+    UserProfile findByUser_UserId(Long userId);
 
     /**
-     * 이메일로 사용자 프로필 조회
+     * 이메일을 기반으로 유저 프로필을 조회하는 메서드.
      *
-     * @param email 조회하려는 사용자의 이메일
-     * @return 해당 이메일을 가진 사용자의 프로필 객체(Optional)
+     * @param email 조회할 사용자 이메일
+     * @return 조회된 유저 프로필
      */
     Optional<UserProfile> findByUser_UserEmail(String email);
 
     /**
-     * 닉네임 중복 여부 확인
-     * @param nickname 사용자의 닉네임
-     * @return 닉네임이 이미 존재하면 true, 그렇지 않으면 false
+     * 닉네임 중복 확인 메서드.
+     * 닉네임이 데이터베이스에 존재하는지 확인.
+     *
+     * @param nickname 확인할 닉네임
+     * @return 닉네임이 이미 존재하면 true, 아니면 false
      */
-    boolean existsByNickname(String nickname);
-
-
-
-
-
-
-
+    boolean existsByUserNickname(String nickname);
 
 }
