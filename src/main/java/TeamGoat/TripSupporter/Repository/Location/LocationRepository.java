@@ -81,6 +81,17 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
                                                Sort sort);
 
 
+    /**
+     * 태그 이름으로 장소 목록을 조회
+     *
+     * @param tagName 필터링할 태그 이름
+     */
+    @Query("SELECT l FROM Location l " +
+            "JOIN l.tags t " +
+            "WHERE t.tagName = :tagName")
+    List<Location> findLocationsByTagName(@Param("tagName") String tagName);
+}
+
 
     // 만약에 위 메서드가 정상적으로 동작하면 아래 메서드도 실행해보자
     // 아래 메서드는 거리순으로 정렬된 list를 반환한다.
@@ -103,4 +114,3 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
 
 
-}
