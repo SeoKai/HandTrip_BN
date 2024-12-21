@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -156,5 +158,20 @@ public class LocationController {
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
 
         return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection);
+    }
+
+    /**
+     * 특정 태그 및 지역에 따라 장소 목록을 필터링하는 API 엔드포인트
+     *
+     * @param tagName 필터링할 태그 이름
+     * @return 필터링된 장소 목록
+     */
+    @GetMapping("/filter-by-tag")
+    public ResponseEntity<List<LocationDto>> getLocationsByTag(
+            @RequestParam("tagName") String tagName) {
+        // 서비스에서 태그 및 지역에 해당하는 장소 목록 조회
+        List<LocationDto> locations = locationServiceImpl.findLocationsByTag(tagName);
+        // 결과를 클라이언트에 반환
+        return ResponseEntity.ok(locations);
     }
 }
