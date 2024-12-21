@@ -143,4 +143,22 @@ public class LocationServiceImpl {
 
         return pageable;
     }
+
+
+    /**
+     * 특정 태그로 필터링된 장소 목록을 반환
+     *
+     * @param tagName 필터링할 태그 이름
+     * @return 필터링된 장소 DTO 목록
+     */
+    public List<LocationDto> findLocationsByTag(String tagName) {
+        // 태그 이름으로 필터링된 장소 목록 조회
+        List<Location> locations = locationRepository.findLocationsByTagName(tagName);
+
+        // Location -> LocationDto 변환
+        return locations.stream()
+                .map(locationMapper::toLocationDto)
+                .collect(Collectors.toList());
+    }
+
 }
