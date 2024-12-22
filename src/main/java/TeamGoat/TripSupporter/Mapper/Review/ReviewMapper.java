@@ -7,7 +7,7 @@ import TeamGoat.TripSupporter.Domain.Entity.Review.ReviewImage;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.UserNotFoundException;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

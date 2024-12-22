@@ -10,67 +10,75 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "TBL_USER")
 @Getter
-@ToString(exclude = "userProfile") // 순환 참조 방지
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    private Long userId;
+    private Long userId;    //pk
 
     @Column(name = "USER_EMAIL", nullable = false, unique = true)
     private String userEmail;   //실제 로그인할때 사용
 
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
+    @Column(name = "USER_PASSWORD", nullable = false)
+    private String userPassword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "USER_ROLE")
-    private UserRole userRole;  //enum : USER, ADMIN
+    @Column(name = "USER_ROLE", nullable = false)
+    private UserRole userRole = UserRole.USER;  //enum : USER, ADMIN
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "USER_STATUS")
-    private UserStatus userStatus;  //enum : ACTIVE, SUSPENDED, DEACTIVATED
+    @Column(name = "USER_STATUS", nullable = false)
+    private UserStatus userStatus = UserStatus.ACTIVE;  //enum : ACTIVE, SUSPENDED, DEACTIVATED
+
+    @Column(name = "USER_PHONE")
+    private String userPhone;
 
     @Column(name = "PLANNER_CREATED_AT", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime userCreatedAt;  //생성일자 - 수정불가
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)  // 외래키 관리하지 않음
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ToString.Exclude
     private UserProfile userProfile;
 
+    @Column(name = "PROVIDER")
+    private String provider;
+
+    @Column(name = "PROVIDER_ID")
+    private String providerId;
+
     @Builder
-    public User(Long userId, String userEmail,String password, UserRole userRole, UserStatus userStatus, LocalDateTime userCreatedAt,UserProfile userProfile){
+    public User(Long userId, String userEmail, String userPassword, String userPhone,
+                UserRole userRole, UserStatus userStatus,
+                LocalDateTime userCreatedAt,
+                String provider, String providerId) {
         this.userId = userId;
         this.userEmail = userEmail;
-        this.password = password;
-        if(userRole == null){
-            this.userRole = UserRole.USER;  //enum : USER, ADMIN
-        }
-        if(userStatus == null){
-            this.userStatus = UserStatus.ACTIVE;  //enum : USER, ADMIN
-        }
+        this.userPhone = userPhone;
+        this.userPassword = userPassword;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
         this.userCreatedAt = userCreatedAt;
-        this.userProfile = userProfile;
+        this.provider = provider;
+        this.providerId = providerId;
+//        this.snsType = snsType;
+//        this.snsConnectDate = snsConnectDate;
     }
 
-    /**
-     * 비밀번호 업데이트 메서드
-     *
-     * @param password 새로운 비밀번호
-     */
-    public void updatePassword(String password){
-        this.password = password;
-    }
-
-    /**
-     * userCreatedAt 자동 설정
-     */
     @PrePersist
-    public void prePersist() {
-        this.userCreatedAt = (this.userCreatedAt == null) ? LocalDateTime.now() : this.userCreatedAt;
+    protected void onCreate() {
+        this.userCreatedAt = LocalDateTime.now();
     }
 
+    public void updatePassword(String newPassword) {
+        this.userPassword = newPassword;
+    }
 
+    public void updatePhone(String newPhone) {
+        this.userPhone = newPhone;
+    }
 
 }

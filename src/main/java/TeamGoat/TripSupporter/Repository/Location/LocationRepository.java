@@ -1,4 +1,4 @@
-package TeamGoat.TripSupporter.Repository;
+package TeamGoat.TripSupporter.Repository.Location;
 
 
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
@@ -11,47 +11,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> findByRegionRegionId(Long regionId);
-
-    /**
-     * 여러가지 태그로 Location을 검색함 단일태그 검색도 가능
-     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
-     * @param tagNames  List<String>으로 tagName을 받으므로 동적으로 값을 입력 받음
-     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
-     * @return tags필드에 List<>tagNames를 가지고 있는 Location 데이터 (페이징 처리된 결과)
-     */
-    Page<Location> findByTags_TagNameInAndRegion_RegionId(Long regionId, String[] tagNames, Pageable pageable);  // 여러 태그 이름으로 장소 조회
-
-    /**
-     * locationName에 keyword가 포함된 Location 데이터를 페이징 처리하여 반환
-     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
-     * @param keyword 검색 keyword
-     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
-     * @return locationName에 keyword가 포함된 Location 데이터 (페이징 처리된 결과)
-     */
-    Page<Location> findByLocationNameContaining(Long regionId, String keyword, Pageable pageable);
-
-    /**
-     * regionName에 해당하는 Region을 기준으로 Location 데이터를 페이징 처리하여 반환
-     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
-     * @param regionId 검색할 Region의 Id
-     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
-     * @return regionName에 해당하는 Region에 속하는 Location 데이터 (페이징 처리된 결과)
-     */
-    Page<Location> findByRegion_RegionId(Long regionId, Pageable pageable);
-
-//    위와 같은 메서드로 regionId를 받을지 region객체를 받을지 몰라서 일단 작성함
-//    /**
-//     * 특정 Region 객체를 기준으로 Location 데이터를 페이징 처리하여 반환
-//     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
-//     * @param region 검색할 Region 객체
-//     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
-//     * @return 주어진 Region에 속하는 Location 데이터 (페이징 처리된 결과)
-//     */
-//    Page<Location> findByRegion(Region region, Pageable pageable);
 
     /**
      * 모든 Location을 페이징처리하여 반환하는 메서드
@@ -60,6 +24,123 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      * @return 페이징처리된 모든 Location데이터를 반환
      */
     Page<Location> findAll(Pageable pageable);
+
+    /**
+     * locationName에 keyword가 포함된 Location 데이터를 페이징 처리하여 반환
+     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
+     * @param keyword 검색 keyword
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
+     * @return locationName에 keyword가 포함된 Location 데이터 (페이징 처리된 결과)
+     */
+    Page<Location> findByLocationNameContaining(String keyword, Pageable pageable);
+
+    /**
+     * 태그로 Location을 검색함 단일태그 검색도 가능 / 단 각 tag끼리는 And 연산
+     * 즉 서로 다른 두 태그를 가진 Set을 입력하면
+     * 태그 1과 태그 2를 모두 가진 Location이 반환됨
+     * @param tagNames 태그이름들이 들어있는 Set
+     * @param tagCount TagNames에 들어간 tag의 종류 즉 tagNames.size()
+     * @param pageable 페이징정보가 담긴 객체
+     * @return
+     */
+    @Query("SELECT l FROM Location l " +
+            "JOIN l.tags t " +
+            "WHERE t.tagName IN :tagNames " +
+            "GROUP BY l.id " +
+            "HAVING COUNT(t.id) = :tagCount")
+    Page<Location> findByTags(@Param("tagNames") Set<String> tagNames,
+                              @Param("tagCount") long tagCount,
+                              Pageable pageable);
+
+
+    /**
+     * 태그와 검색어로 Location을 검색함 단일태그 검색도 가능 / 단 각 tag끼리는 And 연산
+     * LocationName에 검색어가 포함된 Location + 태그 검색
+     * 즉 서로 다른 두 태그를 가진 Set을 입력하면
+     * 태그 1과 태그 2를 모두 가진 Location이 반환됨
+     *
+     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
+     * @param tagNames  Set<String>으로 tagName을 받으므로 동적으로 값을 입력 받음
+     * @param tagCount 태그 종류 tagNames.size()와 같음
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
+     * @return tags필드에 List<>tagNames를 가지고 있는 Location 데이터 (페이징 처리된 결과)
+     */
+    @Query("SELECT l FROM Location l " +
+            "JOIN l.tags t " +
+            "WHERE t.tagName IN :tagNames " +
+            "AND l.locationName LIKE %:keyword% " +
+            "GROUP BY l.id " +
+            "HAVING COUNT(t.id) = :tagCount")
+    Page<Location> findByTagsAndKeyword(@Param("tagNames") Set<String> tagNames,
+                                        @Param("tagCount") long tagCount,
+                                        @Param("keyword") String keyword,
+                                        Pageable pageable);
+
+    /**
+     * 지역아이디를 기반으로 해당 지역에 속하는 모든 Location을 페이징처리하여 반환하는 메서드
+     * @param regionId 지역아이디
+     * @param pageable 페이징정보가 담긴 객체
+     * @return
+     */
+    Page<Location> findByRegion_RegionId(Long regionId, Pageable pageable);
+
+    /**
+     * regionName에 해당하는 Region을 기준으로 Location 데이터를 페이징 처리하여 반환
+     * Pageable객체 작성 예시 PageRequest.of(0, 10);  // 첫 번째 페이지, 10개 항목
+     * @param regionId 검색할 Region의 Id
+     * @param keyword
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
+     * @return regionName에 해당하는 Region에 속하는 Location 데이터 (페이징 처리된 결과)
+     */
+    Page<Location> findByRegion_RegionIdAndLocationNameContaining (Long regionId,String keyword, Pageable pageable);
+
+
+    /**
+     * 태그로 Location을 검색함 단일태그 검색도 가능 / 단 각 tag끼리는 And 연산
+     * 즉 서로 다른 두 태그를 가진 Set을 입력하면
+     * 태그 1과 태그 2를 모두 가진 Location이 반환됨
+     * @param tagNames 태그이름이 들어있는 Set
+     * @param tagCount tagNames에 들어있는 태그 종류 tagNames.size()와 같음
+     * @param regionId 여행지가 속한 지역Id
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
+     * @return
+     */
+    @Query("SELECT l FROM Location l " +
+            "LEFT JOIN l.tags t " +
+            "WHERE l.region.regionId = :regionId " +
+            "AND t.tagName IN :tagNames " +
+            "GROUP BY l.id " +
+            "HAVING COUNT(t.id) = :tagCount")
+    Page<Location> findByTagsAndRegion(
+            @Param("tagNames") Set<String> tagNames,
+            @Param("tagCount") long tagCount,
+            @Param("regionId") Long regionId,
+            Pageable pageable);
+
+
+    /**
+     * 태그로 Location을 검색함 단일태그 검색도 가능 / 단 각 tag끼리는 And 연산
+     * 즉 서로 다른 두 태그를 가진 Set을 입력하면
+     * 태그 1과 태그 2를 모두 가진 Location이 반환됨
+     * @param tagNames 태그이름이 들어있는 Set
+     * @param tagCount tagNames에 들어있는 태그 종류 tagNames.size()와 같음
+     * @param regionId 여행지가 속한 지역Id
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기)
+     * @return
+     */
+    @Query("SELECT l FROM Location l " +
+            "LEFT JOIN l.tags t " +
+            "WHERE l.region.regionId = :regionId " +
+            "AND t.tagName IN :tagNames " +
+            "AND l.locationName LIKE %:keyword% " +
+            "GROUP BY l.id " +
+            "HAVING COUNT(t.id) = :tagCount")
+    Page<Location> findByTagsAndRegionAndKeyword(
+            @Param("tagNames") Set<String> tagNames,
+            @Param("tagCount") long tagCount,
+            @Param("regionId") Long regionId,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 
     /**
      * 특정 위도, 경도 및 거리 내에 있는 장소들을 조회하고, 정렬 기준을 추가로 적용하는 메서드.
@@ -79,6 +160,17 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
                                                @Param("distance") Double distance,
                                                Sort sort);
 
+
+    /**
+     * 태그 이름으로 장소 목록을 조회
+     *
+     * @param tagName 필터링할 태그 이름
+     */
+    @Query("SELECT l FROM Location l " +
+            "JOIN l.tags t " +
+            "WHERE t.tagName = :tagName")
+    List<Location> findLocationsByTagName(@Param("tagName") String tagName);
+}
 
 
     // 만약에 위 메서드가 정상적으로 동작하면 아래 메서드도 실행해보자
@@ -102,4 +194,3 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
 
 
-}
