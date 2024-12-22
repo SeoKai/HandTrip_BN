@@ -27,8 +27,8 @@ public class UserProfileExceptionHandler {
     /**
      * 기타 예상치 못한 예외 처리
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGenericException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("UserProfile 처리 중 오류가 발생했습니다.");
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<String> handleGenericException(Exception ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("UserProfile 처리 중 오류가 발생했습니다.");
+//    }
 }

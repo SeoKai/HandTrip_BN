@@ -4,19 +4,15 @@ import TeamGoat.TripSupporter.Exception.Location.*;
 import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
 import TeamGoat.TripSupporter.Exception.IllegalSortRequestException;
 
-public class LocationControllerValidator {
+import java.util.Set;
 
-    public static void validateKeyword(String keyword) {
-        if(keyword==null){
-            throw new LocationSearchKeywordNullException("잘못된 검색어 입니다. 다시 입력해주세요");
-        }
-    }
+public class LocationControllerValidator {
 
     public static void validatePageRequest(int page, String sortValue, String sortDirection) {
         if(page < 0 ){
             throw new IllegalPageRequestException("페이지값이 잘못되었습니다.");
         }
-        if (!"reviewCreatedAt".equals(sortValue) && !"rating".equals(sortValue)) {
+        if (!"userRatingsTotal".equals(sortValue) && !"googleRating".equals(sortValue)) {
             throw new IllegalSortRequestException("잘못된 정렬 기준입니다.");
         }
         if (!"asc".equals(sortDirection) && !"desc".equals(sortDirection)) {
@@ -52,11 +48,8 @@ public class LocationControllerValidator {
 
 
 
-    public static void validateTagNames(String[] tagNames) {
-        if(tagNames == null || tagNames.length == 0){
-            throw new LocationInvalidTagNamesException("태그 값이 없습니다.");
-        }
-        if(tagNames.length > 3){
+    public static void validateTagNames(Set<String> tagNames) {
+        if(tagNames.size() > 3){
             throw new LocationInvalidTagNamesException("태그 값이 너무 많습니다. 태그는 최대 3개까지만 가능합니다.");
         }
     }
@@ -67,6 +60,12 @@ public class LocationControllerValidator {
         }
         if (!"asc".equals(sortDirection) && !"desc".equals(sortDirection)) {
             throw new IllegalSortRequestException("잘못된 정렬 방향입니다.");
+        }
+    }
+
+    public static void validateLocationId(Long locationId) {
+        if(locationId == null || locationId < 0){
+            throw new IllegalLocationIdException("잘못된 지역 ID 값 입니다.");
         }
     }
 }
