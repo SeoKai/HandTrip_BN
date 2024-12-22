@@ -15,13 +15,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
  * ControllerAdvice를 사용하여 예외 처리 로직을 중앙화
  */
 @ControllerAdvice(assignableTypes = ReviewController.class)
-public class ReviewExceptionHandler implements ExceptionHandler {
+public class ReviewExceptionHandler{
 
 
-    @Override
-    public Object exceptionHandler(Exception exception) {
-        return null;
-    }
 
     /**
      * ReviewNotFoundException 처리

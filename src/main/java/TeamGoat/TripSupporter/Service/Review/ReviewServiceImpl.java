@@ -10,7 +10,7 @@ import TeamGoat.TripSupporter.Exception.Review.ReviewException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Mapper.Review.ReviewMapper;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Repository.Review.ReviewRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;

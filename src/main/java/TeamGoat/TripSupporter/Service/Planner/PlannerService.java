@@ -8,7 +8,7 @@ import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.DailyPlan;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.ToDo;
-import TeamGoat.TripSupporter.Repository.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Repository.Planner.PlannerRepository;
 import TeamGoat.TripSupporter.Repository.Location.RegionRepository;
 import lombok.RequiredArgsConstructor;

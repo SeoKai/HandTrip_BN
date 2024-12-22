@@ -1,5 +1,7 @@
-package TeamGoat.TripSupporter.Domain.Dto.User;
+package TeamGoat.TripSupporter.Domain.User;
 
+import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
+import TeamGoat.TripSupporter.Domain.Dto.User.UserProfileDto;
 import lombok.*;
 
 @Getter
