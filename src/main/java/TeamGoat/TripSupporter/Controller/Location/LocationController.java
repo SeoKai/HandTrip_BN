@@ -11,15 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/locations")
@@ -38,101 +36,54 @@ public class LocationController {
     }
 
     /**
-     * 특정 태그 이름(tagNames)에 해당하는 장소를 페이징 처리하여 조회
-     * @param tagNames 태그 이름 배열
-     * @param page 페이지 번호
-     * @param sortValue 정렬 기준
-     * @param sortDirection 정렬 방향
-     * @return 태그 조건에 맞는 장소 페이지 (LocationResponseDto)
+     * 지역 ID, Location name의 검색어, 태그들과 , 페이지 정보를 받아 해당하는 Location들을 페이징처리하여 반환함
+     * @param regionId Location의 지역 Id
+     * @param keyword 검색어
+     * @param tagNames 태그문자열
+     * @param page 현재 페이지
+     * @param pageSize 한 페이지에 몇개의 Location을 가져올지
+     * @param sortValue 정렬기준
+     * @param sortDirection 정렬방향
+     * @return
      */
-    @GetMapping("/by-region1")
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/searchLocation")
     public Page<LocationResponseDto> getLocationByTagNames(
-            @RequestParam(name = "regionId") Long regionId,
-            @RequestParam(name = "tagNames") String[] tagNames,
+            @RequestParam(name = "regionId", required = false) Long regionId,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "tagNames", defaultValue = "") String tagNames,
             @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
-        log.info("GET /by-region1 - tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
-                tagNames, page, sortValue, sortDirection);
+        log.info("GET /by-region1 - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
+                regionId, keyword, tagNames, page, sortValue, sortDirection);
 
+        // tagNames를 쉼표로 분리하여 Set으로 변환
+        Set<String> tagNameSet = new HashSet<>(Arrays.stream(tagNames.split(","))
+                .filter(tag -> !tag.isEmpty())
+                .collect(Collectors.toList()));
+
+        // Set으로 변환된 tagNames 유효성 검사
+        LocationControllerValidator.validateTagNames(tagNameSet);
+        log.info("tagNameSet : " + tagNameSet);
         // 유효성 검사
-        LocationControllerValidator.validateTagNames(tagNames);
-        // String 배열을 Set으로 변환
-        Set<String> tagNameSet = new HashSet<>(Arrays.asList(tagNames));
-        // 유효성 검사
-        LocationControllerValidator.validateRegion(regionId);
+        if(regionId != null){
+            LocationControllerValidator.validateRegion(regionId);
+        }
         LocationControllerValidator.validatePageRequest(page,sortValue,sortDirection);
 
-        return locationServiceImpl.getLocationByTagNames(regionId, tagNameSet, page, sortValue, sortDirection);
+        return locationServiceImpl.searchLocations(regionId, keyword, tagNameSet, page, pageSize , sortValue, sortDirection);
     }
-//
-//
-    /**
-     * 장소 이름(keyword)을 포함하는 장소를 페이징 처리하여 조회
-     * @param keyword 검색 키워드
-     * @param page 페이지 번호
-     * @param sortValue 정렬 기준
-     * @param sortDirection 정렬 방향
-     * @return 키워드 조건에 맞는 장소 페이지 (LocationResponseDto)
-     */
-    @GetMapping("/by-region2")
-    public Page<LocationResponseDto> getLocationByLocationName(
-            @RequestParam(name = "regionId") Long regionId,
-            @RequestParam(name = "keyword") String keyword,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
-            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
-    ){
-        log.info("GET /by-region2 - keyword: {}, page: {}, sortValue: {}, sortDirection: {}",
-                keyword, page, sortValue, sortDirection);
-        //파라미터 null 체크
-        LocationControllerValidator.validateRegion(regionId);
-        LocationControllerValidator.validateKeyword(keyword);
-        LocationControllerValidator.validatePageRequest(page,sortValue,sortDirection);
-        return locationServiceImpl.getLocationByLocationName(regionId, keyword, page, sortValue, sortDirection);
-    }
-//
-//    /**
-//     * 특정 지역 ID(regionId)에 해당하는 장소를 페이징 처리하여 조회
-//     * @param regionId 조회할 지역 ID
-//     * @param page 페이지 번호
-//     * @param sortValue 정렬 기준
-//     * @param sortDirection 정렬 방향
-//     * @return 지역 조건에 맞는 장소 페이지 (LocationResponseDto)
-//     */
-//    @GetMapping("/by-region3")
-//    public Page<LocationResponseDto> getLocationbyRegion(
-//            @RequestParam(name = "regionId") Long regionId,
-//            @RequestParam(name = "page", defaultValue = "0") int page,
-//            @RequestParam(name = "sortValue", defaultValue = "googleRating") String sortValue,
-//            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection
-//    ){
-//        log.info("GET /by-region3 - regionId: {}, page: {}, sortValue: {}, sortDirection: {}",
-//                regionId, page, sortValue, sortDirection);
-//        LocationControllerValidator.validateRegion(regionId);
-//        LocationControllerValidator.validatePageRequest(page,sortValue,sortDirection);
-//        return locationServiceImpl.getLocationbyRegion(regionId,page,sortValue,sortDirection);
-//    }
 
-//    /**
-//     * 모든 장소를 페이징 처리하여 조회
-//     * @param page 페이지 번호
-//     * @param sortValue 정렬 기준
-//     * @param sortDirection 정렬 방향
-//     * @return 모든 장소 페이지 (LocationResponseDto)
-//     */
-//    @GetMapping("/by-region4")
-//    public Page<LocationResponseDto> getLocationAll(
-//            @RequestParam(name = "page", defaultValue = "0") int page,
-//            @RequestParam(name = "sortValue", defaultValue = "googleRating") String sortValue,
-//            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection
-//    ){
-//        log.info("GET /by-region4 - page: {}, sortValue: {}, sortDirection: {}",
-//                page, sortValue, sortDirection);
-//        LocationControllerValidator.validatePageRequest(page,sortValue,sortDirection);
-//        return locationServiceImpl.getLocationAll(page, sortValue, sortDirection);
-//    }
+    @GetMapping("/{locationId}")
+    public LocationDto getLocationWithId(@PathVariable(name = "locationId") Long locationId){
+        //locationId 유효성 검사
+        LocationControllerValidator.validateLocationId(locationId);
+
+        return locationServiceImpl.getLocationById(locationId);
+    }
 
     /**
      * 특정 위도(latitude), 경도(longitude)로부터 지정된 거리 내의 장소를 정렬하여 조회
@@ -143,7 +94,7 @@ public class LocationController {
      * @param sortDirection 정렬 방향
      * @return 반경 내 장소 리스트 (LocationResponseDto)
      */
-    @GetMapping("/by-region5")
+    @GetMapping("/getNearby")
     public List<LocationResponseDto> getLocationWithinDistance(
             @RequestParam(name = "latitude") Double latitude,
             @RequestParam(name = "longitude") Double longitude,
