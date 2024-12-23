@@ -11,33 +11,55 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class PlannerService {
 
-    private final PlannerRepository plannerRepository;
-    private final RegionRepository regionRepository;
-    private final LocationRepository locationRepository;
-    private final PlannerMapper plannerMapper;
+        private final PlannerRepository plannerRepository;
+        private final RegionRepository regionRepository;
+        private final LocationRepository locationRepository;
+        private final PlannerMapper plannerMapper;
 
-    @Transactional
-    public Long savePlanner(PlannerDto plannerDto) {
-        // 1. Region 조회
-        Region region = regionRepository.findByRegionName(plannerDto.getRegionName())
-                .orElseThrow(() -> new IllegalArgumentException("해당 지역이 존재하지 않습니다."));
 
-        // 2. PlannerDto -> Planner 변환 및 저장
-        Planner planner = plannerMapper.toEntity(plannerDto, region);
-        Planner savedPlanner = plannerRepository.save(planner);
+        // 플랜 저장 서비스
+        @Transactional
+        public Long savePlanner(PlannerDto plannerDto) {
+            // 1. Region 조회
+            Region region = regionRepository.findByRegionName(plannerDto.getRegionName())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 지역이 존재하지 않습니다."));
 
-        return savedPlanner.getPlannerId();
-    }
+            // 2. PlannerDto -> Planner 변환 및 저장
+            Planner planner = plannerMapper.toEntity(plannerDto, region);
+            Planner savedPlanner = plannerRepository.save(planner);
 
-    @Transactional(readOnly = true)
-    public PlannerDto getPlannerDetails(Long id) {
-        Planner planner = plannerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 플랜이 존재하지 않습니다."));
+            return savedPlanner.getPlannerId();
+        }
 
-        return plannerMapper.toDto(planner);
-    }
+        // 플랜 Id 기반으로 플랜 조회
+        @Transactional(readOnly = true)
+        public PlannerDto getPlannerDetails(Long id) {
+            Planner planner = plannerRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 플랜이 존재하지 않습니다."));
+
+            return plannerMapper.toDto(planner);
+        }
+
+        // 이메일 기반으로 조회
+        @Transactional(readOnly = true)
+        public List<PlannerDto> getAllPlansByEmail(String email) {
+            List<Planner> planners = plannerRepository.findByEmail(email);
+
+            if (planners.isEmpty()) {
+                throw new IllegalArgumentException("해당 이메일의 플랜이 존재하지 않습니다.");
+            }
+
+            return planners.stream()
+                    .map(plannerMapper::toDto) // mapper를 사용해 Entity를 DTO로 변환
+                    .collect(Collectors.toList());
+        }
+
+
 }
