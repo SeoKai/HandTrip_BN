@@ -21,6 +21,7 @@ public class PlannerController {
     @PostMapping("/save")
     public ResponseEntity<Long> savePlanner(@RequestBody PlannerDto plannerDto) {
         Long plannerId = plannerService.savePlanner(plannerDto);
+        System.out.println(plannerDto);
         return ResponseEntity.ok(plannerId);
     }
 
@@ -46,12 +47,10 @@ public class PlannerController {
     }
 
 
-
-//    // 플래너 수정
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Void> updatePlanner(@PathVariable Long id, @RequestBody PlannerDto plannerDto) {
-//        plannerService.updatePlanner(id, plannerDto);
-//        return ResponseEntity.ok().build();
-//    }
-
+    // 플래너 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updatePlanner(@PathVariable Long id, @RequestBody PlannerDto plannerDto) {
+        plannerService.updatePlanner(id, plannerDto);
+        return ResponseEntity.ok().build(); // 수정 성공 시 200 OK 반환
+    }
 }
