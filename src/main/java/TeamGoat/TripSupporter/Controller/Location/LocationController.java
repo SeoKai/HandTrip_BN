@@ -4,6 +4,7 @@ package TeamGoat.TripSupporter.Controller.Location;
 import TeamGoat.TripSupporter.Controller.Location.Util.LocationControllerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationSplitByTagDto;
 import TeamGoat.TripSupporter.Service.Location.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,21 +95,22 @@ public class LocationController {
      * @return 반경 내 장소 리스트 (LocationResponseDto)
      */
     @GetMapping("/getNearby")
-    public List<LocationResponseDto> getLocationWithinDistance(
+    public LocationSplitByTagDto getLocationWithinDistance(
             @RequestParam(name = "latitude") Double latitude,
             @RequestParam(name = "longitude") Double longitude,
             @RequestParam(name = "distance") Double distance,
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,  // 정렬 기준
-            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection // 정렬 방향
+            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection, // 정렬 방향
+            @RequestParam(name = "targetTagName", defaultValue = "음식") String targetTagName
     ){
-        log.info("GET /getNearby - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
-                latitude, longitude, distance, sortValue, sortDirection);
+        log.info("GET /getNearby - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}, targetTagName: {}",
+                latitude, longitude, distance, sortValue, sortDirection, targetTagName);
         // 파라미터들 유효성 검사
         LocationControllerValidator.validateLatAndLon(latitude,longitude);
         LocationControllerValidator.validateDistance(distance);
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
 
-        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection);
+        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection, targetTagName);
     }
 
 }
