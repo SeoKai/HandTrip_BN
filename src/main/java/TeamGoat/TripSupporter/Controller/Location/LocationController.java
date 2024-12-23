@@ -35,7 +35,6 @@ public class LocationController {
         return locationServiceImpl.getLocationsByRegion(regionId);
     }
 
-
     /**
      * 지역 ID, Location name의 검색어, 태그들과 , 페이지 정보를 받아 해당하는 Location들을 페이징처리하여 반환함
      * @param regionId Location의 지역 Id
@@ -57,7 +56,7 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
-        log.info("GET /by-region1 - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
+        log.info("GET /searchLocation - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
                 regionId, keyword, tagNames, page, sortValue, sortDirection);
 
         // tagNames를 쉼표로 분리하여 Set으로 변환
@@ -89,7 +88,7 @@ public class LocationController {
      * 특정 위도(latitude), 경도(longitude)로부터 지정된 거리 내의 장소를 정렬하여 조회
      * @param latitude 중심 위도
      * @param longitude 중심 경도
-     * @param distance 반경 거리
+     * @param distance 반경 거리    km단위
      * @param sortValue 정렬 기준
      * @param sortDirection 정렬 방향
      * @return 반경 내 장소 리스트 (LocationResponseDto)
@@ -102,8 +101,9 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,  // 정렬 기준
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection // 정렬 방향
     ){
-        log.info("GET /by-region5 - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
+        log.info("GET /getNearby - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
                 latitude, longitude, distance, sortValue, sortDirection);
+        // 파라미터들 유효성 검사
         LocationControllerValidator.validateLatAndLon(latitude,longitude);
         LocationControllerValidator.validateDistance(distance);
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
@@ -111,18 +111,4 @@ public class LocationController {
         return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection);
     }
 
-    /**
-     * 특정 태그 및 지역에 따라 장소 목록을 필터링하는 API 엔드포인트
-     *
-     * @param tagName 필터링할 태그 이름
-     * @return 필터링된 장소 목록
-     */
-    @GetMapping("/filter-by-tag")
-    public ResponseEntity<List<LocationDto>> getLocationsByTag(
-            @RequestParam("tagName") String tagName) {
-        // 서비스에서 태그 및 지역에 해당하는 장소 목록 조회
-        List<LocationDto> locations = locationServiceImpl.findLocationsByTag(tagName);
-        // 결과를 클라이언트에 반환
-        return ResponseEntity.ok(locations);
-    }
 }

@@ -1,7 +1,6 @@
 package TeamGoat.TripSupporter.Service.Location.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
-import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationMappingException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
@@ -15,13 +14,17 @@ import java.util.List;
 
 public class LocationServiceValidator {
 
-    public static void validateLocationEntity(List<Location> locationList) {
+
+    public static void validateLocationEntity(List<?> locationList) {
+
         if (locationList == null || locationList.isEmpty()) {
             throw new LocationNotFoundException("해당 지역에 대한 정보를 찾을 수 없습니다.");
         }
     }
 
-    public static void validateLocationEntity(Page<Location> locationPage) {
+
+    public static void validateLocationEntity(Page<?> locationPage) {
+
         if (locationPage == null || locationPage.isEmpty()) {
             throw new LocationNotFoundException("해당 지역에 대한 정보를 찾을 수 없습니다.");
         }
@@ -33,21 +36,23 @@ public class LocationServiceValidator {
     }
 
 
-    public static void validateLocationDto(Page<LocationDto> locationDtoPage){
+
+    public static void validateLocationDto(Page<?> locationDtoPage){
         if (locationDtoPage == null || locationDtoPage.isEmpty()){
-            throw new LocationMappingException("해당 엔티티를 Dto로 변환하는대 실패하였습니다.");
+            throw new LocationMappingException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
         }
     }
 
-    public static void validateLocationDto(List<LocationResponseDto> locationDtoList){
+    public static void validateLocationDto(List<?> locationDtoList){
         if(locationDtoList == null || locationDtoList.isEmpty()){
-            throw new LocationMappingException("해당 엔티티를 Dto로 변환하는대 실패하였습니다.");
+            throw new LocationMappingException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
+
         }
     }
 
     public static void validateLocationDto(LocationDto locationDto){
         if(locationDto == null){
-            throw new LocationNotFoundException("해당 엔티티를 Dto로 변환하는대 실패하였습니다.");
+            throw new LocationNotFoundException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
         }
     }
 

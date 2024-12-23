@@ -2,9 +2,9 @@ package TeamGoat.TripSupporter.Service.Location;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
-import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Service.Location.Util.LocationServiceValidator;
@@ -42,6 +42,7 @@ public class LocationServiceImpl {
 
 
     public Page<LocationDto> searchLocations(Long regionId,String keyword ,Set<String> tagNames, int page,int pageSize, String sortValue, String sortDirection) {
+
         //입력받은 페이징정보들로 페이징 객체 생성
         Pageable pageable = getPageable(page,pageSize,sortValue,sortDirection);
         Page<Location> locations;
@@ -77,10 +78,12 @@ public class LocationServiceImpl {
         LocationServiceValidator.validateLocationEntity(locations);
 
         //페이징처리된 location객체들을 반환용Dto로 변환하고 변환이 잘 되었는지 확인
+
         Page<LocationDto> LocationDto = locations.map(locationMapper::toLocationDto);
         LocationServiceValidator.validateLocationDto(LocationDto);
         log.info("get Location by TagNames tagNames: " + tagNames);
         return LocationDto;
+
     }
 
     // region과 tagnames 둘다 없을때 keyword유무에 따라 검색
@@ -125,14 +128,14 @@ public class LocationServiceImpl {
         LocationServiceValidator.validateLocationSort(sort);
 
         // 위도, 경도, 반경, sort객체를 받아 중심위도경도로부터 반경내의 location을 정렬하여 가져오고 유효성 검사
-        List<Location> locations = locationRepository.findLocationsWithinDistance(latitude, longitude, distance,sort);
-        LocationServiceValidator.validateLocationEntity(locations);
+        List<LocationWithDistanceDto> location = locationRepository.findLocationsWithinDistance(latitude, longitude, distance,sort);
+        LocationServiceValidator.validateLocationDto(location);
 
-        // List<Location>을 List<LocationResponseDto>로 변환하고 유효성 검사
-        List<LocationResponseDto> locationResponseDtos = locations.stream().map(locationMapper::toResponseDto).toList();
-        LocationServiceValidator.validateLocationDto(locationResponseDtos);
+        List<LocationResponseDto> responseLocationDtos =
+                location.stream().map(locationMapper::locationResponseDto).collect(Collectors.toList());
 
-        return locationResponseDtos;
+        LocationServiceValidator.validateLocationDto(responseLocationDtos);
+        return responseLocationDtos;
     }
 
 
@@ -162,22 +165,6 @@ public class LocationServiceImpl {
         return pageable;
     }
 
-
-    /**
-     * 특정 태그로 필터링된 장소 목록을 반환
-     *
-     * @param tagName 필터링할 태그 이름
-     * @return 필터링된 장소 DTO 목록
-     */
-    public List<LocationDto> findLocationsByTag(String tagName) {
-        // 태그 이름으로 필터링된 장소 목록 조회
-        List<Location> locations = locationRepository.findLocationsByTagName(tagName);
-
-        // Location -> LocationDto 변환
-        return locations.stream()
-                .map(locationMapper::toLocationDto)
-                .collect(Collectors.toList());
-    }
 
     public LocationDto getLocationById(Long locationId) {
         // Id로 Location가져오기
