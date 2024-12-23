@@ -34,4 +34,12 @@ public class PlannerController {
             return ResponseEntity.notFound().build();
     }
 
+    // 플래너 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updatePlanner(@PathVariable Long id, @RequestBody PlannerDto plannerDto) {
+        plannerService.updatePlanner(id, plannerDto);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
