@@ -1,16 +1,15 @@
-package TeamGoat.TripSupporter.Domain.Dto.Tag;
+package TeamGoat.TripSupporter.Domain.Dto.Location;
 
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class TagDto {
-
     private Long tagId;
-
     private String tagName;
-
 }
