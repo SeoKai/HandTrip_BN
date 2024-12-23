@@ -76,7 +76,6 @@ public class LocationMapper {
                 .distance(distance)
                 .build();
     }
-
     public Location toEntity(LocationDto locationDto, Region region, Set<Tag> tags) {
         return Location.builder()
                 .locationId(locationDto.getLocationId())
@@ -96,6 +95,4 @@ public class LocationMapper {
                 .tags(tags) // tags를 set으로 설정
                 .build();
     }
-
-
 }

@@ -4,7 +4,6 @@ package TeamGoat.TripSupporter.Controller.Location;
 import TeamGoat.TripSupporter.Controller.Location.Util.LocationControllerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
-import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Service.Location.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +46,8 @@ public class LocationController {
      * @param sortDirection 정렬방향
      * @return
      */
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/searchLocation")
-    public Page<LocationResponseDto> getLocationByTagNames(
+    public Page<LocationDto> getLocationByTagNames(
             @RequestParam(name = "regionId", required = false) Long regionId,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "tagNames", defaultValue = "") String tagNames,
@@ -113,18 +111,4 @@ public class LocationController {
         return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection);
     }
 
-    /**
-     * 특정 태그 및 지역에 따라 장소 목록을 필터링하는 API 엔드포인트
-     *
-     * @param tagName 필터링할 태그 이름
-     * @return 필터링된 장소 목록
-     */
-    @GetMapping("/filter-by-tag")
-    public ResponseEntity<List<LocationDto>> getLocationsByTag(
-            @RequestParam("tagName") String tagName) {
-        // 서비스에서 태그 및 지역에 해당하는 장소 목록 조회
-        List<LocationDto> locations = locationServiceImpl.findLocationsByTag(tagName);
-        // 결과를 클라이언트에 반환
-        return ResponseEntity.ok(locations);
-    }
 }

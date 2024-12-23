@@ -45,5 +45,4 @@ public class LocationResponseDto {
         this.regionName = regionName;
         this.tags = tags;
     }
-    
 }

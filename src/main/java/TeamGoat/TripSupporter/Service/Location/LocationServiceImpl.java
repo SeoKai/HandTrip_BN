@@ -5,7 +5,6 @@ import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
-import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Service.Location.Util.LocationServiceValidator;
@@ -41,7 +40,9 @@ public class LocationServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    public Page<LocationResponseDto> searchLocations(Long regionId,String keyword ,Set<String> tagNames, int page,int pageSize, String sortValue, String sortDirection) {
+
+    public Page<LocationDto> searchLocations(Long regionId,String keyword ,Set<String> tagNames, int page,int pageSize, String sortValue, String sortDirection) {
+
         //입력받은 페이징정보들로 페이징 객체 생성
         Pageable pageable = getPageable(page,pageSize,sortValue,sortDirection);
         Page<Location> locations;
@@ -77,10 +78,12 @@ public class LocationServiceImpl {
         LocationServiceValidator.validateLocationEntity(locations);
 
         //페이징처리된 location객체들을 반환용Dto로 변환하고 변환이 잘 되었는지 확인
-        Page<LocationResponseDto> locationResponseDtos = locations.map(locationMapper::toResponseDto);
-        LocationServiceValidator.validateLocationDto(locationResponseDtos);
+
+        Page<LocationDto> LocationDto = locations.map(locationMapper::toLocationDto);
+        LocationServiceValidator.validateLocationDto(LocationDto);
         log.info("get Location by TagNames tagNames: " + tagNames);
-        return locationResponseDtos;
+        return LocationDto;
+
     }
 
     // region과 tagnames 둘다 없을때 keyword유무에 따라 검색
@@ -162,22 +165,6 @@ public class LocationServiceImpl {
         return pageable;
     }
 
-
-    /**
-     * 특정 태그로 필터링된 장소 목록을 반환
-     *
-     * @param tagName 필터링할 태그 이름
-     * @return 필터링된 장소 DTO 목록
-     */
-    public List<LocationDto> findLocationsByTag(String tagName) {
-        // 태그 이름으로 필터링된 장소 목록 조회
-        List<Location> locations = locationRepository.findLocationsByTagName(tagName);
-
-        // Location -> LocationDto 변환
-        return locations.stream()
-                .map(locationMapper::toLocationDto)
-                .collect(Collectors.toList());
-    }
 
     public LocationDto getLocationById(Long locationId) {
         // Id로 Location가져오기

@@ -1,8 +1,6 @@
 package TeamGoat.TripSupporter.Service.Location.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
-import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
-import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationMappingException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
@@ -16,13 +14,17 @@ import java.util.List;
 
 public class LocationServiceValidator {
 
+
     public static void validateLocationEntity(List<?> locationList) {
+
         if (locationList == null || locationList.isEmpty()) {
             throw new LocationNotFoundException("해당 지역에 대한 정보를 찾을 수 없습니다.");
         }
     }
 
+
     public static void validateLocationEntity(Page<?> locationPage) {
+
         if (locationPage == null || locationPage.isEmpty()) {
             throw new LocationNotFoundException("해당 지역에 대한 정보를 찾을 수 없습니다.");
         }
@@ -34,6 +36,7 @@ public class LocationServiceValidator {
     }
 
 
+
     public static void validateLocationDto(Page<?> locationDtoPage){
         if (locationDtoPage == null || locationDtoPage.isEmpty()){
             throw new LocationMappingException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
@@ -43,6 +46,7 @@ public class LocationServiceValidator {
     public static void validateLocationDto(List<?> locationDtoList){
         if(locationDtoList == null || locationDtoList.isEmpty()){
             throw new LocationMappingException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
+
         }
     }
 
@@ -51,7 +55,6 @@ public class LocationServiceValidator {
             throw new LocationNotFoundException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
         }
     }
-
 
     public static void validateLocationSort(Sort sort){
         if(sort == null || sort.isEmpty()){
