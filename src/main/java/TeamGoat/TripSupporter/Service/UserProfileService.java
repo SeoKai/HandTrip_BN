@@ -1,6 +1,8 @@
 package TeamGoat.TripSupporter.Service;
 
 
+import TeamGoat.TripSupporter.Domain.Dto.User.UserProfileDto;
+
 public interface UserProfileService {
 
     /**
