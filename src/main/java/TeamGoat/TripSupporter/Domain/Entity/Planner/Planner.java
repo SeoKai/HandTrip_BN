@@ -1,5 +1,7 @@
 package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
+import TeamGoat.TripSupporter.Domain.Dto.Planner.DailyPlanDto;
+import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import jakarta.persistence.*;
 import lombok.*;
@@ -56,5 +58,17 @@ public class Planner {
         this.plannerCreatedAt = LocalDateTime.now();
         this.plannerUpdatedAt = LocalDateTime.now();
     }
+
+    public void updateWith(Planner updatedPlanner) {
+        this.plannerTitle = updatedPlanner.getPlannerTitle();
+        this.plannerStartDate = updatedPlanner.getPlannerStartDate();
+        this.plannerEndDate = updatedPlanner.getPlannerEndDate();
+        this.region = updatedPlanner.getRegion();
+
+        // DailyPlans 업데이트
+        this.dailyPlans.clear();
+        this.dailyPlans.addAll(updatedPlanner.getDailyPlans());
+    }
+
 
 }
