@@ -2,6 +2,7 @@ package TeamGoat.TripSupporter.Service.Location;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
@@ -124,14 +125,14 @@ public class LocationServiceImpl {
         LocationServiceValidator.validateLocationSort(sort);
 
         // 위도, 경도, 반경, sort객체를 받아 중심위도경도로부터 반경내의 location을 정렬하여 가져오고 유효성 검사
-        List<Location> locations = locationRepository.findLocationsWithinDistance(latitude, longitude, distance,sort);
-        LocationServiceValidator.validateLocationEntity(locations);
+        List<LocationWithDistanceDto> location = locationRepository.findLocationsWithinDistance(latitude, longitude, distance,sort);
+        LocationServiceValidator.validateLocationDto(location);
 
-        // List<Location>을 List<LocationResponseDto>로 변환하고 유효성 검사
-        List<LocationResponseDto> locationResponseDtos = locations.stream().map(locationMapper::toResponseDto).toList();
-        LocationServiceValidator.validateLocationDto(locationResponseDtos);
+        List<LocationResponseDto> responseLocationDtos =
+                location.stream().map(locationMapper::locationResponseDto).collect(Collectors.toList());
 
-        return locationResponseDtos;
+        LocationServiceValidator.validateLocationDto(responseLocationDtos);
+        return responseLocationDtos;
     }
 
 

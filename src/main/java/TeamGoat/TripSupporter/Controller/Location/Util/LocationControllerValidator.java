@@ -31,10 +31,10 @@ public class LocationControllerValidator {
         if(latitude == null || longitude == null){
             throw new LocationLatAndLonNullException("위도, 경도 값이 잘 못 되었습니다.");
         }else{
-            if(latitude >= -90 && latitude <= 90 ){
+            if(latitude < -90 || latitude > 90 ){
                 throw new LocationInvalidLatitudeException("위도값은 -90~90사이의 값이여야 합니다.");
             }
-            if(longitude >= -180 && longitude <= 180){
+            if(longitude < -180 || longitude > 180){
                 throw new LocationInvalidLongitudeException("경도값은 -180~180사이의 값이여야 합니다.");
             }
         }
@@ -55,7 +55,7 @@ public class LocationControllerValidator {
     }
 
     public static void validateSortRequest(String sortValue, String sortDirection) {
-        if (!"reviewCreatedAt".equals(sortValue) && !"rating".equals(sortValue)) {
+        if (!"reviewCreatedAt".equals(sortValue) && !"googleRating".equals(sortValue)) {
             throw new IllegalSortRequestException("잘못된 정렬 기준입니다.");
         }
         if (!"asc".equals(sortDirection) && !"desc".equals(sortDirection)) {

@@ -4,6 +4,7 @@ package TeamGoat.TripSupporter.Controller.Location;
 import TeamGoat.TripSupporter.Controller.Location.Util.LocationControllerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Service.Location.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
-        log.info("GET /by-region1 - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
+        log.info("GET /searchLocation - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
                 regionId, keyword, tagNames, page, sortValue, sortDirection);
 
         // tagNames를 쉼표로 분리하여 Set으로 변환
@@ -89,7 +90,7 @@ public class LocationController {
      * 특정 위도(latitude), 경도(longitude)로부터 지정된 거리 내의 장소를 정렬하여 조회
      * @param latitude 중심 위도
      * @param longitude 중심 경도
-     * @param distance 반경 거리
+     * @param distance 반경 거리    km단위
      * @param sortValue 정렬 기준
      * @param sortDirection 정렬 방향
      * @return 반경 내 장소 리스트 (LocationResponseDto)
@@ -102,8 +103,9 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,  // 정렬 기준
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection // 정렬 방향
     ){
-        log.info("GET /by-region5 - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
+        log.info("GET /getNearby - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
                 latitude, longitude, distance, sortValue, sortDirection);
+        // 파라미터들 유효성 검사
         LocationControllerValidator.validateLatAndLon(latitude,longitude);
         LocationControllerValidator.validateDistance(distance);
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
