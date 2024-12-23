@@ -28,6 +28,7 @@ public class PlannerMapper {
                 .plannerTitle(planner.getPlannerTitle()) // 플래너 제목
                 .plannerStartDate(planner.getPlannerStartDate()) // 시작일
                 .plannerEndDate(planner.getPlannerEndDate()) // 종료일
+                .regionId(planner.getRegion().getRegionId()) // 지역 ID
                 .regionName(planner.getRegion().getRegionName()) // 지역 이름
                 .dailyPlans(planner.getDailyPlans().stream() // 하루 일정 목록
                         .map(dailyPlanMapper::toDto)
