@@ -1,6 +1,6 @@
 package TeamGoat.TripSupporter.Repository.Location;
 
-
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -142,54 +142,35 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             @Param("keyword") String keyword,
             Pageable pageable);
 
-    /**
-     * 특정 위도, 경도 및 거리 내에 있는 장소들을 조회하고, 정렬 기준을 추가로 적용하는 메서드.
-     *
-     * @param latitude 조회할 기준 위도
-     * @param longitude 조회할 기준 경도
-     * @param distance 검색할 최대 거리 (단위: 킬로미터)
-     * @param sort 결과 리스트에 적용할 정렬 기준
-     * @return 주어진 범위 내의 장소들 (거리 기준 및 정렬 기준이 적용됨)
-     */
-    @Query("SELECT l FROM Location l WHERE " +
-            "6371 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(l.latitude)) * " +
-            "COS(RADIANS(l.longitude) - RADIANS(:longitude)) + " +
-            "SIN(RADIANS(:latitude)) * SIN(RADIANS(l.latitude))) <= :distance")
-    List<Location> findLocationsWithinDistance(@Param("latitude") Double latitude,
-                                               @Param("longitude") Double longitude,
-                                               @Param("distance") Double distance,
-                                               Sort sort);
 
 
     /**
-     * 태그 이름으로 장소 목록을 조회
-     *
-     * @param tagName 필터링할 태그 이름
+     * 거리순으로 정렬된 list를 반환한다. 정렬된 list에서 sort를 입력받아 추가적인 정렬 기준을 설정할 수 있다.
+     * 또한 특정 location으로 부터 근처의 location이 얼마나 떨어져있는지도 계산한다.
+     * @param latitude  중심위도
+     * @param longitude 중심경도
+     * @param distance  거리(단위 : km)
+     * @param sort 정렬 기준
+     * @return 메서드는 거리순으로 정렬된 list를 반환한다.
      */
-    @Query("SELECT l FROM Location l " +
-            "JOIN l.tags t " +
-            "WHERE t.tagName = :tagName")
-    List<Location> findLocationsByTagName(@Param("tagName") String tagName);
+    @Query("SELECT new TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto" +
+            "(l, 6371 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(l.latitude)) * COS(RADIANS(l.longitude)" +
+            " - RADIANS(:longitude)) + SIN(RADIANS(:latitude)) * SIN(RADIANS(l.latitude))) AS distance)" +
+            " FROM Location l WHERE 6371 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(l.latitude)) *" +
+            " COS(RADIANS(l.longitude) - RADIANS(:longitude)) + SIN(RADIANS(:latitude)) * SIN(RADIANS(l.latitude)))" +
+            " <= :distance ORDER BY distance ASC")
+    List<LocationWithDistanceDto> findLocationsWithinDistance(@Param("latitude") Double latitude,
+                                                              @Param("longitude") Double longitude,
+                                                              @Param("distance") Double distance,
+                                                              Sort sort);
+
+
+
+
+
+
+
 }
-
-
-    // 만약에 위 메서드가 정상적으로 동작하면 아래 메서드도 실행해보자
-    // 아래 메서드는 거리순으로 정렬된 list를 반환한다.
-    // 정렬된 list에서 sort를 입력받아 추가적인 정렬 기준을 설정할 수 있다.
-    // 또한 특정 location으로 부터 근처의 location이 얼마나 떨어져있는지도 계산한다.
-//    @Query("SELECT new com.example.LocationWithDistanceDto(l, " +
-//            "6371 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(l.latitude)) * " +
-//            "COS(RADIANS(l.longitude) - RADIANS(:longitude)) + " +
-//            "SIN(RADIANS(:latitude)) * SIN(RADIANS(l.latitude)))) AS distance " +
-//            "FROM Location l WHERE " +
-//            "6371 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(l.latitude)) * " +
-//            "COS(RADIANS(l.longitude) - RADIANS(:longitude)) + " +
-//            "SIN(RADIANS(:latitude)) * SIN(RADIANS(l.latitude))) <= :distance " +
-//            "ORDER BY distance ASC")
-//    List<LocationWithDistanceDto> findLocationsWithinDistance(@Param("latitude") Double latitude,
-//                                                              @Param("longitude") Double longitude,
-//                                                              @Param("distance") Double distance,
-//                                                              Sort sort);
 
 
 
