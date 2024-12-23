@@ -2,6 +2,7 @@ package TeamGoat.TripSupporter.Mapper.Location;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Tag;
@@ -53,6 +54,29 @@ public class LocationMapper {
                 .build();
     }
 
+    public LocationResponseDto locationResponseDto(LocationWithDistanceDto locationWithDistanceDto){
+        Location location = locationWithDistanceDto.getLocation();
+        Double distance = locationWithDistanceDto.getDistance();
+
+        return LocationResponseDto.builder()
+                .locationId(location.getLocationId())
+                .locationName(location.getLocationName())
+                .description(location.getDescription())
+                .googleRating(location.getGoogleRating())
+                .userRatingsTotal(location.getUserRatingsTotal())
+                .placeImgUrl(location.getPlaceImgUrl())
+                .formattedAddress(location.getFormattedAddress())
+                .openingHours(location.getOpeningHours())
+                .website(location.getWebsite())
+                .phoneNumber(location.getPhoneNumber())
+                .regionName(location.getRegion().getRegionName())
+                .tags(location.getTags().stream()
+                        .map(tag -> tag.getTagName()) // 태그 이름만 추출
+                        .collect(Collectors.toSet()))
+                .distance(distance)
+                .build();
+    }
+
     public Location toEntity(LocationDto locationDto, Region region, Set<Tag> tags) {
         return Location.builder()
                 .locationId(locationDto.getLocationId())
@@ -72,4 +96,6 @@ public class LocationMapper {
                 .tags(tags) // tags를 set으로 설정
                 .build();
     }
+
+
 }
