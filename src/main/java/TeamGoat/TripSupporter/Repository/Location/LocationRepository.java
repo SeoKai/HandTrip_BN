@@ -164,12 +164,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
                                                               @Param("distance") Double distance,
                                                               Sort sort);
 
-
-
-
-
-
-
 }
 
 
