@@ -10,6 +10,7 @@ import lombok.*;
 
 public class UserProfile {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_PROFILE_ID")
     private Long userProfileId;
 
