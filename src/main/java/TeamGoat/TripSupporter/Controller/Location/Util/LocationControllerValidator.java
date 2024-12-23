@@ -55,6 +55,7 @@ public class LocationControllerValidator {
     }
 
     public static void validateSortRequest(String sortValue, String sortDirection) {
+
         if (!"reviewCreatedAt".equals(sortValue) && !"googleRating".equals(sortValue)) {
             throw new IllegalSortRequestException("잘못된 정렬 기준입니다.");
         }
