@@ -1,5 +1,6 @@
 package TeamGoat.TripSupporter.Controller.User;
 
+import TeamGoat.TripSupporter.Domain.Dto.Auth.AuthDto;
 import TeamGoat.TripSupporter.Domain.Dto.Auth.TokenInfo;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserAndProfileDto;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
@@ -29,43 +30,10 @@ public class UserController {
      * @return JWT 토큰 정보
      */
     @PostMapping("/register")
-    public ResponseEntity<TokenInfo> register(@Valid @RequestBody UserAndProfileDto userAndProfileDto) {
-        TokenInfo tokenInfo = userService.register(userAndProfileDto);
-        return ResponseEntity.ok(tokenInfo);
-    }
-
-    /**
-     * 로그인 처리
-     * @param userDto 로그인 요청 데이터 (이메일, 비밀번호)
-     * @return JWT 토큰 정보
-     */
-    @PostMapping(value = "/login",produces = "text/plain;charset=UTF-8")
-    public ResponseEntity<TokenInfo> login(@RequestBody UserDto userDto) {
-        TokenInfo tokenInfo = userService.login(userDto.getUserEmail(), userDto.getUserPassword());
-        return ResponseEntity.ok(tokenInfo);
-    }
-
-    /**
-     * 로그아웃 처리
-     * @param request HTTP 요청 객체
-     * @param response HTTP 응답 객체
-     * @return 성공 메시지
-     */
-    @PostMapping(value = "/logout",produces = "text/plain;charset=UTF-8")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body("Authorization 헤더가 잘못되었습니다.");
-        }
-
-        String accessToken = authorizationHeader.substring(7); // "Bearer " 제거
-        try {
-            userService.logout(accessToken);
-            response.addHeader("Set-Cookie", "Authorization=; Path=/; Max-Age=0; HttpOnly"); // 쿠키 무효화
-            return ResponseEntity.ok("로그아웃 되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<AuthDto.LoginResponse> register(@Valid @RequestBody UserAndProfileDto userAndProfileDto) {
+        // UserService를 통해 회원가입 후 로그인 응답 반환
+        AuthDto.LoginResponse response = userService.register(userAndProfileDto);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -73,13 +41,9 @@ public class UserController {
      * @param userDto 비밀번호 찾기 요청 데이터 (이메일, 전화번호)
      * @return 성공 메시지
      */
-    @PostMapping(value ="/find-password",produces = "text/plain;charset=UTF-8")
+    @PostMapping("/find-password")
     public ResponseEntity<String> findPassword(@RequestBody UserDto userDto) {
-        try {
-            userService.findPassword(userDto.getUserEmail(), userDto.getUserPhone());
-            return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        userService.findPassword(userDto.getUserEmail(), userDto.getUserPhone());
+        return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다.");
     }
 }

@@ -6,11 +6,11 @@ import lombok.*;
 @Entity
 @Table(name = "TBL_USER_PROFILE")
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
 public class UserProfile {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_PROFILE_ID")
     private Long userProfileId;
 

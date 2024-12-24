@@ -10,9 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "TBL_USER")
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
 public class User {
 
     @Id
