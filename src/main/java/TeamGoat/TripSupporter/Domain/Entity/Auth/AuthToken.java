@@ -24,4 +24,7 @@ public class AuthToken {
 
     @Column(nullable = false)
     private Long expiration; // 토큰 만료 시간 (Unix Timestamp)
+
+    public AuthToken(String userEmail, String refreshToken, long l) {
+    }
 }

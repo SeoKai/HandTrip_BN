@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
-                userEmail = jwtTokenProvider.extractUserEmail(jwt); // 토큰에서 userEmail 추출
+                userEmail = jwtTokenProvider.extractUserEmail(jwt);
             }
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -46,6 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, userDetails.getAuthorities());
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                } else {
+                    throw new IllegalArgumentException("만료된 토큰입니다.");
                 }
             }
         } catch (Exception e) {
