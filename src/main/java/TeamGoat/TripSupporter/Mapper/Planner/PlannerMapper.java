@@ -1,6 +1,8 @@
 package TeamGoat.TripSupporter.Mapper.Planner;
 
+import TeamGoat.TripSupporter.Domain.Dto.Planner.DailyPlanDto;
 import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
+import TeamGoat.TripSupporter.Domain.Dto.Planner.ToDoDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.DailyPlan;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
@@ -23,17 +25,36 @@ public class PlannerMapper {
      * @return 변환된 PlannerDto
      */
     public PlannerDto toDto(Planner planner) {
-        return PlannerDto.builder()
-                .plannerId(planner.getPlannerId()) // 플래너 ID
-                .plannerTitle(planner.getPlannerTitle()) // 플래너 제목
+        PlannerDto dto = PlannerDto.builder()
+                .plannerId(planner.getPlannerId())
+                .plannerTitle(planner.getPlannerTitle())
                 .plannerStartDate(planner.getPlannerStartDate()) // 시작일
                 .plannerEndDate(planner.getPlannerEndDate()) // 종료일
                 .regionId(planner.getRegion().getRegionId()) // 지역 ID
-                .regionName(planner.getRegion().getRegionName()) // 지역 이름
-                .dailyPlans(planner.getDailyPlans().stream() // 하루 일정 목록
-                        .map(dailyPlanMapper::toDto)
+                .regionName(planner.getRegion().getRegionName()) // 지역 이
+                .dailyPlans(planner.getDailyPlans().stream()
+                        .map(dailyPlan -> {
+                            DailyPlanDto dailyPlanDto = new DailyPlanDto();
+                            dailyPlanDto.setPlanDate(dailyPlan.getPlanDate());
+                            dailyPlanDto.setToDos(dailyPlan.getToDos().stream()
+                                    .map(toDo -> {
+                                        ToDoDto toDoDto = new ToDoDto();
+                                        // `ToDo`의 `Location` 데이터를 매핑
+                                        toDoDto.setLocationId(toDo.getLocation().getLocationId());
+                                        toDoDto.setLocationName(toDo.getLocation().getLocationName());
+                                        toDoDto.setFormattedAddress(toDo.getLocation().getFormattedAddress());
+                                        toDoDto.setLatitude(toDo.getLocation().getLatitude());
+                                        toDoDto.setLongitude(toDo.getLocation().getLongitude());
+                                        toDoDto.setPlaceImgUrl(toDo.getLocation().getPlaceImgUrl()); // 이미지 URL 매핑
+                                        return toDoDto;
+                                    })
+                                    .toList());
+                            return dailyPlanDto;
+                        })
                         .toList())
                 .build();
+
+        return dto;
     }
 
     /**

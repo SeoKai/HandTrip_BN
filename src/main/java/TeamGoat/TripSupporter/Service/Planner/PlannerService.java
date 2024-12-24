@@ -22,7 +22,6 @@ public class PlannerService {
 
     private final PlannerRepository plannerRepository;
     private final RegionRepository regionRepository;
-    private final LocationRepository locationRepository;
     private final PlannerMapper plannerMapper;
 
 
@@ -65,19 +64,29 @@ public class PlannerService {
 
     @Transactional
     public void updatePlanner(Long id, PlannerDto plannerDto) {
-        // 기존 Planner 조회
         Planner existingPlanner = plannerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("플래너를 찾을 수 없습니다. ID: " + id));
 
-        // Region 엔티티 조회
         Region region = regionRepository.findByRegionName(plannerDto.getRegionName())
                 .orElseThrow(() -> new IllegalArgumentException("해당 지역이 존재하지 않습니다. 이름: " + plannerDto.getRegionName()));
 
-        // PlannerMapper를 사용해 PlannerDto를 엔티티로 변환
         Planner updatedPlanner = plannerMapper.toEntity(plannerDto, region);
 
-        // 기존 Planner의 데이터를 업데이트
+        // 기존 Planner 업데이트
         existingPlanner.updateWith(updatedPlanner);
+
+        System.out.println("Updated Planner: " + existingPlanner);
+        existingPlanner.getDailyPlans().forEach(dailyPlan -> {
+            System.out.println("Updated DailyPlan: " + dailyPlan);
+            dailyPlan.getToDos().forEach(toDo -> {
+                System.out.println("Updated ToDo: " + toDo);
+            });
+        });
+
+
+        // Planner 저장 (변경사항 반영)
+        plannerRepository.save(existingPlanner);
     }
+
 
 }

@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class PlannerDto {
     private Long plannerId;          // 플래너 ID
     private String plannerTitle;     // 플래너 제목
