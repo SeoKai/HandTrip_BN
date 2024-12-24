@@ -88,5 +88,12 @@ public class PlannerService {
         plannerRepository.save(existingPlanner);
     }
 
+    @Transactional
+    public void deletePlanner(Long id) {
+        Planner planner = plannerRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("플래너를 찾을 수 없습니다. ID: " + id));
+        plannerRepository.delete(planner);
+    }
+
 
 }
