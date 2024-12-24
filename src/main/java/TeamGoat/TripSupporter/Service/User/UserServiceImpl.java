@@ -1,6 +1,7 @@
 package TeamGoat.TripSupporter.Service.User;
 
 import TeamGoat.TripSupporter.Config.auth.JwtTokenProvider;
+import TeamGoat.TripSupporter.Domain.Dto.Auth.AuthDto;
 import TeamGoat.TripSupporter.Domain.Dto.Auth.TokenInfo;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserAndProfileDto;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
@@ -8,9 +9,11 @@ import TeamGoat.TripSupporter.Domain.Entity.Auth.AuthToken;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Entity.User.UserProfile;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
+import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import TeamGoat.TripSupporter.Repository.Auth.AuthTokenRepository;
 import TeamGoat.TripSupporter.Repository.User.UserProfileRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
+import TeamGoat.TripSupporter.Service.Auth.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,7 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private final AuthService authService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -35,21 +39,23 @@ public class UserServiceImpl implements UserService {
     private final AuthTokenRepository authTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+
     @Override
     @Transactional
-    public TokenInfo register(UserAndProfileDto userAndProfileDto) {
+    public AuthDto.LoginResponse register(UserAndProfileDto userAndProfileDto) {
         // 중복 체크
         if (userRepository.existsByUserEmail(userAndProfileDto.getUserDto().getUserEmail()) ||
                 userProfileRepository.existsByUserNickname(userAndProfileDto.getUserProfileDto().getUserNickname())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일 또는 닉네임입니다.");
         }
 
-        // 사용자 엔티티 생성 및 저장
+        // 사용자 생성 및 저장
         User user = User.builder()
                 .userEmail(userAndProfileDto.getUserDto().getUserEmail())
                 .userPassword(passwordEncoder.encode(userAndProfileDto.getUserDto().getUserPassword()))
                 .userPhone(userAndProfileDto.getUserDto().getUserPhone())
                 .userRole(UserRole.USER)
+                .userStatus(UserStatus.valueOf("ACTIVE"))
                 .build();
         userRepository.save(user);
 
@@ -60,65 +66,15 @@ public class UserServiceImpl implements UserService {
                 .build();
         userProfileRepository.save(userProfile);
 
-        // 인증 객체 생성
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userAndProfileDto.getUserDto().getUserEmail(),
-                        userAndProfileDto.getUserDto().getUserPassword()
-                )
+        // 회원가입 후 로그인 처리
+        AuthDto.LoginRequest loginRequest = new AuthDto.LoginRequest(
+                user.getUserEmail(),
+                userAndProfileDto.getUserDto().getUserPassword()
         );
 
-        // JWT 생성
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getUserEmail());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUserEmail());
-
-        // Refresh 토큰 저장
-        AuthToken authToken = new AuthToken();
-        authToken.setUserEmail(user.getUserEmail());
-        authToken.setRefreshToken(refreshToken);
-        authToken.setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000).getTime()); // 7일
-        authTokenRepository.save(authToken);
-
-        return new TokenInfo(accessToken, refreshToken);
+        return authService.login(loginRequest); // AuthService를 통해 로그인 처리
     }
 
-    @Override
-    public TokenInfo login(String userEmail, String password) {
-        // 사용자 조회
-        User user = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        if (!passwordEncoder.matches(password, user.getUserPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 인증 객체 생성
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userEmail, password)
-        );
-
-        // JWT 생성
-        String accessToken = jwtTokenProvider.generateAccessToken(userEmail);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(userEmail);
-
-        // Refresh 토큰 저장
-        AuthToken authToken = new AuthToken();
-        authToken.setUserEmail(userEmail);
-        authToken.setRefreshToken(refreshToken);
-        authToken.setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000).getTime()); // 7일
-        authTokenRepository.save(authToken);
-
-        return new TokenInfo(accessToken, refreshToken);
-    }
-
-    @Override
-    @Transactional
-    public void logout(String accessToken) {
-        String userEmail = jwtTokenProvider.extractUserEmail(accessToken);
-        AuthToken authToken = authTokenRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 토큰입니다."));
-        authTokenRepository.delete(authToken);
-    }
 
     // 나머지 메서드는 기존 로직 유지
     @Override
@@ -127,11 +83,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        if (updatedData.getUserPassword() != null) {
+        if (updatedData.getUserPassword() != null && !updatedData.getUserPassword().isBlank()) {
             user.updatePassword(passwordEncoder.encode(updatedData.getUserPassword()));
         }
 
-        if (updatedData.getUserPhone() != null) {
+        if (updatedData.getUserPhone() != null && !updatedData.getUserPhone().isBlank()) {
             user.updatePhone(updatedData.getUserPhone());
         }
 
@@ -153,13 +109,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보를 확인할 수 없습니다."));
 
         String tempPassword = generateTempPassword();
-
         user.updatePassword(passwordEncoder.encode(tempPassword));
         userRepository.save(user);
 
-        log.info("임시 비밀번호 [{}]가 이메일 [{}]로 전송되었습니다.", tempPassword, email);
+        sendEmail(email, "임시 비밀번호 안내", "임시 비밀번호는 " + tempPassword + "입니다.");
+        log.info("임시 비밀번호가 이메일 [{}]로 전송되었습니다.", email);
     }
-
     @Override
     public boolean isEmailDuplicate(String email) {
         return userRepository.existsByUserEmail(email);
@@ -179,5 +134,9 @@ public class UserServiceImpl implements UserService {
 
     private String generateTempPassword() {
         return UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    private void sendEmail(String to, String subject, String body) {
+        log.info("이메일 [{}]로 [{}]를 전송합니다. 내용: {}", to, subject, body);
     }
 }
