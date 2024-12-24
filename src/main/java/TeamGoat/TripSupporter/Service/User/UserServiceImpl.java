@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public AuthDto.LoginResponse register(UserAndProfileDto userAndProfileDto) {
         // 중복 체크
+        log.info("userServiceImpl register invoke, 파라미터 확인 UserAndProfileDto : {}", userAndProfileDto);
         if (userRepository.existsByUserEmail(userAndProfileDto.getUserDto().getUserEmail()) ||
                 userProfileRepository.existsByUserNickname(userAndProfileDto.getUserProfileDto().getUserNickname())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일 또는 닉네임입니다.");
@@ -72,7 +73,9 @@ public class UserServiceImpl implements UserService {
                 userAndProfileDto.getUserDto().getUserPassword()
         );
 
-        return authService.login(loginRequest); // AuthService를 통해 로그인 처리
+        AuthDto.LoginResponse response = authService.login(loginRequest);
+        log.info("userServiceImpl register invoke, 반환 데이터 확인 , response : {} ",response);
+        return response; // AuthService를 통해 로그인 처리
     }
 
 

@@ -1,7 +1,6 @@
 package TeamGoat.TripSupporter.Exception.Review;
 
 import TeamGoat.TripSupporter.Controller.Review.ReviewController;
-import TeamGoat.TripSupporter.Exception.ExceptionHandler;
 import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.UserNotFoundException;
@@ -97,7 +96,7 @@ public class ReviewExceptionHandler{
      * @return 400 상태 코드와 예외 메시지
      */
     @org.springframework.web.bind.annotation.ExceptionHandler
-    public ResponseEntity<String> handleMismatchedIdsException(MismatchedIdsException e) {
+    public ResponseEntity<String> handleMismatchedIdsException(MismatchedException e) {
         return ResponseEntity.status(400).body("ID 불일치: " + e.getMessage());
     }
     /**

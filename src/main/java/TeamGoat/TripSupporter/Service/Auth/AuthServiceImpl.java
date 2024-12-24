@@ -39,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthDto.LoginResponse login(AuthDto.LoginRequest loginRequest) {
+        log.info("AuthServiceImpl login invoke 파라미터 확인, loginRequest : {}", loginRequest);
         if (loginRequest.getUserPassword() == null) {
             throw new IllegalArgumentException("비밀번호가 null입니다.");
         }
@@ -47,10 +48,15 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUserEmail(), loginRequest.getUserPassword())
         );
+        log.info("authentication 생성 확인 authentication : {}",authentication);
 
         // AccessToken 및 RefreshToken 생성
+        log.info("loginRequest로 부터 getUserEamil 확인 .. loginRequest : {}, userEmail : {}",loginRequest,loginRequest.getUserEmail());
+
         String accessToken = jwtTokenProvider.generateAccessToken(loginRequest.getUserEmail());
+        log.info("accessToken 생성 확인 accessToken : {} ",accessToken);
         String refreshToken = jwtTokenProvider.generateRefreshToken(loginRequest.getUserEmail());
+        log.info("refreshToken 생성 확인 refreshToken : {} ",refreshToken);
 
         // 기존 AuthToken 제거
         authTokenRepository.findByUserEmail(loginRequest.getUserEmail())
@@ -65,9 +71,12 @@ public class AuthServiceImpl implements AuthService {
 
         // AccessToken 만료 시간 계산
         long accessTokenExpiry = System.currentTimeMillis() + jwtTokenProvider.getAccessExpiration();
+        log.info("accessTokenExpiry 만료 시간 계산 확인 accessTokenExpiry : {}",accessTokenExpiry);
 
         // LoginResponse 반환
-        return new AuthDto.LoginResponse(accessToken, refreshToken, accessTokenExpiry);
+        AuthDto.LoginResponse response = new AuthDto.LoginResponse(accessToken, refreshToken, accessTokenExpiry);
+        log.info("AuthServiceImpl login invoke 반환 확인, response : {}", response);
+        return response;
     }
 
 

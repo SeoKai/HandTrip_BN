@@ -2,6 +2,7 @@ package TeamGoat.TripSupporter.Service.Review.Util;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
+import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Exception.IllegalPageRequestException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.*;
@@ -22,12 +23,12 @@ public class ReviewServiceValidator {
     }
 
     /**
-     * userid null 체크
-     * @param userId
+     * user null 체크
+     * @param user
      */
-    public static void validateUserId(Long userId) {
-        if (userId == null) {
-            throw new UserNotFoundException("userId가 null이기때문에 user를 찾을 수 없습니다.");
+    public static void validateUser(User user) {
+        if (user == null) {
+            throw new UserNotFoundException("사용자 정보를 찾을 수 없습니다.");
         }
     }
 
@@ -41,27 +42,25 @@ public class ReviewServiceValidator {
         }
     }
 
+    public static void validateUserId(Long userId) {
+        if (userId == null) {
+            throw new UserNotFoundException("userId가 null이기때문에 user를 찾을 수 없습니다.");
+        }
+    }
+
+    public static void validateUserEmail(String userEmail) {
+        if (userEmail == null) {
+            throw new IllegalArgumentException("userEmail이 null입니다.");
+        }
+    }
+
     /**
      * 작성자와 사용자가 일치하는지 확인함.
-     * @param review 작성자 ( repository에서 불러온 userId 또는 review.getUser().getUserId() )
-     * @param reviewDto 사용자 ( view로부터 입력받은 userId 또는 reviewDto.getUserid() )
+     * @param user 사용자 ( view로부터 입력받은 userId 또는 reviewDto.getUserid() )
+     * @param author 작성자 ( repository에서 불러온 userId 또는 review.getUser().getUserId() )
      */
-    public static void validateUserAndAuthor(Object review,Object reviewDto){
-
-        Long userId = null;
-        Long authorId = null;
-
-        // review가 Long타입이면
-        if(review instanceof Long)
-            authorId = (Long)review;
-        if(review instanceof Review)
-            authorId = ((Review)review).getUser().getUserId();
-        if(reviewDto instanceof Long)
-            userId = (Long)reviewDto;
-        if(reviewDto instanceof ReviewDto)
-            userId = ((ReviewDto)reviewDto).getUserId();
-
-        if(userId != authorId){
+    public static void validateUserAndAuthor(User user, User author){
+        if(!user.getUserId().equals(author.getUserId())){
             throw new ReviewAuthorMismatchException("작성자와 사용자가 일치하지 않습니다.");
         }
 
@@ -109,10 +108,6 @@ public class ReviewServiceValidator {
             throw new IllegalPageRequestException("조회 위치는 0 이상이어야 합니다.");
         }
     }
-
-
-
-
 
 
 

@@ -135,7 +135,7 @@ public class LocationServiceImpl {
 
         // location에서 targetTagName에 따라 분리
         for (LocationWithDistanceDto locationDto : location) {
-            LocationResponseDto locationResponseDto = locationMapper.locationResponseDto(locationDto);
+            LocationResponseDto locationResponseDto = locationMapper.toResponseDtoWithDistance(locationDto);
 
             boolean hasTargetTag = locationDto.getLocation().getTags().stream()
                     .anyMatch(tag -> tag.getTagName().equalsIgnoreCase(targetTagName));

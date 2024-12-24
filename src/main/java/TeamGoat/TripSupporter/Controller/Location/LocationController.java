@@ -62,8 +62,8 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
-        log.info("GET /searchLocation - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
-                regionId, keyword, tagNames, page, sortValue, sortDirection);
+        log.info("GET /searchLocation - regionId: {}, keyword: {},tagNames: {}, page: {},pageSize: {}, sortValue: {}, sortDirection: {}",
+                regionId, keyword, tagNames, page,pageSize, sortValue, sortDirection);
 
         // tagNames를 쉼표로 분리하여 Set으로 변환
         Set<String> tagNameSet = new HashSet<>(Arrays.stream(tagNames.split(","))

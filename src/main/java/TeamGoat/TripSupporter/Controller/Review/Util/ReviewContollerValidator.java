@@ -5,6 +5,7 @@ import TeamGoat.TripSupporter.Exception.IllegalSortRequestException;
 import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Exception.Review.*;
 import TeamGoat.TripSupporter.Exception.UserNotFoundException;
+import jakarta.validation.constraints.NotNull;
 
 public class ReviewContollerValidator {
 
@@ -37,10 +38,10 @@ public class ReviewContollerValidator {
 
     /**
      * userid null 체크
-     * @param userId
+     * @param userEmail
      */
-    public static void validateUserId(Long userId) {
-        if (userId == null) {
+    public static void validateUserEmail(String userEmail) {
+        if (userEmail == null) {
             throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
         }
     }
@@ -110,13 +111,17 @@ public class ReviewContollerValidator {
     }
 
     /**
-     * 두수를 입력받고 두수가 다르다면 예외를 던집니다.
-     * @param id1
-     * @param id2
+     * 두 문자열을 입력받고 다르다면 예외를 던집니다.
      */
-    public static void compareLongTypeNumber(Long id1, Long id2) {
-        if (!id1.equals(id2)) {
-            throw new MismatchedIdsException("입력된 두 값이 다릅니다: " + id1 + "와 " + id2);
+    public static void compareEmail(String Email1, String Email2) {
+        if (!Email1.equals(Email2)) {
+            throw new MismatchedException("입력된 두 값이 다릅니다: " + Email1 + "와 " + Email2);
+        }
+    }
+
+    public static void compareLongTypeNumber(Long number1, Long number2) {
+        if(number1.equals(number2)) {
+            throw new MismatchedException("입력된 두 값이 다릅니다: " + number1 + "와 " + number2);
         }
     }
 
