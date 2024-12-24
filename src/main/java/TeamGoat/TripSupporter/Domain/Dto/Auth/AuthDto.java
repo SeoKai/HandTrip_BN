@@ -11,7 +11,7 @@ public class AuthDto {
     @AllArgsConstructor
     public static class LoginRequest {
         private String userEmail; // 사용자 이메일
-        private String password;  // 사용자 비밀번호
+        private String userPassword;  // 사용자 비밀번호
     }
 
     @Data
@@ -20,6 +20,13 @@ public class AuthDto {
     public static class LoginResponse {
         private String accessToken;  // Access 토큰
         private String refreshToken; // Refresh 토큰
+        private long accessTokenExpiry;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class LogoutRequest {
+        private String refreshToken;
     }
 
     @Data

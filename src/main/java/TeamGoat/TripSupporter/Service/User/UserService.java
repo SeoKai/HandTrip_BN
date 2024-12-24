@@ -1,5 +1,6 @@
 package TeamGoat.TripSupporter.Service.User;
 
+import TeamGoat.TripSupporter.Domain.Dto.Auth.AuthDto;
 import TeamGoat.TripSupporter.Domain.Dto.Auth.TokenInfo;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserAndProfileDto;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
@@ -19,7 +20,7 @@ public interface UserService {
      * @param userAndProfileDto 회원 가입에 필요한 사용자 정보
      * @return 회원 가입 성공 여부
      */
-    TokenInfo register(UserAndProfileDto userAndProfileDto);
+    AuthDto.LoginResponse register(UserAndProfileDto userAndProfileDto);
 
     public void deleteUser(String email);
 
@@ -53,10 +54,8 @@ public interface UserService {
      */
     boolean isEmailDuplicate(String email);
 
-    TokenInfo login(String userEmail, String password); // 로그인 메서드
 
 
-    void logout(String accessToken) throws IOException; //  로그아웃 메서드
 
 
 
