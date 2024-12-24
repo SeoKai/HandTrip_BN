@@ -4,6 +4,7 @@ package TeamGoat.TripSupporter.Controller.Location;
 import TeamGoat.TripSupporter.Controller.Location.Util.LocationControllerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
+import TeamGoat.TripSupporter.Domain.Dto.Location.LocationSplitByTagDto;
 import TeamGoat.TripSupporter.Service.Location.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +52,8 @@ public class LocationController {
      * @param sortDirection 정렬방향
      * @return
      */
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/searchLocation")
-    public Page<LocationResponseDto> getLocationByTagNames(
+    public Page<LocationDto> getLocationByTagNames(
             @RequestParam(name = "regionId", required = false) Long regionId,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "tagNames", defaultValue = "") String tagNames,
@@ -62,7 +62,7 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
-        log.info("GET /by-region1 - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
+        log.info("GET /searchLocation - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
                 regionId, keyword, tagNames, page, sortValue, sortDirection);
 
         // tagNames를 쉼표로 분리하여 Set으로 변환
@@ -94,40 +94,28 @@ public class LocationController {
      * 특정 위도(latitude), 경도(longitude)로부터 지정된 거리 내의 장소를 정렬하여 조회
      * @param latitude 중심 위도
      * @param longitude 중심 경도
-     * @param distance 반경 거리
+     * @param distance 반경 거리    km단위
      * @param sortValue 정렬 기준
      * @param sortDirection 정렬 방향
      * @return 반경 내 장소 리스트 (LocationResponseDto)
      */
     @GetMapping("/getNearby")
-    public List<LocationResponseDto> getLocationWithinDistance(
+    public LocationSplitByTagDto getLocationWithinDistance(
             @RequestParam(name = "latitude") Double latitude,
             @RequestParam(name = "longitude") Double longitude,
             @RequestParam(name = "distance") Double distance,
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,  // 정렬 기준
-            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection // 정렬 방향
+            @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection, // 정렬 방향
+            @RequestParam(name = "targetTagName", defaultValue = "음식") String targetTagName
     ){
-        log.info("GET /by-region5 - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}",
-                latitude, longitude, distance, sortValue, sortDirection);
+        log.info("GET /getNearby - latitude: {}, longitude: {}, distance: {}, sortValue: {}, sortDirection: {}, targetTagName: {}",
+                latitude, longitude, distance, sortValue, sortDirection, targetTagName);
+        // 파라미터들 유효성 검사
         LocationControllerValidator.validateLatAndLon(latitude,longitude);
         LocationControllerValidator.validateDistance(distance);
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
 
-        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection);
+        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection, targetTagName);
     }
 
-    /**
-     * 특정 태그 및 지역에 따라 장소 목록을 필터링하는 API 엔드포인트
-     *
-     * @param tagName 필터링할 태그 이름
-     * @return 필터링된 장소 목록
-     */
-    @GetMapping("/filter-by-tag")
-    public ResponseEntity<List<LocationDto>> getLocationsByTag(
-            @RequestParam("tagName") String tagName) {
-        // 서비스에서 태그 및 지역에 해당하는 장소 목록 조회
-        List<LocationDto> locations = locationServiceImpl.findLocationsByTag(tagName);
-        // 결과를 클라이언트에 반환
-        return ResponseEntity.ok(locations);
-    }
 }

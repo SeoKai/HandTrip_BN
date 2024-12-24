@@ -1,98 +1,65 @@
 package TeamGoat.TripSupporter.Service.Planner;
 
-import TeamGoat.TripSupporter.Domain.Dto.Planner.DailyPlanDto;
 import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
-import TeamGoat.TripSupporter.Domain.Dto.Planner.ToDoDto;
-import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.DailyPlan;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.ToDo;
+import TeamGoat.TripSupporter.Mapper.Planner.PlannerMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
-import TeamGoat.TripSupporter.Repository.Planner.PlannerRepository;
 import TeamGoat.TripSupporter.Repository.Location.RegionRepository;
+import TeamGoat.TripSupporter.Repository.Planner.PlannerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PlannerService {
 
-    private final PlannerRepository plannerRepository;
-    private final RegionRepository regionRepository;
-    private final LocationRepository locationRepository;
+        private final PlannerRepository plannerRepository;
+        private final RegionRepository regionRepository;
+        private final LocationRepository locationRepository;
+        private final PlannerMapper plannerMapper;
 
-    @Transactional
-    public Long savePlanner(PlannerDto plannerDto) {
-        // 1. Region 조회 (regionName 기준)
-        Region region = regionRepository.findByRegionName(plannerDto.getRegionName())
-                .orElseThrow(() -> new IllegalArgumentException("해당 지역이 존재하지 않습니다."));
 
-        // 2. Planner 생성 및 저장
-        Planner planner = Planner.builder()
-                .plannerTitle(plannerDto.getPlannerTitle())
-                .plannerStartDate(plannerDto.getPlannerStartDate())
-                .plannerEndDate(plannerDto.getPlannerEndDate())
-                .email("test@example.com") // 예시 사용자 이메일
-                .region(region)
-                .build();
+        // 플랜 저장 서비스
+        @Transactional
+        public Long savePlanner(PlannerDto plannerDto) {
+            // 1. Region 조회
+            Region region = regionRepository.findByRegionName(plannerDto.getRegionName())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 지역이 존재하지 않습니다."));
 
-        // 3. DailyPlan 생성 및 연결
-        for (DailyPlanDto dailyPlanDto : plannerDto.getDailyPlans()) {
-            DailyPlan dailyPlan = DailyPlan.builder()
-                    .planDate(dailyPlanDto.getPlanDate())
-                    .planner(planner)
-                    .build();
+            // 2. PlannerDto -> Planner 변환 및 저장
+            Planner planner = plannerMapper.toEntity(plannerDto, region);
+            Planner savedPlanner = plannerRepository.save(planner);
 
-            // 4. ToDo 생성 및 연결
-            for (ToDoDto toDoDto : dailyPlanDto.getToDos()) {
-                Location location = locationRepository.findById(toDoDto.getLocationId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 장소가 존재하지 않습니다."));
-
-                ToDo toDo = ToDo.builder()
-                        .dailyPlan(dailyPlan)
-                        .location(location)
-                        .build();
-
-                dailyPlan.getToDos().add(toDo);
-            }
-
-            planner.getDailyPlans().add(dailyPlan);
+            return savedPlanner.getPlannerId();
         }
 
-        // 5. Planner 저장 (Cascade로 DailyPlan 및 ToDo도 함께 저장)
-        Planner savedPlanner = plannerRepository.save(planner);
+        // 플랜 Id 기반으로 플랜 조회
+        @Transactional(readOnly = true)
+        public PlannerDto getPlannerDetails(Long id) {
+            Planner planner = plannerRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 플랜이 존재하지 않습니다."));
 
-        return savedPlanner.getPlannerId(); // 저장된 Planner의 ID 반환
-    }
+            return plannerMapper.toDto(planner);
+        }
 
-    @Transactional(readOnly = true)
-    public PlannerDto getPlannerDetails(Long id) {
-        Planner planner = plannerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 플랜이 존재하지 않습니다."));
+        // 이메일 기반으로 조회
+        @Transactional(readOnly = true)
+        public List<PlannerDto> getAllPlansByEmail(String email) {
+            List<Planner> planners = plannerRepository.findByEmail(email);
 
-        return PlannerDto.builder()
-                .plannerId(planner.getPlannerId())
-                .plannerTitle(planner.getPlannerTitle())
-                .plannerStartDate(planner.getPlannerStartDate())
-                .plannerEndDate(planner.getPlannerEndDate())
-                .regionName(planner.getRegion().getRegionName())
-                .dailyPlans(planner.getDailyPlans().stream()
-                        .map(dailyPlan -> DailyPlanDto.builder()
-                                .planDate(dailyPlan.getPlanDate())
-                                .toDos(dailyPlan.getToDos().stream()
-                                        .map(toDo -> ToDoDto.builder()
-                                                .locationId(toDo.getLocation().getLocationId())
-                                                .locationName(toDo.getLocation().getLocationName())
-                                                .formattedAddress(toDo.getLocation().getFormattedAddress())
-                                                .build())
-                                        .collect(Collectors.toList()))
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
-    }
+            if (planners.isEmpty()) {
+                throw new IllegalArgumentException("해당 이메일의 플랜이 존재하지 않습니다.");
+            }
+
+            return planners.stream()
+                    .map(plannerMapper::toDto) // mapper를 사용해 Entity를 DTO로 변환
+                    .collect(Collectors.toList());
+        }
+
 
 }
