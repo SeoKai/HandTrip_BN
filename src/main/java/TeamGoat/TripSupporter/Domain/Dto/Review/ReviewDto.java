@@ -27,13 +27,19 @@ public class ReviewDto {
     @NotNull(message = "Review ID는 null일 수 없습니다.")
     private Long reviewId;
 
-    @JsonProperty("userId")
-    @NotNull(message = "User ID는 null일 수 없습니다.")
-    private Long userId;
+    @JsonProperty("userEmail")
+    private String userEmail;
+
+    @JsonProperty("userNickname")
+    private String userNickname;
 
     @JsonProperty("locationId")
     @NotNull(message = "Location ID는 null일 수 없습니다.")
     private Long locationId;
+
+    @JsonProperty("title")
+    @NotNull(message = "title은 null일 수 없습니다.")
+    private String title;
 
     @JsonProperty("rating")
     @NotNull(message = "Rating은 null일 수 없습니다.")
@@ -60,11 +66,11 @@ public class ReviewDto {
     private List<String> imageUrls; // 이미지 URL 목록 추가
 
     // 이미지 URL을 제외한 8개 필드만 포함하는 생성자
-    public ReviewDto(Long reviewId, Long userId, Long locationId, Integer rating, String comment,
+    public ReviewDto(Long reviewId, String userEmail, Long locationId, Integer rating, String comment,
                      LocalDateTime reviewCreatedAt, LocalDateTime reviewUpdatedAt,
                      ReviewStatus reviewStatus) {
         this.reviewId = reviewId;
-        this.userId = userId;
+        this.userEmail = userEmail;
         this.locationId = locationId;
         this.rating = rating;
         this.comment = comment;

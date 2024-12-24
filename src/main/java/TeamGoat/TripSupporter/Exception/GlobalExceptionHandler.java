@@ -35,16 +35,16 @@ public class GlobalExceptionHandler {
                 .body("찾을 수 없는 엔티티: " + exception.getMessage());
     }
 
-    /**
-     * 모든 예외 처리
-     *
-     * @param exception Exception
-     * @return ResponseEntity로 사용자에게 반환
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGenericException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("서버 내부 오류가 발생했습니다. 메시지: " + exception.getMessage());
-    }
+//    /**
+//     * 모든 예외 처리
+//     *
+//     * @param exception Exception
+//     * @return ResponseEntity로 사용자에게 반환
+//     */
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<String> handleGenericException(Exception exception) {
+//        return ResponseEntity
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body("서버 내부 오류가 발생했습니다. 메시지: " + exception.getMessage());
+//    }
 }

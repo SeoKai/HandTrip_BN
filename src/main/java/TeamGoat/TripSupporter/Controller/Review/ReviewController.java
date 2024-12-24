@@ -1,8 +1,10 @@
 package TeamGoat.TripSupporter.Controller.Review;
 
+import TeamGoat.TripSupporter.Config.auth.JwtTokenProvider;
 import TeamGoat.TripSupporter.Controller.Review.Util.ReviewContollerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithLocationDto;
+import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithUserProfileDto;
 import TeamGoat.TripSupporter.Exception.Review.*;
 import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -23,26 +25,31 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
     private final ReviewServiceImpl reviewService;
-    private final PagedResourcesAssembler<ReviewDto> pagedResourcesAssembler;
+    private final PagedResourcesAssembler<ReviewWithUserProfileDto> pagedResourcesAssembler;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 리뷰 생성
-     * @param userId 로그인된 사용자 ID (유효성 검사를 통해 인증된 사용자임을 확인)
+     * @param authorization 로그인된 사용자 토큰 (유효성 검사를 통해 인증된 사용자임을 확인)
      * @param reviewDto 리뷰 데이터 (평점, 댓글 등 필수 입력값 포함)
      * @return 성공 메시지 (리뷰가 성공적으로 저장되었음을 나타냄)
      * @throws ReviewDtoNullException 리뷰 데이터가 null인 경우
      * @throws ReviewRatingNullException 평점이 null이거나 유효하지 않은 경우
      * @throws ReviewCommentNullException 댓글이 null이거나 길이 제한을 초과한 경우
      */
-    //이거 locationId null로 들어오는지 강사님한테 함 물어보기
     @PostMapping("/create")
-    public ResponseEntity<String> createReview(@RequestHeader ("userId") Long userId,@RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<String> createReview(@RequestHeader("Authorization") String authorization,@RequestBody ReviewDto reviewDto) {
 
-        // 로그인한 사용자와 review를 쓴 사람이 같아야함
-        ReviewContollerValidator.compareLongTypeNumber(userId, reviewDto.getUserId());
+        log.info("reviewController createReview Method invoke 파라미터 확인 - token : {}, reviewDto : {}",authorization,reviewDto);
+        String token = authorization.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.extractUserEmail(token);
+
         // Dto와 필수입력 파라미터 (rating, comment)이 null인지 확인함
-        ReviewContollerValidator.validateUserId(userId);
+        ReviewContollerValidator.validateUserEmail(userEmail);
         ReviewContollerValidator.validateReviewDto(reviewDto);
+        //reviewDto에 userEmail 정보 저장
+        reviewDto.setUserEmail(userEmail);
+
         // rating이 유효한 값인지 확인함 (1~5 사이)
         ReviewContollerValidator.validateRating(reviewDto.getRating());
         // comment가 유효한 값인지 확인함 (1~500글자 사이)
@@ -56,17 +63,20 @@ public class ReviewController {
 
     /**
      * 리뷰 수정 페이지를 보여주기 위한 작성된 리뷰 데이터를 가져오는 메서드
-     * @param userId 로그인된 사용자 ID
+     * @param authorization 로그인된 사용자 토큰정보
      * @param reviewId 수정할 리뷰의 ID
      * @return reviewId에 해당하는 리뷰와 해당 리뷰에 연결된 위치 정보를 포함한 ReviewWithLocationDto 객체를 반환
      */
     @GetMapping("/{reviewId}/edit")
-    public ResponseEntity<ReviewWithLocationDto> showReviewUpdatePage(@RequestHeader ("userId") Long userId,@PathVariable(name = "reviewId") Long reviewId) {
+    public ResponseEntity<ReviewWithLocationDto> showReviewUpdatePage(@RequestHeader("Authorization") String authorization,@PathVariable(name = "reviewId") Long reviewId) {
+
+        String token = authorization.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.extractUserEmail(token);
         // 파라미터 null체크
-        ReviewContollerValidator.validateUserId(userId);
+        ReviewContollerValidator.validateUserEmail(userEmail);
         ReviewContollerValidator.validateReviewId(reviewId);
         // reviewId로 reviewDto 가져옴
-        ReviewWithLocationDto ReviewWithLocationDto = reviewService.getReviewWithLocationById(userId,reviewId);
+        ReviewWithLocationDto ReviewWithLocationDto = reviewService.getReviewWithLocationById(userEmail,reviewId);
         // service에서 받은 ReviewWithLocationDto 객체 반환
         return ResponseEntity.ok(ReviewWithLocationDto);
     }
@@ -77,49 +87,56 @@ public class ReviewController {
 
     /**
      * 리뷰 수정
-     * @param userId 로그인된 사용자 ID
+     * @param authorization 로그인된 사용자 토큰
      * @param reviewId 리뷰 ID
      * @param reviewDto 수정할 리뷰 데이터
      * @return 성공 메시지
      */
     @PutMapping("/{reviewId}/edit/completed")
-    public ResponseEntity<String> reviewUpdate( @RequestHeader ("userId") Long userId, @PathVariable(name = "reviewId") Long reviewId , @RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<String> reviewUpdate( @RequestHeader("Authorization")String authorization , @PathVariable(name = "reviewId") Long reviewId , @RequestBody ReviewDto reviewDto) {
 
+        // token에서 userEmail 추출
+        String token = authorization.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.extractUserEmail(token);
         // Id값들 유효성 확인
         ReviewContollerValidator.validateReviewId(reviewId);
-        ReviewContollerValidator.validateUserId(userId);
+        ReviewContollerValidator.validateUserEmail(userEmail);
+        // Dto와 필수입력 파라미터 (rating, comment)이 null인지 확인함
+        ReviewContollerValidator.validateReviewDto(reviewDto);
         // 제출하는 수정리뷰(reviewDto) reviewId랑 수정하는 게시물의 reviewId가 같아야함
         ReviewContollerValidator.compareLongTypeNumber(reviewId,reviewDto.getReviewId());
         // 현재 수정중인 로그인 상태의 사용자 userId와 제출하는 수정리뷰(reviewDto)를 작성한 userId가 같아야함
-        ReviewContollerValidator.compareLongTypeNumber(userId,reviewDto.getUserId());
+        ReviewContollerValidator.compareEmail(userEmail,reviewDto.getUserEmail());
 
-        // Dto와 필수입력 파라미터 (rating, comment)이 null인지 확인함
-        ReviewContollerValidator.validateReviewDto(reviewDto);
         // rating이 유효한 값인지 확인함 (1~5 사이)
         ReviewContollerValidator.validateRating(reviewDto.getRating());
         // comment가 유효한 값인지 확인함 (1~500글자 사이)
         ReviewContollerValidator.validateComment(reviewDto.getComment());
         // 유효성 검사 완료 후 서비스로 넘김
-        reviewService.updateReview(userId,reviewDto);
+        reviewService.updateReview(userEmail,reviewDto);
         // 서비스에서 처리 후 처리 결과 반환
         return ResponseEntity.ok("리뷰 수정 성공");
     }
 
     /**
      * 리뷰 삭제
-     * @param userId 로그인된 사용자 ID (삭제 권한 확인에 사용)
+     * @param authorization 로그인된 사용자 토큰 (삭제 권한 확인에 사용)
      * @param reviewId 삭제할 리뷰 ID
      * @return 성공 메시지 (리뷰가 삭제되었음을 나타냄)
      * @throws ReviewNotFoundException 리뷰가 존재하지 않을 경우
      * @throws ReviewAuthorMismatchException 리뷰 작성자와 삭제 요청 사용자가 다를 경우
      */
     @DeleteMapping("/delete/{reviewId}")
-    public ResponseEntity<String> deleteReview(@RequestHeader ("userId") Long userId, @PathVariable(name = "reviewId") Long reviewId) {
-        //파라미터 null체크
+    public ResponseEntity<String> deleteReview( @RequestHeader("Authorization")String authorization, @PathVariable(name = "reviewId") Long reviewId) {
+
+        // token에서 userEmail 추출
+        String token = authorization.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.extractUserEmail(token);
+        // null체크
         ReviewContollerValidator.validateReviewId(reviewId);
-        ReviewContollerValidator.validateUserId(userId);
+        ReviewContollerValidator.validateUserEmail(userEmail);
         // 유효성 검사 완료 후 서비스로 넘김
-        reviewService.deleteReview(userId , reviewId);
+        reviewService.deleteReview(userEmail , reviewId);
         // 서비스에서 처리 후 처리 결과 반환
         return ResponseEntity.ok("리뷰 삭제 성공");
     }
@@ -129,51 +146,56 @@ public class ReviewController {
 
     /**
      * 리뷰 조회
+     * @param authorization 사용자 토큰 (옵션, 특정 사용자가 작성한 리뷰를 조회할 때 사용)
+     * @param locationId 여행지 ID (옵션, 특정 여행지의 리뷰를 조회할 때 사용)
      * @param page 페이지 번호 (0부터 시작, 기본값: 0)
      * @param sortValue 정렬 기준 (reviewCreatedAt, rating 중 하나, 기본값: reviewCreatedAt)
      * @param sortDirection 정렬 방향 (asc 또는 desc, 기본값: desc)
-     * @param locationId 여행지 ID (옵션, 특정 여행지의 리뷰를 조회할 때 사용)
-     * @param userId 사용자 ID (옵션, 특정 사용자가 작성한 리뷰를 조회할 때 사용)
      * @return 페이징된 리뷰 목록
      * @throws IllegalArgumentException 잘못된 정렬 기준 또는 방향이 전달된 경우
      */
     @GetMapping("/getPagedReviews")
-    public ResponseEntity<PagedModel<EntityModel<ReviewDto>>> getReviews(
-            @RequestParam(name = "page" , defaultValue = "0") Integer page,
-            @RequestParam(name = "sortValue" , defaultValue = "reviewCreatedAt") String sortValue,
-            @RequestParam(name = "sortDirection" , defaultValue = "desc") String sortDirection,
+    public ResponseEntity<PagedModel<EntityModel<ReviewWithUserProfileDto>>> getReviews(
+            @RequestHeader("Authorization")String authorization,
             @RequestParam(name = "locationId" , required = false) Long locationId,
-            @RequestParam(name = "userId" , required = false) Long userId) {
+            @RequestParam(name = "page" , defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name = "sortValue" , defaultValue = "reviewCreatedAt") String sortValue,
+            @RequestParam(name = "sortDirection" , defaultValue = "desc") String sortDirection
+            ) {
+
+        log.info("GET /getPagedReviews - locationId: {}, page: {},pageSize: {}, sortValue: {},sortDirection: {}",
+                locationId, page,pageSize, sortValue, sortDirection);
+
+        // token에서 userEmail 추출
+        String token = authorization.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.extractUserEmail(token);
 
         // 외래키 id값들 null 체크
         if(locationId != null)
             ReviewContollerValidator.validateLocationId(locationId); // 여행지 ID 유효성 검사
-        if(userId != null)
-            ReviewContollerValidator.validateUserId(userId); // 사용자 ID 유효성 검사
+        if(userEmail != null)
+            ReviewContollerValidator.validateUserEmail(userEmail); // 사용자 email 유효성 검사
 
         // 페이지 번호, 정렬 기준, 정렬 방향 유효성 검사
-//        int pageNumber = Integer.parseInt(page);
         ReviewContollerValidator.validatePageNumber(page);
-        log.info(String.valueOf(page));
-        log.info(page.getClass().getName());
         ReviewContollerValidator.validateSortValue(sortValue);
         ReviewContollerValidator.validateSortDirection(sortDirection);
 
-        Page<ReviewDto> reviews;
+        Page<ReviewWithUserProfileDto> reviews;
 
         if (locationId != null) {
             // 특정 여행지 리뷰 조회
-            reviews = reviewService.getReviewsByLocationId(locationId, page, sortValue, sortDirection);
-        } else if (userId != null) {
+            reviews = reviewService.getReviewsByLocationId(locationId, page, pageSize, sortValue, sortDirection);
+        } else if (userEmail != null) {
             // 특정 사용자 리뷰 조회
-            reviews = reviewService.getReviewsByUserId(userId, page, sortValue, sortDirection);
+            reviews = reviewService.getReviewsByUserId(userEmail, page, pageSize, sortValue, sortDirection);
         } else {
             // 모든 리뷰 조회
-            reviews = reviewService.getReviews(page, sortValue, sortDirection);
+            reviews = reviewService.getReviews(page, pageSize, sortValue, sortDirection);
         }
         // Page<ReviewDto> 를 PagedModel<EntityModel<ReviewDto>>로 변환
-        log.info("page : {}",page);
-        PagedModel<EntityModel<ReviewDto>> pagedModel = pagedResourcesAssembler.toModel(reviews);
+        PagedModel<EntityModel<ReviewWithUserProfileDto>> pagedModel = pagedResourcesAssembler.toModel(reviews);
         return ResponseEntity.ok(pagedModel);
     }
 
