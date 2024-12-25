@@ -33,4 +33,3 @@ public class ToDo {
         this.location = location;
     }
 }
-
