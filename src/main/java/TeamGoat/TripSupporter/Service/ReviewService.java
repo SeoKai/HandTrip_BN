@@ -1,5 +1,7 @@
 package TeamGoat.TripSupporter.Service;
 
+import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
+
 import java.util.List;
 
 public interface ReviewService {

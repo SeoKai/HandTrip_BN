@@ -1,45 +1,89 @@
 package TeamGoat.TripSupporter.Domain.Entity.Location;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "tbl_location")
 @Getter
-@ToString
-@Builder
+@Setter
+@ToString(exclude = {"region", "tags"}) // 순환 참조 방지
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
-    private Long locationId; // 위치 ID
+    private Long locationId; // 고유 ID
 
-    @Column(name = "city_name", length = 100)
-    private String cityName; // 위치 이름
+    @Column(name = "place_id", nullable = false, unique = true)
+    private String placeId; // Google Places 고유 ID
+
+    @Column(name = "location_name", nullable = false)
+    private String locationName; // 장소 이름
 
     @Column(name = "description", columnDefinition = "TEXT")
-    private String description; // 위치 설명
+    private String description; // 장소 설명
 
-    @Column(name = "latitude", precision = 11, scale = 8)
-    private BigDecimal latitude; // 위도 11자리표시, 소수점이하는 8자리
+    @Column(name = "latitude", nullable = false)
+    private Double latitude; // 위도
 
-    @Column(name = "longitude", precision = 11, scale = 8)
-    private BigDecimal longitude; // 경도 11자리표시, 소수점이하는 8자리
+    @Column(name = "longitude", nullable = false)
+    private Double longitude; // 경도
 
-    @Column(name = "location_created_at")
-    private LocalDateTime locationCreatedAt; // 위치 생성 시각
+    @Column(name = "google_rating")
+    private Float googleRating; // Google 평점
 
-    @Column(name = "location_updated_at")
-    private LocalDateTime locationUpdatedAt; // 위치 수정 시각
+    @Column(name = "user_ratings_total")
+    private Integer userRatingsTotal; // 총 사용자 리뷰 수
 
-    @Column(name = "image_url", length = 255)
-    private String imageUrl; // 이미지 URL
+    @Column(name = "place_img_url", columnDefinition = "TEXT")
+    private String placeImgUrl; // 장소 이미지 URL
 
+    @Column(name = "formatted_address")
+    private String formattedAddress; // 형식화된 주소
+
+    @Column(name = "opening_hours", columnDefinition = "TEXT")
+    private String openingHours; // 운영 시간
+
+    @Column(name = "website")
+    private String website; // 웹사이트 URL
+
+    @Column(name = "phone_number")
+    private String phoneNumber; // 전화번호
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false) // 외래키 매핑
+    private Region region; // 소속 지역
+
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_location_tag",
+            joinColumns = @JoinColumn(name = "location_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags; // 연관 태그
+
+    @Builder
+    public Location(Long locationId, String placeId, String locationName, String description, Double latitude, Double longitude,
+                    Float googleRating, Integer userRatingsTotal, String placeImgUrl, String formattedAddress,
+                    String openingHours, String website, String phoneNumber, Region region, Set<Tag> tags) {
+        this.locationId = locationId;
+        this.placeId = placeId;
+        this.locationName = locationName;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.googleRating = googleRating;
+        this.userRatingsTotal = userRatingsTotal;
+        this.placeImgUrl = placeImgUrl;
+        this.formattedAddress = formattedAddress;
+        this.openingHours = openingHours;
+        this.website = website;
+        this.phoneNumber = phoneNumber;
+        this.region = region;
+        this.tags = tags;
+    }
 }

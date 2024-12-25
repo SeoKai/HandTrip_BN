@@ -10,19 +10,13 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TodoDto {
-    private Long todoId;
+@ToString
+public class ToDoDto {
 
-    private String DailyPlanId;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd" )
-    private LocalTime startTime;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd" )
-    private LocalTime endTime;
-
-    private String description;
-
-    private String locationId;
-
+    private Long toDoId;         // ToDo ID
+    private Long locationId;     // 장소 ID
+    private String locationName; // 장소 이름
+    private String formattedAddress; // 장소 주소
+    private Double latitude;     // 위도
+    private Double longitude;    // 경도
 }

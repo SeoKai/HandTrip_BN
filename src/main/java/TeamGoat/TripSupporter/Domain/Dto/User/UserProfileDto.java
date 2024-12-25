@@ -1,5 +1,6 @@
 package TeamGoat.TripSupporter.Domain.Dto.User;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
@@ -8,9 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class UserProfileDto {
-    private Long userId;
 
+    @NotBlank
+    private Long userProfileId;
+
+    @NotBlank(message="닉네임은 필수 입니다.")
     private String userNickname;
 
     private String profileImageUrl;
