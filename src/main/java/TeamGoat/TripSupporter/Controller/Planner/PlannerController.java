@@ -61,10 +61,10 @@ public class PlannerController {
 
     // 플래너 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlanner(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePlanner(@PathVariable(name = "id", required = true) Long id) {
         log.info("Delete request received for planner ID: {}", id);
         plannerService.deletePlanner(id);
-        return ResponseEntity.noContent().build(); // 삭제 성공 시 204 No Content 반환
+        return ResponseEntity.noContent().build();
     }
 
 }
