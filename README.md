@@ -1,7 +1,7 @@
 ## WORKSPACE
 - [**Notion**](https://seong-kai.notion.site/PROJECT-14dfcab0377c80ae8e20e6d8f35d869c?pvs=4)
 
-## 프로젝트 이름 (미정)
+## 프로젝트 이름 JPA HandTrip
 
 #### **사용자가 자유롭게 일본 여행지 정보를 리뷰하고, 이를 기반으로 최적화된 여행 플래너를 작성할 수 있는 플랫폼**
 ---
