@@ -1,9 +1,6 @@
 package TeamGoat.TripSupporter.Domain.Dto.Planner;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalTime;
 
 @Getter
 @Setter

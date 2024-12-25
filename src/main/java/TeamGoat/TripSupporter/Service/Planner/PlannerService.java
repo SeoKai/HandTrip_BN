@@ -4,7 +4,6 @@ import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.DailyPlan;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.ToDo;
 import TeamGoat.TripSupporter.Mapper.Planner.PlannerMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Repository.Location.RegionRepository;
