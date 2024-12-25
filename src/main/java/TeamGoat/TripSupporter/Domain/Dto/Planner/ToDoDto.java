@@ -1,9 +1,6 @@
 package TeamGoat.TripSupporter.Domain.Dto.Planner;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -12,7 +9,6 @@ import java.time.LocalTime;
 @Builder
 @ToString
 public class ToDoDto {
-
     private Long toDoId;         // ToDo ID
     private Long locationId;     // 장소 ID
     private String locationName; // 장소 이름
