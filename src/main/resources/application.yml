@@ -4,15 +4,16 @@ spring:
   datasource:
     url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb  # MySQL 데이터베이스 URL
     username: admin                              # MySQL 사용자 이름
-    password: trip970708!                              # MySQL 비밀번호
-    driver-class-name: com.mysql.cj.jdbc.Driver          # MySQL 드라이버 클래스
+    password: trip970708!                         # MySQL 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver   # MySQL 드라이버 클래스
   jpa:
     hibernate:
-      ddl-auto: update                                   # 스키마 자동 업데이트
-    show-sql: false                                       # SQL 쿼리 로깅
+      ddl-auto: update                            # 스키마 자동 업데이트
+    show-sql: false                                # SQL 쿼리 로깅
     properties:
       hibernate:
-        format_sql: true                                  # SQL 포멧
+        format_sql: true                           # SQL 포멧
+        dialect: org.hibernate.dialect.MySQL8Dialect # MySQL 8 Dialect 추가
 
 jwt:
   secret: 6lwIEEF7Hqg0PCO6KxHoGe6kVqPRdgvnmQp3KiN0RTj4E3dAfqQ2Yi4Ttr9MxlZT
