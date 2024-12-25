@@ -2,39 +2,35 @@ package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalTime;
 
 @Entity
-@Table(name = "TBL_TODO")
+@Table(name = "tbl_todo")
 @Getter
-@ToString
-@Builder
-public class Todo {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class ToDo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TODO_ID")
-    private Long todoId;
+    @Column(name = "todo_id")
+    private Long toDoId; // 고유 ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DAILYPLAN_ID", nullable = false)
-    private DailyPlan dailyPlan;    // fk
+    @JoinColumn(name = "daily_plan_id", nullable = false)
+    private DailyPlan dailyPlan; // 상위 하루 일정
 
-    @Column(name = "TODO_START_TIME", nullable = false)
-    private LocalTime startTime;    // 일정 시작 시간
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location; // 방문할 장소
 
-    @Column(name = "TODO_END_TIME", nullable = false)
-    private LocalTime endTime;  // 일정 종료 시간
-
-    @Column(name = "TODO_DESCRIPTION", columnDefinition = "TEXT")
-    private String description; // 일정에 대한 설명
-
-    @OneToOne  // 1:1 관계 매핑
-    @JoinColumn(name = "LOCATION_ID", referencedColumnName = "LOCATION_ID", nullable = true)
-    private Location locationId;      // 위치 참조 (Location fk)
-
+    @Builder
+    public ToDo(DailyPlan dailyPlan, Location location) {
+        this.dailyPlan = dailyPlan;
+        this.location = location;
+    }
 }
+
