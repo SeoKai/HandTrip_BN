@@ -35,10 +35,11 @@ public class LocationController {
     private static final String DEFAULT_SORT_VALUE = "googleRating";
     private static final String DEFAULT_SORT_DIRECTION = "desc";
 
-    @GetMapping("/by-region")
-    public List<LocationDto> getLocationsByRegion(@RequestParam("regionId") Long regionId) {
-        log.info("GET /by-region with regionId: {}", regionId);
-        return locationServiceImpl.getLocationsByRegion(regionId);
+    @GetMapping("/getLocation")
+    public LocationDto getLocation(@RequestParam("locationId") Long locationId) {
+        log.info("GET /getLocation with locationId: {}", locationId);
+        LocationControllerValidator.validateLocationId(locationId);
+        return locationServiceImpl.getLocation(locationId);
     }
 
     /**

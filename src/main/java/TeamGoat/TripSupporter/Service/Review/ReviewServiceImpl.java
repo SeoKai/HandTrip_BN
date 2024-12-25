@@ -112,7 +112,6 @@ public class ReviewServiceImpl{
         Page<Review> reviews = reviewRepository.findByLocation_LocationIdAndReviewStatus(locationId,ReviewStatus.ACTIVE,pageable);
 
         log.info("Location에서 " + locationId + "로 검색한 결과를 "+sortValue+"기준으로 " + sortDirection + "방향으로 정렬합니다.");
-
         // 페이징 처리된 review를 반환 타입에 맞는 Dto로 변환하여 반환
         return reviews.map(reviewMapper::ReviewConvertToWithUserProfileDto);
     }
@@ -142,18 +141,37 @@ public class ReviewServiceImpl{
     }
 
     /**
-     * reviewId로 리뷰 하나 찾는 메서드
-     * @param reviewId
-     * @return  ReviewDto로 반환함
+     * 유저 email 받아서 review랑 그 review가 쓰인 location을 가져오는 메서드 review와 location정보는 페이징처리된 dto로 반환된다
+     * @param userEmail
+     * @param page
+     * @param pageSize
+     * @param sortValue
+     * @param sortDirection
+     * @return
      */
-    public ReviewDto getReviewById(Long reviewId) {
-        // reviewId로 review 가져옴
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
-        // 가져온 review의 상태가 유효한지 검사
-        ReviewServiceValidator.isReviewStatusActive(review);
-        // 가져온 리뷰를 dto로 변환해서 반환
-        return reviewMapper.ReviewConvertToDto(review);
+    public Page<ReviewWithLocationDto> getReviewsWithLocationByEmail(String userEmail,int page, int pageSize, String sortValue, String sortDirection) {
+
+        Pageable pageable = getPageable(page, pageSize, sortValue, sortDirection);
+
+        // userEmail로 user가져옴
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        Long userId = user.getUserId();
+
+        // 생성된 pageable 객체와 입력받은 userId를 Repository에 전달하여 review 가져옴
+        Page<Review> reviews = reviewRepository.findByUser_UserIdAndReviewStatus(userId,ReviewStatus.ACTIVE,pageable);
+
+        return reviews.map(review -> {
+            // Review와 Location 정보를 DTO로 변환
+            Location location = review.getLocation();  // Review 엔티티의 Location 객체
+            LocationDto locationDto = locationMapper.toLocationDto(location);
+            ReviewDto reviewDto = reviewMapper.ReviewConvertToDto(review);
+            // ReviewWithLocationDto 생성
+            return ReviewWithLocationDto.builder()
+                    .reviewDto(reviewDto)
+                    .locationDto(locationDto)
+                    .build();
+        });
     }
 
     /**
@@ -228,23 +246,23 @@ public class ReviewServiceImpl{
             // 우선 ReviewDto의 id로 수정되기전 review를 가져온다.
             Review existingReview = reviewRepository.findById(reviewDto.getReviewId())
                     .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
-
+            // 입력받은 userEmail로 사용자 정보를 가져온다
             User user = userRepository.findByUserEmail(userEmail)
                     .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-            // 수정되기전 review의 user정보와, 수정된 review data의 user정보가 일치하는지 확인한다.
-            ReviewServiceValidator.validateUserAndAuthor(user,existingReview.getUser());
 
-            // 기존 이미지 목록 제거 후 DTO에서 새 이미지 추가
-            existingReview.getImages().clear();  // 기존 이미지 삭제
+            // 수정되기전 review의 user정보와, 사용자가 일치하는지 확인한다
+            ReviewServiceValidator.validateUserAndAuthor(user,existingReview.getUser());
 
             // 새로운 이미지 추가
             if (reviewDto.getImageUrls() != null) {
+                // 기존 이미지 목록 제거 후 DTO에서 새 이미지 추가
+                existingReview.getImages().clear();  // 기존 이미지 삭제
                 reviewDto.getImageUrls().forEach(existingReview::addImage);
             }
 
-            // entity에서 update 메서드 실행 (Rating과 Comment 수정, UpdateAt 갱신)
-            existingReview.updateReview(reviewDto.getRating(), reviewDto.getComment());
+            // entity에서 update 메서드 실행 (title,Rating과 Comment 수정, UpdateAt 갱신)
+            existingReview.updateReview(reviewDto.getTitle(),reviewDto.getRating(), reviewDto.getComment());
             reviewRepository.save(existingReview);
 
             log.info("review를 성공적으로 수정하였습니다. " +
@@ -307,29 +325,5 @@ public class ReviewServiceImpl{
             throw new ReviewException("rating 평균 계산중 오류 발생",e);
         }
     }
-
-    /**
-     * 모든 CRUD메서드에 중복된 예외처리 구문을 추출하여 관리하는 메서드
-     * DataAccessException, IllegalArgumentException, ConstraintViolationException를 던짐
-     * Review를 찾지 못할 경우 발생하는 ReviewNotFoundException과
-     * 그외에 ReviewService에서 발생하는 나머지 예외인 ReviewException를 던짐
-     * @param message   예외발생 시 던질 메시지
-     * @param e 상세 예외클래스
-     */
-    private void ReviewException(String message,Exception e) {
-        log.error("예외 발생" + message + " - 발생한 예외: " + e.getClass().getSimpleName(), e);
-        if (e instanceof DataAccessException) {
-            throw new ReviewException(message + " - 데이터베이스 오류가 발생했습니다", e);
-        } else if (e instanceof IllegalArgumentException) {
-            throw new ReviewException(message + " - 잘못된 데이터가 제공되었습니다", e);
-        } else if (e instanceof ConstraintViolationException) {
-            throw new ReviewException(message + " - 유효하지 않은 값이 전달되었습니다", e);
-        } else if (e instanceof ReviewNotFoundException) {
-            throw (ReviewNotFoundException) e;
-        } else {
-            throw new ReviewException(message + " - 예상치 못한 오류가 발생했습니다", e);
-        }
-    }
-
 }
 

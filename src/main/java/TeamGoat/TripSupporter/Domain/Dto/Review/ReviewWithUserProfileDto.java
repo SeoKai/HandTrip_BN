@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class ReviewWithUserProfileDto {
 
-    private ReviewDto reivewDto;
+    private ReviewDto reviewDto;
     private UserProfileDto userProfileDto;
 
 }
