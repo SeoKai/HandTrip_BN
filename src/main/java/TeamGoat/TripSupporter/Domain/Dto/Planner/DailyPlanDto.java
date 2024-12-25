@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class DailyPlanDto {
     private Long dailyPlanId;        // 하루 일정 ID
     private LocalDate planDate;      // 하루 날짜

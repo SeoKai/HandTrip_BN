@@ -1,5 +1,7 @@
 package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
+import TeamGoat.TripSupporter.Domain.Dto.Planner.DailyPlanDto;
+import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +10,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tbl_planner")
@@ -55,6 +60,23 @@ public class Planner {
         this.region = region;
         this.plannerCreatedAt = LocalDateTime.now();
         this.plannerUpdatedAt = LocalDateTime.now();
+    }
+
+    public void updateWith(Planner updatedPlanner) {
+        this.plannerTitle = updatedPlanner.getPlannerTitle();
+        this.plannerStartDate = updatedPlanner.getPlannerStartDate();
+        this.plannerEndDate = updatedPlanner.getPlannerEndDate();
+        this.region = updatedPlanner.getRegion();
+
+        // 기존 DailyPlans 제거
+        this.dailyPlans.clear();
+
+        // 새로운 DailyPlans 추가
+        updatedPlanner.getDailyPlans().forEach(newDailyPlan -> {
+            newDailyPlan.setPlanner(this); // Planner와 연결 설정
+            this.dailyPlans.add(newDailyPlan);
+        });
+
     }
 
 }

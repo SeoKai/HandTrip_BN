@@ -32,5 +32,10 @@ public class ToDo {
         this.dailyPlan = dailyPlan;
         this.location = location;
     }
+
+    public void updateWith(ToDo updatedToDo) {
+        this.location = updatedToDo.getLocation();
+    }
+
 }
 
