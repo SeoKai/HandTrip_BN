@@ -19,4 +19,5 @@ public class ToDoDto {
     private String formattedAddress; // 장소 주소
     private Double latitude;     // 위도
     private Double longitude;    // 경도
+    private String placeImgUrl; // 장소 이미지 URL (새로 추가)
 }

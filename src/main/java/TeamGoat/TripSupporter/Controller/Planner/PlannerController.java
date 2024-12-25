@@ -20,6 +20,7 @@ public class PlannerController {
     // 플래너 저장
     @PostMapping("/save")
     public ResponseEntity<Long> savePlanner(@RequestBody PlannerDto plannerDto) {
+        System.out.println(plannerDto);
         Long plannerId = plannerService.savePlanner(plannerDto);
         return ResponseEntity.ok(plannerId);
     }
@@ -46,12 +47,24 @@ public class PlannerController {
     }
 
 
+    // 플래너 수정 (id를 RequestBody로 받음)
+    @PutMapping("/update")
+    public ResponseEntity<Void> updatePlanner(@RequestBody PlannerDto plannerDto) {
+        System.out.println("Received PlannerDto: " + plannerDto);
+        if (plannerDto.getPlannerId() == null) {
+            throw new IllegalArgumentException("Planner ID is required.");
+        }
 
-//    // 플래너 수정
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Void> updatePlanner(@PathVariable Long id, @RequestBody PlannerDto plannerDto) {
-//        plannerService.updatePlanner(id, plannerDto);
-//        return ResponseEntity.ok().build();
-//    }
+        plannerService.updatePlanner(plannerDto.getPlannerId(), plannerDto);
+        return ResponseEntity.ok().build(); // 수정 성공 시 200 OK 반환
+    }
+
+    // 플래너 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlanner(@PathVariable(name = "id", required = true) Long id) {
+        log.info("Delete request received for planner ID: {}", id);
+        plannerService.deletePlanner(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }
