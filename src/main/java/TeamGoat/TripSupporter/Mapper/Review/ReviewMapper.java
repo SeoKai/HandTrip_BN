@@ -90,7 +90,7 @@ public class ReviewMapper {
         ReviewDto reviewDto = ReviewConvertToDto(review);
 
         return ReviewWithUserProfileDto.builder()
-                .reivewDto(reviewDto)
+                .reviewDto(reviewDto)
                 .userProfileDto(userProfileDto)
                 .build();
     }

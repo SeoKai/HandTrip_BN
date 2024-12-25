@@ -80,7 +80,8 @@ public class Review {
      * @param rating    별점 (1~5)
      * @param comment   리뷰본문
      */
-    public void updateReview(Integer rating, String comment) {
+    public void updateReview(String title, Integer rating, String comment) {
+        this.title = title;
         this.rating = rating;
         this.comment = comment;
         this.reviewUpdatedAt = LocalDateTime.now(); // 수정시각 갱신

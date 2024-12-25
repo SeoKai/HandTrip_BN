@@ -120,7 +120,7 @@ public class ReviewContollerValidator {
     }
 
     public static void compareLongTypeNumber(Long number1, Long number2) {
-        if(number1.equals(number2)) {
+        if(!number1.equals(number2)) {
             throw new MismatchedException("입력된 두 값이 다릅니다: " + number1 + "와 " + number2);
         }
     }

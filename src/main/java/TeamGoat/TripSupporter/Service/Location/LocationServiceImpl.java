@@ -35,11 +35,12 @@ public class LocationServiceImpl {
     }
 
     // regionId를 기반으로 장소 조회
-    public List<LocationDto> getLocationsByRegion(Long regionId) {
-        List<Location> locations = locationRepository.findByRegionRegionId(regionId); // Repository 메서드 호출
-        return locations.stream()
-                .map(locationMapper::toLocationDto) // 엔티티를 DTO로 변환
-                .collect(Collectors.toList());
+    public LocationDto getLocation(Long locationId) {
+        // Repository 메서드 호출
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new LocationNotFoundException("해당 위치를 찾을 수 없습니다."));
+
+        return locationMapper.toLocationDto(location);
     }
 
 
@@ -146,9 +147,6 @@ public class LocationServiceImpl {
                 locationWithoutTag.add(locationResponseDto);
             }
         }
-        // 분리된 Dto들 유효성 검사
-        LocationServiceValidator.validateLocationDto(locationWithTag);
-        LocationServiceValidator.validateLocationDto(locationWithoutTag);
 
         // LocationSplitByTagDto로 묶어 반환
         return LocationSplitByTagDto.builder()

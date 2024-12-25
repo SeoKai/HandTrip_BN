@@ -22,6 +22,12 @@ public class ReviewServiceValidator {
         }
     }
 
+    public static void validateCheck(int check){
+        if (check < 1 || check > 3){
+            throw new IllegalArgumentException("check 값은 1, 2, 3 이어야합니다.");
+        }
+    }
+
     /**
      * user null 체크
      * @param user
