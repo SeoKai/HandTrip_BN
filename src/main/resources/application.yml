@@ -2,13 +2,13 @@ spring:
   application:
     name: TripSupporter
   datasource:
-    url: jdbc:mysql://localhost:3306/testdb  # MySQL 데이터베이스 URL
+    url: jdbc:mysql://13.209.114.27:3306/testdb  # MySQL 데이터베이스 URL
     username: root                              # MySQL 사용자 이름
     password: 1234                              # MySQL 비밀번호
     driver-class-name: com.mysql.cj.jdbc.Driver          # MySQL 드라이버 클래스
   jpa:
     hibernate:
-      ddl-auto: none                                   # 스키마 자동 업데이트
+      ddl-auto: update                                   # 스키마 자동 업데이트
     show-sql: true                                       # SQL 쿼리 로깅
     properties:
       hibernate:
