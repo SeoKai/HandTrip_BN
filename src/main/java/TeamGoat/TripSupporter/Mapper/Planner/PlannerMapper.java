@@ -4,7 +4,6 @@ import TeamGoat.TripSupporter.Domain.Dto.Planner.DailyPlanDto;
 import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
 import TeamGoat.TripSupporter.Domain.Dto.Planner.ToDoDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
-import TeamGoat.TripSupporter.Domain.Entity.Planner.DailyPlan;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
