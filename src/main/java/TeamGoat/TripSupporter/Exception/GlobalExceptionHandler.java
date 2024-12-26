@@ -34,7 +34,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body("찾을 수 없는 엔티티: " + exception.getMessage());
     }
-
     /**
      * 모든 예외 처리
      *

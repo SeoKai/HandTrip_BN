@@ -34,5 +34,5 @@ public class DailyPlan {
         this.planDate = planDate;
         this.planner = planner;
     }
-
 }
+

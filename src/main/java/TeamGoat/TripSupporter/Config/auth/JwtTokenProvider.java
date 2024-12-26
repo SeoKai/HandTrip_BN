@@ -31,6 +31,8 @@ public class JwtTokenProvider {
         return refreshExpiration;
     }
 
+
+
     public String generateAccessToken(String userEmail) {
         return Jwts.builder()
                 .setSubject(userEmail)

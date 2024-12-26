@@ -22,6 +22,7 @@ public class PlannerController {
     public ResponseEntity<Long> savePlanner(@RequestBody PlannerDto plannerDto) {
         System.out.println(plannerDto);
         Long plannerId = plannerService.savePlanner(plannerDto);
+        System.out.println(plannerDto);
         return ResponseEntity.ok(plannerId);
     }
 
@@ -45,7 +46,6 @@ public class PlannerController {
         log.info("사용자 email" + email + "DTO" + plannerDtos);
         return ResponseEntity.ok(plannerDtos);
     }
-
 
     // 플래너 수정 (id를 RequestBody로 받음)
     @PutMapping("/update")

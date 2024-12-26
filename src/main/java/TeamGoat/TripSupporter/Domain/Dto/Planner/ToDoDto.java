@@ -1,9 +1,6 @@
 package TeamGoat.TripSupporter.Domain.Dto.Planner;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -21,3 +18,4 @@ public class ToDoDto {
     private Double longitude;    // 경도
     private String placeImgUrl; // 장소 이미지 URL (새로 추가)
 }
+
