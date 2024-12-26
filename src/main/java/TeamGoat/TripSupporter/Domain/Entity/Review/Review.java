@@ -30,8 +30,10 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", foreignKey = @ForeignKey(name = "tbl_review_ibfk_2"))
-
     private Location location; // 위치 외래키
+
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Column(name = "rating", nullable = false)
     private Integer rating; // 평점
@@ -39,10 +41,10 @@ public class Review {
     @Column(name = "comment")
     private String comment; // 리뷰 코멘트
 
-    @Column(name = "PLANNER_CREATED_AT", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    @Column(name = "review_created_at", updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime reviewCreatedAt; // 리뷰 생성 시각
 
-    @Column(name = "PLANNER_UPDATED_AT", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "review_updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime reviewUpdatedAt; // 리뷰 수정 시각
 
     @Enumerated(EnumType.STRING)
@@ -53,15 +55,23 @@ public class Review {
     private List<ReviewImage> images = new ArrayList<>();
 
     @Builder
-    public Review(Long reviewId, User user, Location location, Integer rating, String comment, LocalDateTime reviewCreatedAt, LocalDateTime reviewUpdatedAt,ReviewStatus reviewStatus) {
+    public Review(Long reviewId, User user, Location location,String title,Integer rating, String comment, LocalDateTime reviewCreatedAt, LocalDateTime reviewUpdatedAt,ReviewStatus reviewStatus) {
         this.reviewId = reviewId;
         this.user = user;
         this.location = location;
+        this.title = title;
         this.rating = rating;
         this.comment = comment;
         this.reviewCreatedAt = reviewCreatedAt;
         this.reviewUpdatedAt = reviewUpdatedAt;
         this.reviewStatus = Objects.requireNonNullElse(reviewStatus, ReviewStatus.ACTIVE);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.reviewCreatedAt == null) {
+            this.reviewCreatedAt = LocalDateTime.now(); // 기본값 설정
+        }
     }
 
 
@@ -70,7 +80,8 @@ public class Review {
      * @param rating    별점 (1~5)
      * @param comment   리뷰본문
      */
-    public void updateReview(Integer rating, String comment) {
+    public void updateReview(String title, Integer rating, String comment) {
+        this.title = title;
         this.rating = rating;
         this.comment = comment;
         this.reviewUpdatedAt = LocalDateTime.now(); // 수정시각 갱신

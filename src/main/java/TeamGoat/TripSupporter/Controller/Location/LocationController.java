@@ -35,10 +35,11 @@ public class LocationController {
     private static final String DEFAULT_SORT_VALUE = "googleRating";
     private static final String DEFAULT_SORT_DIRECTION = "desc";
 
-    @GetMapping("/by-region")
-    public List<LocationDto> getLocationsByRegion(@RequestParam("regionId") Long regionId) {
-        log.info("GET /by-region with regionId: {}", regionId);
-        return locationServiceImpl.getLocationsByRegion(regionId);
+    @GetMapping("/getLocation")
+    public LocationDto getLocation(@RequestParam("locationId") Long locationId) {
+        log.info("GET /getLocation with locationId: {}", locationId);
+        LocationControllerValidator.validateLocationId(locationId);
+        return locationServiceImpl.getLocation(locationId);
     }
 
     /**
@@ -62,8 +63,8 @@ public class LocationController {
             @RequestParam(name = "sortValue", defaultValue = DEFAULT_SORT_VALUE) String sortValue,
             @RequestParam(name = "sortDirection", defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection
     ){
-        log.info("GET /searchLocation - regionId: {}, keyword: {}, tagNames: {}, page: {}, sortValue: {}, sortDirection: {}",
-                regionId, keyword, tagNames, page, sortValue, sortDirection);
+        log.info("GET /searchLocation - regionId: {}, keyword: {},tagNames: {}, page: {},pageSize: {}, sortValue: {}, sortDirection: {}",
+                regionId, keyword, tagNames, page,pageSize, sortValue, sortDirection);
 
         // tagNames를 쉼표로 분리하여 Set으로 변환
         Set<String> tagNameSet = new HashSet<>(Arrays.stream(tagNames.split(","))

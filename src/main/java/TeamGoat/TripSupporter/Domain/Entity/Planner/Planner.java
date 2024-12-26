@@ -67,7 +67,6 @@ public class Planner {
         this.plannerStartDate = updatedPlanner.getPlannerStartDate();
         this.plannerEndDate = updatedPlanner.getPlannerEndDate();
         this.region = updatedPlanner.getRegion();
-
         // 기존 DailyPlans 제거
         this.dailyPlans.clear();
 

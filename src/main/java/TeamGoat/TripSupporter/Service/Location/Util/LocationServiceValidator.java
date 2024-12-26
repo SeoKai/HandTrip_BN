@@ -44,6 +44,7 @@ public class LocationServiceValidator {
     }
 
     public static void validateLocationDto(List<?> locationDtoList){
+
         if(locationDtoList == null || locationDtoList.isEmpty()){
             throw new LocationMappingException("해당 지역 Data를 찾는대 실패하였습니다 또는 변환이 제대로 이루어지지 않았습니다.");
 

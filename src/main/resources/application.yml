@@ -17,9 +17,9 @@ spring:
 jwt:
   secret: 6lwIEEF7Hqg0PCO6KxHoGe6kVqPRdgvnmQp3KiN0RTj4E3dAfqQ2Yi4Ttr9MxlZT
   access:
-    expiration: 30000  # 30초 (30,000 밀리초)
+    expiration: 18000000
   refresh:
-    expiration: 60000  # 1분 (60,000 밀리초)
+    expiration: 36000000
 server:
   security:
     oauth2:

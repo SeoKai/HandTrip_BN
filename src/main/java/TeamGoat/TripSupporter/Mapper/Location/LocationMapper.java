@@ -54,7 +54,7 @@ public class LocationMapper {
                 .build();
     }
 
-    public LocationResponseDto locationResponseDto(LocationWithDistanceDto locationWithDistanceDto){
+    public LocationResponseDto toResponseDtoWithDistance(LocationWithDistanceDto locationWithDistanceDto){
         Location location = locationWithDistanceDto.getLocation();
         Double distance = locationWithDistanceDto.getDistance();
 
