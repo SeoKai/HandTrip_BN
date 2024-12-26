@@ -1,10 +1,7 @@
 package TeamGoat.TripSupporter.Domain.Entity.Planner;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +21,7 @@ public class DailyPlan {
     @Column(name = "plan_date", nullable = false)
     private LocalDate planDate; // 하루 날짜
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "planner_id", nullable = false)
     private Planner planner; // 상위 플래너
@@ -37,3 +35,4 @@ public class DailyPlan {
         this.planner = planner;
     }
 }
+

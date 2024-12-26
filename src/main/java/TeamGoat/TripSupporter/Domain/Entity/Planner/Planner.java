@@ -10,6 +10,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tbl_planner")
@@ -64,11 +67,15 @@ public class Planner {
         this.plannerStartDate = updatedPlanner.getPlannerStartDate();
         this.plannerEndDate = updatedPlanner.getPlannerEndDate();
         this.region = updatedPlanner.getRegion();
-
-        // DailyPlans 업데이트
+        // 기존 DailyPlans 제거
         this.dailyPlans.clear();
-        this.dailyPlans.addAll(updatedPlanner.getDailyPlans());
-    }
 
+        // 새로운 DailyPlans 추가
+        updatedPlanner.getDailyPlans().forEach(newDailyPlan -> {
+            newDailyPlan.setPlanner(this); // Planner와 연결 설정
+            this.dailyPlans.add(newDailyPlan);
+        });
+
+    }
 
 }
