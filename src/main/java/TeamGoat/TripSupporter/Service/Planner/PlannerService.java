@@ -95,8 +95,4 @@ public class PlannerService {
         plannerRepository.delete(planner);
     }
 
-        // 기존 Planner의 데이터를 업데이트
-        existingPlanner.updateWith(updatedPlanner);
-    }
-
 }
