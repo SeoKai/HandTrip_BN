@@ -19,10 +19,13 @@ public class EmailController {
 
     @PostMapping("/send")
     public String sendEmail(@RequestBody Map<String, String> payload) {
-        log.info("인증메일 전송");
+        log.info("메일 전송");
         String userEmail = payload.get("userEmail");
-        emailService.sendVerificationEmail(userEmail);
-        return "인증 이메일이 발송되었습니다.";
+        String mode = payload.get("mode");
+        String phone = payload.get("userPhone");
+        log.info("payload 확인 userEmail : {}, mode : {}, phone : {}", userEmail, mode, phone);
+        emailService.sendVerificationEmail(userEmail,phone,mode);
+        return "이메일이 발송되었습니다.";
     }
 
     @PostMapping("/verify")

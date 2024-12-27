@@ -45,8 +45,7 @@ public class UserServiceImpl implements UserService {
     public AuthDto.LoginResponse register(UserAndProfileDto userAndProfileDto) {
         // 중복 체크
         log.info("userServiceImpl register invoke, 파라미터 확인 UserAndProfileDto : {}", userAndProfileDto);
-        if (userRepository.existsByUserEmail(userAndProfileDto.getUserDto().getUserEmail()) ||
-                userProfileRepository.existsByUserNickname(userAndProfileDto.getUserProfileDto().getUserNickname())) {
+        if (userRepository.existsByUserEmail(userAndProfileDto.getUserDto().getUserEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일 또는 닉네임입니다.");
         }
 

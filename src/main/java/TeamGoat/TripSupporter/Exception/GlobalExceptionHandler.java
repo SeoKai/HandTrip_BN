@@ -3,6 +3,7 @@ package TeamGoat.TripSupporter.Exception;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -45,5 +46,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("서버 내부 오류가 발생했습니다. 메시지: " + exception.getMessage());
+    }
+
+    @ExceptionHandler(MailSendException.class)
+    public ResponseEntity<String> handleMailSendException(MailSendException exception) {
+        return ResponseEntity
+               .status(HttpStatus.INTERNAL_SERVER_ERROR)
+               .body("메일 전송 실패: " + exception.getMessage());
     }
 }
