@@ -35,6 +35,9 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+  redis:
+    host: localhost
+    port: 6379
 
 
 jwt:
