@@ -31,6 +31,7 @@ public class PlannerMapper {
                 .plannerEndDate(planner.getPlannerEndDate()) // 종료일
                 .regionId(planner.getRegion().getRegionId()) // 지역 ID
                 .regionName(planner.getRegion().getRegionName()) // 지역 이
+                .userEmail(planner.getEmail()) // 이메일
                 .dailyPlans(planner.getDailyPlans().stream()
                         .map(dailyPlan -> {
                             DailyPlanDto dailyPlanDto = new DailyPlanDto();
@@ -68,7 +69,7 @@ public class PlannerMapper {
                 .plannerTitle(plannerDto.getPlannerTitle()) // 플래너 제목
                 .plannerStartDate(plannerDto.getPlannerStartDate()) // 시작일
                 .plannerEndDate(plannerDto.getPlannerEndDate()) // 종료일
-                .email("test@example.com") // 예시 사용자 이메일
+                .email(plannerDto.getUserEmail()) // 예시 사용자 이메일
                 .region(region) // 연결된 Region 엔티티
                 .build();
 

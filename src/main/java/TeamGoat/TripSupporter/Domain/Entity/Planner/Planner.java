@@ -51,6 +51,8 @@ public class Planner {
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DailyPlan> dailyPlans = new ArrayList<>();
 
+
+
     @Builder
     public Planner(String plannerTitle, LocalDate plannerStartDate, LocalDate plannerEndDate, String email, Region region) {
         this.plannerTitle = plannerTitle;
@@ -75,6 +77,8 @@ public class Planner {
             newDailyPlan.setPlanner(this); // Planner와 연결 설정
             this.dailyPlans.add(newDailyPlan);
         });
+
+        this.plannerUpdatedAt = LocalDateTime.now();
 
     }
 

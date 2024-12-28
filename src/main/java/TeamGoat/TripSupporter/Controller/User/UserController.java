@@ -11,10 +11,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -47,5 +46,18 @@ public class UserController {
     public ResponseEntity<String> findPassword(@RequestBody UserDto userDto) {
         userService.findPassword(userDto.getUserEmail(), userDto.getUserPhone());
         return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다.");
+    }
+
+    /**
+     * 이메일 중복여부 확인 api
+     * @param payload post data
+     * @return
+     */
+    @PostMapping("/duplicate-email")
+    public ResponseEntity<Boolean> checkDuplicateEmail(@RequestBody Map<String, String> payload) {
+        String userEmail = payload.get("userEmail");
+        log.info("Get /user/duplicate-email?userEmail={}", userEmail);
+        boolean isDuplicate = !userService.isEmailDuplicate(userEmail);
+        return ResponseEntity.ok(isDuplicate);
     }
 }

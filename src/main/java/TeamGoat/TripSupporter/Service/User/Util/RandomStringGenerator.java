@@ -11,7 +11,7 @@ public class RandomStringGenerator {
     private static final String DIGITS = "0123456789"; // 난수에 포함될 숫자들
     private static final String SPECIAL_CHARACTERS = "!@#$%";  //난수에 포함될 특수문자들
 
-    private static SecureRandom random = new SecureRandom();
+    public static SecureRandom random = new SecureRandom();
 
     /**
      * 입력받은 자릿수 길이 만큼의 난수 문자열을 특수문자의 갯수를 제한하여 생성합니다.

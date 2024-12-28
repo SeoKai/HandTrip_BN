@@ -20,6 +20,25 @@ spring:
       hibernate:
         format_sql: true                           # SQL 포멧
         dialect: org.hibernate.dialect.MySQL8Dialect # MySQL 8 Dialect 추가
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: handtrip2024@gmail.com
+    password: ondspowvlzzjayst
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+  redis:
+    host: localhost
+    port: 6379
+
 
 jwt:
   secret: 6lwIEEF7Hqg0PCO6KxHoGe6kVqPRdgvnmQp3KiN0RTj4E3dAfqQ2Yi4Ttr9MxlZT
