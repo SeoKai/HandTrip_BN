@@ -17,3 +17,4 @@ public class ToDoDto {
     private Double longitude;    // 경도
     private String placeImgUrl; // 장소 이미지 URL (새로 추가)
 }
+

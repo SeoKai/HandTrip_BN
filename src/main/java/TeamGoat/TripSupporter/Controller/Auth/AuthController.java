@@ -28,6 +28,7 @@ public class AuthController {
                 loginRequest.getUserEmail(),
                 loginRequest.getUserPassword()
         );
+        log.info("토큰 확인 : {}",tokenInfo);
 
         // AccessToken 만료 시간 계산
         long accessTokenExpiry = System.currentTimeMillis() + jwtTokenProvider.getAccessExpiration();
