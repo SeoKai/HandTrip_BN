@@ -31,8 +31,10 @@ public class UserController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthDto.LoginResponse> register(@Valid @RequestBody UserAndProfileDto userAndProfileDto) {
+        log.info("Post /user/register 파라미터 정보 확인 : {}", userAndProfileDto);
         // UserService를 통해 회원가입 후 로그인 응답 반환
         AuthDto.LoginResponse response = userService.register(userAndProfileDto);
+        log.info("Post /user/register 반환 정보 확인 : {}", response);
         return ResponseEntity.ok(response);
     }
 

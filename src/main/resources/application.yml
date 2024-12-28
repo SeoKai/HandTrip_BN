@@ -2,10 +2,16 @@ spring:
   application:
     name: TripSupporter
   datasource:
-    url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb  # MySQL 데이터베이스 URL
-    username: admin                              # MySQL 사용자 이름
-    password: trip970708!                         # MySQL 비밀번호
-    driver-class-name: com.mysql.cj.jdbc.Driver   # MySQL 드라이버 클래스
+#    서버에 확인할때 사용
+#    url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb  # MySQL 데이터베이스 URL
+#    username: admin                              # MySQL 사용자 이름
+#    password: trip970708!                         # MySQL 비밀번호
+#    driver-class-name: com.mysql.cj.jdbc.Driver   # MySQL 드라이버 클래스
+#    로컬에서 테스트 할떄 사용
+    url: jdbc:mysql://localhost:3306/testdb  # MySQL 데이터베이스 URL
+    username: root                              # MySQL 사용자 이름
+    password: 1234                              # MySQL 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver          # MySQL 드라이버 클래스
   jpa:
     hibernate:
       ddl-auto: update                            # 스키마 자동 업데이트
@@ -18,9 +24,9 @@ spring:
 jwt:
   secret: 6lwIEEF7Hqg0PCO6KxHoGe6kVqPRdgvnmQp3KiN0RTj4E3dAfqQ2Yi4Ttr9MxlZT
   access:
-    expiration: 30000  # 30초 (30,000 밀리초)
+    expiration: 18000000
   refresh:
-    expiration: 60000  # 1분 (60,000 밀리초)
+    expiration: 36000000
 server:
   security:
     oauth2:
