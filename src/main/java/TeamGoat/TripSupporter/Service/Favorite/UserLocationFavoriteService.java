@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +81,7 @@ public class UserLocationFavoriteService {
      * @param pageSize 한 페이지에 포함될 항목 수
      * @param sortValue 정렬 기준 필드
      * @param sortDirection 정렬 방향 ("ASC" 또는 "DESC")
-     * @return 페이징 처리된 사용자 즐겨찾기 여행지 목록 (LocationResponseDto 리스트)
+     * @return 페이징 처리된 사용자 즐겨찾기 여행지 목록 (LocationResponseDto 리   스트)
      *
      * @throws UserNotFoundException 사용자가 존재하지 않으면 발생
      * @throws LocationNotFoundException 여행지 정보가 존재하지 않으면 발생
@@ -91,18 +92,19 @@ public class UserLocationFavoriteService {
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
         Long UserId = user.getUserId();
-        log.info("user : {}",user);
+        log.info("1, userId : {}, userEmail : {}",UserId,userEmail);
         // 페이징 처리와 정렬을 위한 Pageable 객체를 생성
         Pageable pageable = getPageable(page,pageSize,sortValue,sortDirection);
 
         // 사용자의 여행지 즐겨찾기 목록 조회
-        Page<UserLocationFavorite> favorites = favoriteRepository.findByUser_UserId(UserId,pageable);
-        log.info("3");
+        Page<UserLocationFavorite> favorites = favoriteRepository.findByUser(user,pageable);
+
         // 즐겨찾기 목록을 LocationResponseDto로 변환하여 반환
         return favorites.map(favorite -> {
             Location location = favorite.getLocation();
             return locationMapper.toResponseDto(location);  // LocationResponseDto로 변환
         });
+
 
     }
 

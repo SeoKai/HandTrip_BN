@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -40,10 +41,12 @@ public class UserLocationFavoriteController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteFavoriteLocation(@RequestHeader("Authorization") String authorization, @RequestBody Long locationId) {
+    public ResponseEntity<String> deleteFavoriteLocation(@RequestHeader("Authorization") String authorization, @RequestBody Map<String, Long> body) {
         log.info("Delete favorite location");
         String token = authorization.replace("Bearer ", "");
         String userEmail = jwtTokenProvider.extractUserEmail(token);
+
+        Long locationId = body.get("locationId");
 
         LocationControllerValidator.validateLocationId(locationId);
 
@@ -82,6 +85,8 @@ public class UserLocationFavoriteController {
         // 사용자 즐겨찾기 목록 조회
         Page<LocationResponseDto> favoriteLocations = userLocationFavoriteService
                 .getUserFavoriteLocations(userEmail, page, pageSize, sortValue, sortDirection);
+
+//        List<LocationResponseDto> favoriteLocations = userLocationFavoriteService.getUserFavoriteLocations(userEmail, page, pageSize, sortValue, sortDirection);
 
         return ResponseEntity.ok(favoriteLocations);  // 페이징된 즐겨찾기 여행지 목록 반환
     }
