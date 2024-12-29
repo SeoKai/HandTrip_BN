@@ -1,11 +1,14 @@
 package TeamGoat.TripSupporter.Domain.Entity.User;
 
+import TeamGoat.TripSupporter.Domain.Entity.Favorite.UserLocationFavorite;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "TBL_USER")
@@ -47,6 +50,10 @@ public class User {
 
     @Column(name = "PROVIDER_ID")
     private String providerId;
+
+    // 즐겨찾기
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserLocationFavorite> favorites = new ArrayList<>();
 
     @Builder
     public User(Long userId, String userEmail, String userPassword, String userPhone,
