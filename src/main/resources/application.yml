@@ -92,6 +92,21 @@ server:
     level:
       org.springframework.web: DEBUG
 
+  servlet:
+    multipart:
+      # 최대 파일 크기
+      max-file-size: 5MB
+      # 최대 요청 크기 (여러 파일 업로드 시)
+      max-request-size: 5MB
+      # 임시 파일을 저장할 경로
+      location: /tmp/uploads
+  file:
+    upload-dir: upload/images/  # 운영 환경 파일 경로
+    url-prefix: http://localhost:5050/images/
+  # static 리소스 경로 설정 추가
+  resources:
+    static-locations: classpath:/static/
+
 
 
 

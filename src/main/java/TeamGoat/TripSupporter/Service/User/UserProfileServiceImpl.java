@@ -8,14 +8,30 @@ import TeamGoat.TripSupporter.Repository.User.UserProfileRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
+
+//    @Value("${file.upload-dir}")
+//    private String uploadDir;
+//    @Value("${file.url-prefix}")
+//    private String urlPrefix;
+
+    private final String uploadDir = "src/main/resources/static/images/";  // 업로드 디렉토리 경로
+    private final String urlPrefix = "http://localhost:5050/images/";  // 이미지 접근 URL
 
     @Override
     public UserProfileDto getProfileByUserEmail(String email) {
@@ -35,6 +51,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Transactional
     public UserProfileDto updateUserProfile(String userEmail, UserProfileDto updatedProfileDto) {
+        log.info("유저 업데이트 진행중?");
         // User를 이메일로 조회
         if (userEmail == null || userEmail.isEmpty()) {
             throw new UserProfileException("유효하지 않은 이메일입니다.");
@@ -73,5 +90,63 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .profileImageUrl(updatedProfile.getProfileImageUrl())
                 .userBio(updatedProfile.getUserBio())
                 .build();
+    }
+
+    @Transactional
+    public String saveProfileImage(String Email,MultipartFile file) throws IOException{
+        log.info("saveProfileImage is invoked");
+        // 파일 크기 제한 예시: 최대 5MB
+        if (file.getSize() > 5 * 1024 * 1024) {
+            throw new IOException("파일 크기가 너무 큽니다. 최대 5MB까지 가능합니다.");
+        }
+
+        // 파일 확장자 확인 (예시: jpg, jpeg, png만 허용)
+        String originalFilename = file.getOriginalFilename();
+        log.info("originalFilename : {} ",originalFilename);
+        if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png)$")) {
+            throw new IOException("지원되지 않는 파일 형식입니다.");
+        }
+
+        // 파일 경로
+        String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID() + "-" + originalFilename;
+        String directoryPath = uploadDir;
+        log.info("fileName : {} , directoryPath : {}", fileName, directoryPath);
+
+        // 프로젝트 루트 디렉토리 경로를 기준으로 파일을 저장할 디렉토리 경로 계산
+        String absoluteDirPath = new File("").getAbsolutePath() + File.separator + directoryPath;
+        log.info("absoluteDirPath : {}", absoluteDirPath);
+
+        // 디렉토리가 없으면 생성
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                throw new IOException("디렉토리 생성에 실패했습니다.");
+            }
+        }
+        log.info("디렉토리 경로 생성 확인 : " + directory.exists());
+
+        // 파일 저장
+        String imagePath = absoluteDirPath + File.separator + fileName;
+        log.info("imagePath : {} ", imagePath);
+
+        File dest = new File(imagePath);
+
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            log.error("파일 저장 중 오류 발생: {}", e.getMessage(), e);
+            throw new IOException("파일 저장에 실패했습니다.", e);
+        }
+
+        // 저장된 이미지 URL를 userProfile에 저장
+        String url = urlPrefix + fileName;
+        log.info("url : {} ", url);
+
+        UserProfile userProfile = userProfileRepository.findByUser_UserEmail(Email).orElseThrow(()->new UserProfileException("사용자를 찾을 수 없습니다"));
+        userProfile.updateUserProfileImgUrl(url);
+        log.info("유저 프로필 이미지"+userProfile.getProfileImageUrl());
+        userProfileRepository.save(userProfile);
+
+        return url;
     }
 }

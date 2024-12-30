@@ -7,6 +7,9 @@ import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -54,4 +57,15 @@ public class GlobalExceptionHandler {
                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                .body("메일 전송 실패: " + exception.getMessage());
     }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(MalformedURLException.class)
+    public ResponseEntity<String> handleMalformedURLException(MalformedURLException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 URL 처리 오류");
+    }
+
 }
