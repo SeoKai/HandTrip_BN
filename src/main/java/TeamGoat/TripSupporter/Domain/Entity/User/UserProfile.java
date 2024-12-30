@@ -3,6 +3,8 @@ package TeamGoat.TripSupporter.Domain.Entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "TBL_USER_PROFILE")
 @Getter
@@ -36,4 +38,7 @@ public class UserProfile {
         this.user = user;
     }
 
+    public void updateUserProfileImgUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }
