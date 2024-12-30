@@ -1,15 +1,17 @@
 package TeamGoat.TripSupporter.Domain.Entity.Location;
 
+import TeamGoat.TripSupporter.Domain.Entity.Favorite.UserLocationFavorite;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "tbl_location")
 @Getter
-@Setter
-@ToString(exclude = {"region", "tags"}) // 순환 참조 방지
+@ToString(exclude = {"region", "tags", "favorites"}) // 순환 참조 방지
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
@@ -65,6 +67,10 @@ public class Location {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags; // 연관 태그
+
+    // 즐겨 찾기
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserLocationFavorite> favorites = new ArrayList<>();
 
     @Builder
     public Location(Long locationId, String placeId, String locationName, String description, Double latitude, Double longitude,
