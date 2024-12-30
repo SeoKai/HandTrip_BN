@@ -65,17 +65,29 @@ public class AiController {
     }
 
 
-    @GetMapping("/recommendations/{userId}")
-    public ResponseEntity<List<String>> fetchRecommendations(@PathVariable Long userId) {
+    @PostMapping("/verify")
+    public ResponseEntity<List<String>> verifyAndFetchRecommendations(@RequestHeader("Authorization") String token) {
         try {
-            // Flask 서버에서 추천 데이터 가져오기
+            // JWT에서 이메일 추출
+            String email = jwtTokenProvider.extractUserEmail(token.replace("Bearer ", ""));
+            log.info("Extracted email: {}", email);
+
+            // 이메일로 userId 조회
+            Long userId = aiRecommendationService.getUserIdByEmail(email);
+            log.info("UserId for email {}: {}", email, userId);
+
+            // Flask 서버에 userId 전달하여 추천 데이터 가져오기
             List<String> recommendations = aiModelIntegrationService.getRecommendationsFromFlask(userId);
-            System.out.println(recommendations);
+            log.info("Recommendations: {}", recommendations);
+
+            // 추천 데이터를 반환
             return ResponseEntity.ok(recommendations);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            log.error("Error occurred: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
     @GetMapping("/random-places")
