@@ -68,7 +68,7 @@ public class LocationMapper {
                 .description(location.getDescription())
                 .googleRating(location.getGoogleRating())
                 .userRatingsTotal(location.getUserRatingsTotal())
-                .placeImgUrl(location.getPlaceImgUrl())
+                .placeImgUrl(PhotoUrlGenerator.generatePhotoUrl(location.getPlaceImgUrl()))
                 .formattedAddress(location.getFormattedAddress())
                 .openingHours(location.getOpeningHours())
                 .website(location.getWebsite())
