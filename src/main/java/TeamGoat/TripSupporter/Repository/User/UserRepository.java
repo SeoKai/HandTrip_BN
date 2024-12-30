@@ -3,6 +3,8 @@ package TeamGoat.TripSupporter.Repository.User;
 
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -40,7 +42,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * 등록된 Email 과 비밀번호 가 일치하는 지 확인
      *
-     * @param email 확인 할 이메일
+     * @param email    확인 할 이메일
      * @param password 확인 할 비밀번호
      * @return 등록 된 이메일 과 비밀번호가 일치하면 true, 불일치 하면 false
      */
@@ -49,4 +51,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserEmailAndUserPhone(String email, String password);
 
 
+    /**
+     * 이메일과 일치하는 유저 아이디를 받아오는 메서드
+     *
+     * @param email 확인할 이메일
+     * @return 이메일과 일치하는 userId
+     */
+    @Query("SELECT u.userId FROM User u WHERE u.userEmail = :email")
+    Optional<Long> findUserIdByEmail(@Param("email") String email);
 }

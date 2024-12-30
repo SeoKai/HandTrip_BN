@@ -4,36 +4,43 @@ import TeamGoat.TripSupporter.Domain.Dto.Ai.AiUserDto;
 import TeamGoat.TripSupporter.Domain.Entity.Ai.AiUser;
 import TeamGoat.TripSupporter.Mapper.Ai.AiUserMapper;
 import TeamGoat.TripSupporter.Repository.Ai.AiUserRepository;
+import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AiRecommendationService {
 
     private final AiUserRepository aiUserRepository;
-
-//    /**
-//     * 사용자 ID로 추천 데이터를 조회합니다.
-//     *
-//     * @param userId 사용자 ID
-//     * @return 추천 데이터 리스트
-//     */
-//    public List<Long> getRecommendationsByUserId(Long userId) {
-//        return aiUserRepository.findByUser_UserId(userId)
-//                .stream()
-//                .map(aiUser -> aiUser.getLocation().getLocationId()) // Location 객체에서 ID를 추출
-//                .collect(Collectors.toList());
-//    }
+    private final UserRepository userRepository; // UserRepository를 통해 userId를 조회
 
     /**
-     * 새로운 추천 데이터를 저장합니다.
+     * 이메일을 통해 사용자 ID를 조회합니다.
      *
-     * @param aiUserDto 추천 데이터 DTO
+     * @param email 사용자 이메일
+     * @return 사용자 ID
      */
-    public void saveRecommendation(AiUserDto aiUserDto) {
-        AiUser aiUser = AiUserMapper.toEntity(aiUserDto);
-        aiUserRepository.save(aiUser);
+    public Long getUserIdByEmail(String email) {
+        return userRepository.findUserIdByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다: " + email));
     }
+
+
+    public void saveRecommendations(List<AiUserDto> aiUserDtoList) {
+        if (aiUserDtoList == null || aiUserDtoList.isEmpty()) {
+            throw new IllegalArgumentException("추천 데이터가 비어있습니다.");
+        }
+
+        List<AiUser> aiUsers = aiUserDtoList.stream()
+                .map(AiUserMapper::toEntity)
+                .collect(Collectors.toList());
+
+        aiUserRepository.saveAll(aiUsers); // 데이터베이스에 저장
+    }
+
+
 }
