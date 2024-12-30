@@ -5,6 +5,7 @@ import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
 import TeamGoat.TripSupporter.Domain.Dto.Planner.ToDoDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
+import TeamGoat.TripSupporter.Service.Location.Util.PhotoUrlGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +46,9 @@ public class PlannerMapper {
                                         toDoDto.setFormattedAddress(toDo.getLocation().getFormattedAddress());
                                         toDoDto.setLatitude(toDo.getLocation().getLatitude());
                                         toDoDto.setLongitude(toDo.getLocation().getLongitude());
-                                        toDoDto.setPlaceImgUrl(toDo.getLocation().getPlaceImgUrl()); // 이미지 URL 매핑
+                                        // 이미지 URL 동적 생성
+                                        String dynamicPhotoUrl = PhotoUrlGenerator.generatePhotoUrl(toDo.getLocation().getPlaceImgUrl());
+                                        toDoDto.setPlaceImgUrl(dynamicPhotoUrl);
                                         return toDoDto;
                                     })
                                     .toList());
