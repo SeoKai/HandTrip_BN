@@ -17,10 +17,14 @@ public class AiUserMapper {
     }
 
     public static AiUser toEntity(AiUserDto aiUserDto) {
+        if (aiUserDto.getUserId() == null || aiUserDto.getLocationId() == null) {
+            throw new IllegalArgumentException("userId와 locationId는 필수입니다.");
+        }
         return AiUser.builder()
                 .user(User.builder().userId(aiUserDto.getUserId()).build())
                 .location(Location.builder().locationId(aiUserDto.getLocationId()).build())
                 .rating(aiUserDto.getRating())
                 .build();
     }
+
 }
