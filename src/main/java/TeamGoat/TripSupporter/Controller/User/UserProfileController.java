@@ -16,7 +16,7 @@ public class UserProfileController {
     /**
      * 로그인된 사용자의 프로필 조회
      */
-    @GetMapping
+    @GetMapping("/get")
     public UserProfileDto getUserProfile() {
         // SecurityContext에서 현재 사용자 이메일 가져오기
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
