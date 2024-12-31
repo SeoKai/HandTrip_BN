@@ -103,7 +103,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         // 파일 확장자 확인 (예시: jpg, jpeg, png만 허용)
         String originalFilename = file.getOriginalFilename();
         log.info("originalFilename : {} ",originalFilename);
-        if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png)$")) {
+
+//        !originalFilename.matches(".*\\.(jpg|jpeg|png)$")
+        if (originalFilename == null ) {
             throw new IOException("지원되지 않는 파일 형식입니다.");
         }
 
