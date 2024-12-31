@@ -72,41 +72,37 @@ public class AiController {
         try {
             List<LocationDto> locationDtos;
 
-            if (token != null && !token.isEmpty()) {
-                // JWT에서 이메일 추출
+            if (token == null || token.isEmpty()) {
+                log.info("비로그인 상태. 랜덤 추천 (음식 제외) 반환.");
+
+                // 랜덤으로 5개 장소 가져오기 (음식 제외)
+                List<Location> randomLocations = locationRepository.findRandomTopLocationsExcludingFood();
+                locationDtos = randomLocations.stream()
+                        .map(locationMapper::toLocationDto)
+                        .collect(Collectors.toList());
+            } else {
                 String email = jwtTokenProvider.extractUserEmail(token.replace("Bearer ", ""));
-                log.info("Extracted email: {}", email);
-
-                // 이메일로 userId 조회
                 Long userId = aiRecommendationService.getUserIdByEmail(email);
-                log.info("UserId for email {}: {}", email, userId);
 
-                // Flask 서버에서 추천 결과 가져오기
                 List<String> recommendations = aiModelIntegrationService.getRecommendationsFromFlask(userId);
-                log.info("Recommendations: {}", recommendations);
 
                 if (recommendations != null && !recommendations.isEmpty()) {
-                    // 추천 데이터가 있으면 매핑
                     List<Location> locations = recommendations.stream()
-                            .map(locationName -> locationRepository.findByLocationName(locationName)) // Optional<Location> 반환
-                            .filter(Optional::isPresent) // 존재하는 경우에만 필터링
-                            .map(Optional::get) // Optional에서 Location 객체 추출
+                            .map(locationRepository::findByLocationName)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
                             .collect(Collectors.toList());
 
                     locationDtos = locations.stream()
-                            .map(locationMapper::toLocationDto) // Location -> LocationDto 변환
+                            .map(locationMapper::toLocationDto)
                             .collect(Collectors.toList());
                 } else {
-                    // 추천 데이터가 없으면 Google 평점 기반 반환
-                    locationDtos = locationRepository.findTop4ByOrderByGoogleRatingDesc().stream()
+                    log.info("추천 데이터가 없음. 랜덤 추천 (음식 제외) 반환.");
+                    List<Location> randomLocations = locationRepository.findRandomTopLocationsExcludingFood();
+                    locationDtos = randomLocations.stream()
                             .map(locationMapper::toLocationDto)
                             .collect(Collectors.toList());
                 }
-            } else {
-                // 비로그인 상태에서는 Google 평점 기반 반환
-                locationDtos = locationRepository.findTop4ByOrderByGoogleRatingDesc().stream()
-                        .map(locationMapper::toLocationDto)
-                        .collect(Collectors.toList());
             }
 
             return ResponseEntity.ok(locationDtos);
@@ -115,6 +111,9 @@ public class AiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
 
 
 
