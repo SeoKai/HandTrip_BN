@@ -203,7 +203,22 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      */
     Optional<Location> findByLocationName(String locationName);
 
-    List<Location> findTop4ByOrderByGoogleRatingDesc();
+    @Query(value = """
+                SELECT DISTINCT l.* 
+                FROM tbl_location l
+                JOIN tbl_location_tag lt ON l.location_id = lt.location_id
+                JOIN tbl_tag t ON lt.tag_id = t.tag_id
+                WHERE t.tag_name IN ('관광명소', '랜드마크', '문화', '쇼핑')
+                  AND l.location_id NOT IN (
+                      SELECT lt.location_id 
+                      FROM tbl_location_tag lt
+                      JOIN tbl_tag t ON lt.tag_id = t.tag_id
+                      WHERE t.tag_name = '음식'
+                  )
+                ORDER BY RAND()
+                LIMIT 4
+            """, nativeQuery = true)
+    List<Location> findRandomTopLocationsExcludingFood();
 }
 
 
