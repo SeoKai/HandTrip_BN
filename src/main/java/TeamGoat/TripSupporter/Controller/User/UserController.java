@@ -86,22 +86,16 @@ public class UserController {
         // 이메일로 userId 조회
         Long userId = aiRecommendationService.getUserIdByEmail(userEmail);
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 이메일입니다.");
+            throw new IllegalArgumentException("유효하지 않은 이메일입니다.");
         }
 
         log.info("UserId for email {}: {}", userEmail, userId);
 
         // 비밀번호 변경 로직 실행
-        try {
-            userService.changePassword(userId, request.getCurrentPassword(), request.getNewPassword());
-            log.info("사용자 [{}]의 비밀번호가 성공적으로 변경되었습니다.", userId);
-            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
-        } catch (IllegalArgumentException e) {
-            log.error("비밀번호 변경 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            log.error("서버 오류 발생: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류가 발생했습니다.");
-        }
+        userService.changePassword(userId, request.getCurrentPassword(), request.getNewPassword());
+        log.info("사용자 [{}]의 비밀번호가 성공적으로 변경되었습니다.", userId);
+
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
     }
+
 }
