@@ -54,8 +54,12 @@ public interface UserService {
      */
     boolean isEmailDuplicate(String email);
 
-
-
+    /**
+     * 비밀번호 변경 메서드
+     * @param userId 사용자 Id
+     * @param newPassword 새로운 비밀번호
+     */
+    void changePassword(Long userId, String currentPassword, String newPassword);
 
 
 
