@@ -1,15 +1,20 @@
 package TeamGoat.TripSupporter.Controller.User;
 
+import TeamGoat.TripSupporter.Config.auth.JwtTokenProvider;
 import TeamGoat.TripSupporter.Domain.Dto.Auth.AuthDto;
 import TeamGoat.TripSupporter.Domain.Dto.Auth.TokenInfo;
+import TeamGoat.TripSupporter.Domain.Dto.User.ChangePasswordRequestDto;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserAndProfileDto;
 import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
+import TeamGoat.TripSupporter.Repository.Ai.AiUserRepository;
+import TeamGoat.TripSupporter.Service.Ai.AiRecommendationService;
 import TeamGoat.TripSupporter.Service.User.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +27,12 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AiRecommendationService aiRecommendationService;
 
     /**
      * 회원가입 처리
+     *
      * @param userAndProfileDto 회원가입 요청 데이터
      * @return JWT 토큰 정보
      */
@@ -39,6 +47,7 @@ public class UserController {
 
     /**
      * 비밀번호 찾기 처리
+     *
      * @param userDto 비밀번호 찾기 요청 데이터 (이메일, 전화번호)
      * @return 성공 메시지
      */
@@ -50,6 +59,7 @@ public class UserController {
 
     /**
      * 이메일 중복여부 확인 api
+     *
      * @param payload post data
      * @return
      */
@@ -59,5 +69,39 @@ public class UserController {
         log.info("Get /user/duplicate-email?userEmail={}", userEmail);
         boolean isDuplicate = !userService.isEmailDuplicate(userEmail);
         return ResponseEntity.ok(isDuplicate);
+    }
+
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestHeader("Authorization") String authorization,
+            @RequestBody ChangePasswordRequestDto request) {
+
+        // JWT에서 이메일 추출
+        String token = authorization.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.extractUserEmail(token);
+
+        log.info("Extracted userEmail from JWT: {}", userEmail);
+
+        // 이메일로 userId 조회
+        Long userId = aiRecommendationService.getUserIdByEmail(userEmail);
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 이메일입니다.");
+        }
+
+        log.info("UserId for email {}: {}", userEmail, userId);
+
+        // 비밀번호 변경 로직 실행
+        try {
+            userService.changePassword(userId, request.getCurrentPassword(), request.getNewPassword());
+            log.info("사용자 [{}]의 비밀번호가 성공적으로 변경되었습니다.", userId);
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } catch (IllegalArgumentException e) {
+            log.error("비밀번호 변경 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            log.error("서버 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류가 발생했습니다.");
+        }
     }
 }
