@@ -20,7 +20,9 @@ import TeamGoat.TripSupporter.Service.Ai.AiRecommendationService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/ai")
@@ -66,27 +68,54 @@ public class AiController {
 
 
     @PostMapping("/verify")
-    public ResponseEntity<List<String>> verifyAndFetchRecommendations(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<LocationDto>> verifyAndFetchRecommendations(@RequestHeader(value = "Authorization", required = false) String token) {
         try {
-            // JWT에서 이메일 추출
-            String email = jwtTokenProvider.extractUserEmail(token.replace("Bearer ", ""));
-            log.info("Extracted email: {}", email);
+            List<LocationDto> locationDtos;
 
-            // 이메일로 userId 조회
-            Long userId = aiRecommendationService.getUserIdByEmail(email);
-            log.info("UserId for email {}: {}", email, userId);
+            if (token != null && !token.isEmpty()) {
+                // JWT에서 이메일 추출
+                String email = jwtTokenProvider.extractUserEmail(token.replace("Bearer ", ""));
+                log.info("Extracted email: {}", email);
 
-            // Flask 서버에 userId 전달하여 추천 데이터 가져오기
-            List<String> recommendations = aiModelIntegrationService.getRecommendationsFromFlask(userId);
-            log.info("Recommendations: {}", recommendations);
+                // 이메일로 userId 조회
+                Long userId = aiRecommendationService.getUserIdByEmail(email);
+                log.info("UserId for email {}: {}", email, userId);
 
-            // 추천 데이터를 반환
-            return ResponseEntity.ok(recommendations);
+                // Flask 서버에서 추천 결과 가져오기
+                List<String> recommendations = aiModelIntegrationService.getRecommendationsFromFlask(userId);
+                log.info("Recommendations: {}", recommendations);
+
+                if (recommendations != null && !recommendations.isEmpty()) {
+                    // 추천 데이터가 있으면 매핑
+                    List<Location> locations = recommendations.stream()
+                            .map(locationName -> locationRepository.findByLocationName(locationName)) // Optional<Location> 반환
+                            .filter(Optional::isPresent) // 존재하는 경우에만 필터링
+                            .map(Optional::get) // Optional에서 Location 객체 추출
+                            .collect(Collectors.toList());
+
+                    locationDtos = locations.stream()
+                            .map(locationMapper::toLocationDto) // Location -> LocationDto 변환
+                            .collect(Collectors.toList());
+                } else {
+                    // 추천 데이터가 없으면 Google 평점 기반 반환
+                    locationDtos = locationRepository.findTop4ByOrderByGoogleRatingDesc().stream()
+                            .map(locationMapper::toLocationDto)
+                            .collect(Collectors.toList());
+                }
+            } else {
+                // 비로그인 상태에서는 Google 평점 기반 반환
+                locationDtos = locationRepository.findTop4ByOrderByGoogleRatingDesc().stream()
+                        .map(locationMapper::toLocationDto)
+                        .collect(Collectors.toList());
+            }
+
+            return ResponseEntity.ok(locationDtos);
         } catch (Exception e) {
             log.error("Error occurred: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
 

@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -173,6 +174,9 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
                                                               Sort sort);
 
 
+    /**
+     * @return 음식 태그가 제외된 관광지 정보들을 랜덤하게 반환
+     */
     @Query(value = """
                 SELECT DISTINCT l.* 
                 FROM tbl_location l
@@ -189,6 +193,17 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
                 LIMIT 5
             """, nativeQuery = true)
     List<Location> findRandomPlacesExcludingFood();
+
+
+    /**
+     * 장소 이름으로 Location 엔티티를 조회합니다.
+     *
+     * @param locationName 조회할 장소 이름
+     * @return Location 엔티티(Optional)
+     */
+    Optional<Location> findByLocationName(String locationName);
+
+    List<Location> findTop4ByOrderByGoogleRatingDesc();
 }
 
 
