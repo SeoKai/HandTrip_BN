@@ -37,7 +37,7 @@ public class ReviewMapper {
                 .reviewCreatedAt(review.getReviewCreatedAt())
                 .reviewUpdatedAt(review.getReviewUpdatedAt())
                 .reviewStatus(review.getReviewStatus())
-                .imageUrls(review.getImages().stream() // ReviewImage 리스트를 URL 리스트로 변환
+                .imageUrls(review.getImageUrls().stream() // ReviewImage 리스트를 URL 리스트로 변환
                         .map(ReviewImage::getImageUrl)
                         .toList())
                 .build();

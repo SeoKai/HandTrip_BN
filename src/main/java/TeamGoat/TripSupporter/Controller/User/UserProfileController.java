@@ -7,12 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,8 +35,8 @@ public class UserProfileController {
 //    @Value("${file.url-prefix}")
 //    private String urlPrefix;
 
-    private final String uploadDir = "/upload/images";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
-    private final String urlPrefix = "http://localhost:5050/images/";  // 이미지 접근 URL
+    private final String uploadDir = "upload/images/profile/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
+
 
     /**
      * 로그인된 사용자의 프로필 조회
@@ -72,6 +74,8 @@ public class UserProfileController {
 
         // 토큰으로부터 유저정보 추출
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        log.info(file.getOriginalFilename());
         // 이미지 파일을 저장하고 경로를 얻음
         String savedImageUrl = userProfileService.saveProfileImage(userEmail,file);
         log.info("savedImgUrl: " + savedImageUrl);
@@ -81,9 +85,10 @@ public class UserProfileController {
 
 
     @GetMapping("/images/{filename}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) throws IOException {
+    public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) throws IOException {
         // 실제 파일 경로 설정 (서버 내 경로)
         Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
+
         log.info("filename : {}",filename);
         // 파일이 존재하지 않으면 FileNotFoundException 던짐
         if (!Files.exists(filePath)) {
@@ -94,9 +99,13 @@ public class UserProfileController {
         Resource resource = new UrlResource(filePath.toUri());
         // 동적으로 MIME 타입 설정
         String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE; // 기본 MIME 타입 설정
+        }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))  // MIME 타입을 실제 이미지에 맞게 설정
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                 .body(resource);
     }
 }

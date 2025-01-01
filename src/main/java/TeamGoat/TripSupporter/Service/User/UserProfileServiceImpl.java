@@ -30,8 +30,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 //    @Value("${file.url-prefix}")
 //    private String urlPrefix;
 
-    private final String uploadDir = "src/main/resources/static/images/";  // 업로드 디렉토리 경로
-    private final String urlPrefix = "http://localhost:5050/images/";  // 이미지 접근 URL
+    private final String uploadDir = "upload/images/profile/";  // 업로드 디렉토리 경로
+    private final String urlPrefix = "http://localhost:5050/api/userProfile/images/";  // 이미지 접근 URL
 
     @Override
     public UserProfileDto getProfileByUserEmail(String email) {
@@ -109,6 +109,20 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new IOException("지원되지 않는 파일 형식입니다.");
         }
 
+        UserProfile userProfile = userProfileRepository.findByUser_UserEmail(Email).orElseThrow(()->new UserProfileException("사용자를 찾을 수 없습니다"));
+
+        // 이전 사용자가 사용중인 프로필 사진 url 정보를 가져옴
+        String oldImageUrl = userProfile.getProfileImageUrl();
+        // 사용자가 기존에 사용중인 프로필 사진 url정보가 있다면 기존 사진을 삭제함
+        if (oldImageUrl != null) {
+            String oldImagePath = oldImageUrl.replace(urlPrefix, ""); // URL에서 파일 경로 추출
+            File oldFile = new File(uploadDir, oldImagePath);
+            if (oldFile.exists() && oldFile.isFile()) {
+                boolean deleted = oldFile.delete();
+                log.info("이전 프로필 이미지 삭제 상태: {}", deleted ? "성공" : "실패");
+            }
+        }
+
         // 파일 경로
         String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID() + "-" + originalFilename;
         String directoryPath = uploadDir;
@@ -144,7 +158,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         String url = urlPrefix + fileName;
         log.info("url : {} ", url);
 
-        UserProfile userProfile = userProfileRepository.findByUser_UserEmail(Email).orElseThrow(()->new UserProfileException("사용자를 찾을 수 없습니다"));
+
         userProfile.updateUserProfileImgUrl(url);
         log.info("유저 프로필 이미지"+userProfile.getProfileImageUrl());
         userProfileRepository.save(userProfile);

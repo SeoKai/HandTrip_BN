@@ -5,6 +5,7 @@ import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Review {
 
     @Id
@@ -52,7 +54,7 @@ public class Review {
     private ReviewStatus reviewStatus = ReviewStatus.ACTIVE;  //enum : ACTIVE, DELETED, PENDING(임시저장)
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewImage> images = new ArrayList<>();
+    private List<ReviewImage> imageUrls = new ArrayList<>();
 
     @Builder
     public Review(Long reviewId, User user, Location location,String title,Integer rating, String comment, LocalDateTime reviewCreatedAt, LocalDateTime reviewUpdatedAt,ReviewStatus reviewStatus) {
@@ -102,15 +104,11 @@ public class Review {
 
     // 이미지 추가 메서드
     public void addImage(String imageUrl) {
-        if (images.size() >= 3) {
+        log.info("리뷰 엔티티 내 addImage 메서드 : " + imageUrl);
+        if (imageUrls.size() >= 3) {
             throw new IllegalStateException("리뷰에는 최대 3개의 이미지만 추가할 수 있습니다.");
         }
-        this.images.add(new ReviewImage(this, imageUrl));
-    }
-
-    // 이미지 삭제 메서드
-    public void removeImage(String imageUrl) {
-        images.removeIf(image -> image.getImageUrl().equals(imageUrl));
+        this.imageUrls.add(new ReviewImage(this, imageUrl));
     }
 
 }
