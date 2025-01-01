@@ -104,8 +104,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         String originalFilename = file.getOriginalFilename();
         log.info("originalFilename : {} ",originalFilename);
 
-//        !originalFilename.matches(".*\\.(jpg|jpeg|png)$")
-        if (originalFilename == null ) {
+
+        if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png)$")) {
             throw new IOException("지원되지 않는 파일 형식입니다.");
         }
 
