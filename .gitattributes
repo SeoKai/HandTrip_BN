@@ -1,0 +1,5 @@
+/gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+# 모든 텍스트 파일 CRLF로 강제
+* text eol=crlf
