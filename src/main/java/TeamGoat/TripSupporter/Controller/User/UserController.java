@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -55,6 +56,20 @@ public class UserController {
     public ResponseEntity<String> findPassword(@RequestBody UserDto userDto) {
         userService.findPassword(userDto.getUserEmail(), userDto.getUserPhone());
         return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다.");
+    }
+
+    @PostMapping("/find-Email")
+    public ResponseEntity<?> findEmail(@RequestBody Map<String, String> payload) {
+        String isVerified = payload.get("isVerified");
+        String phoneNumber = payload.get("phoneNumber");
+
+        if(isVerified.equals("true")){
+            List<String> userEmail = userService.findId(phoneNumber);
+            return ResponseEntity.ok(userEmail);
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 실패");
+        }
+
     }
 
     /**
@@ -97,5 +112,7 @@ public class UserController {
 
         return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
     }
+
+
 
 }

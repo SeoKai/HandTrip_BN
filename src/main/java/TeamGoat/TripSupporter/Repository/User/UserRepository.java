@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param phone 조회하려는 사용자의 전화번호
      * @return 해당 이메일을 가진 사용자의 Optional 객체
      */
-    Optional<User> findByUserPhone(String phone);
+    List<User> findByUserPhone(String phone);
 
 
     /**

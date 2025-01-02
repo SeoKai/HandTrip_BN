@@ -6,29 +6,38 @@ import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithLocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithUserProfileDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
+import TeamGoat.TripSupporter.Domain.Entity.Review.ReviewImage;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Enum.ReviewStatus;
 import TeamGoat.TripSupporter.Exception.Review.ReviewException;
 import TeamGoat.TripSupporter.Exception.Review.ReviewNotFoundException;
 import TeamGoat.TripSupporter.Exception.UserNotFoundException;
+import TeamGoat.TripSupporter.Exception.userProfile.UserProfileException;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Mapper.Review.ReviewMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
+import TeamGoat.TripSupporter.Repository.Review.ReviewImageRepository;
 import TeamGoat.TripSupporter.Repository.Review.ReviewRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +49,14 @@ public class ReviewServiceImpl{
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
     private final ReviewMapper reviewMapper;
+
+    @Value("${file.userProfile-upload-dir}")
+    private String uploadDir;
+    @Value("${file.userProfile-url-prefix}")
+    private String urlPrefix;
+
+//    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
+//    private final String urlPrefix = "http://localhost:5050/reviews/images/";  // 이미지 접근 URL
 
 
 
@@ -212,21 +229,19 @@ public class ReviewServiceImpl{
      */
     public void createReview(ReviewDto reviewDto){
         try {
+            log.info("reviewService createReview invoke : " + reviewDto);
             // dto를 review객체로 변환
             Review review = reviewMapper.ReviewDtoConvertToEntity(reviewDto);
-
+            log.info("reviewDto를 review엔티티로 변환");
             // 외래키 제대로 변환됐는지 확인
             ReviewServiceValidator.validateUserEmail(review.getUser().getUserEmail());
             ReviewServiceValidator.validateLocationId(review.getLocation().getLocationId());
-
-            // 이미지 추가
-            if (reviewDto.getImageUrls() != null) {
-                reviewDto.getImageUrls().forEach(review::addImage);
-            }
+            log.info("변환과정에서 review의 imageUrls가 어떤 상태인지 확인 :" + review.getImageUrls().size());
 
             // 검사가 끝난 후 저장
             reviewRepository.save(review);
             log.info("review를 성공적으로 저장하였습니다. 저장된 리뷰 아이디 : "+review.getReviewId());
+
 
         }catch (Exception e) {
             log.info("ReviewService Create Method invoke failed");
@@ -257,7 +272,7 @@ public class ReviewServiceImpl{
             // 새로운 이미지 추가
             if (reviewDto.getImageUrls() != null) {
                 // 기존 이미지 목록 제거 후 DTO에서 새 이미지 추가
-                existingReview.getImages().clear();  // 기존 이미지 삭제
+                existingReview.getImageUrls().clear();  // 기존 이미지 삭제
                 reviewDto.getImageUrls().forEach(existingReview::addImage);
             }
 
@@ -324,6 +339,86 @@ public class ReviewServiceImpl{
         }catch(Exception e){
             throw new ReviewException("rating 평균 계산중 오류 발생",e);
         }
+    }
+
+    public List<String> saveReviewImage(Long reviewId, List<MultipartFile> files) throws IOException {
+        log.info("saveProfileImage is invoked");
+
+        // 업로드할 파일들의 URL을 담을 리스트
+        List<String> savedUrls = new ArrayList<>();
+
+        // 각 파일에 대해 처리
+        for (MultipartFile file : files) {
+            if (file.getSize() > 5 * 1024 * 1024) {
+                throw new IOException("파일 크기가 너무 큽니다. 최대 5MB까지 가능합니다.");
+            }
+
+            // 파일 확장자 확인
+            String originalFilename = file.getOriginalFilename();
+            log.info("originalFilename : {} ", originalFilename);
+
+
+            if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png)$")) {
+                throw new IOException("지원되지 않는 파일 형식입니다.");
+            }
+
+            // 파일 이름 생성
+            String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID() + "-" + originalFilename;
+            String directoryPath = uploadDir;
+            log.info("fileName : {} , directoryPath : {}", fileName, directoryPath);
+
+            // 파일 저장 경로 계산
+            String absoluteDirPath = new File("").getAbsolutePath() + File.separator + directoryPath;
+            log.info("absoluteDirPath : {}", absoluteDirPath);
+
+            // 디렉토리 생성
+            File directory = new File(absoluteDirPath);
+            if (!directory.exists() && !directory.mkdirs()) {
+                throw new IOException("디렉토리 생성에 실패했습니다.");
+            }
+
+            // 파일 저장 경로
+            String imagePath = absoluteDirPath + File.separator + fileName;
+            log.info("imagePath : {}", imagePath);
+
+            // 파일 저장
+            File dest = new File(imagePath);
+            try {
+                file.transferTo(dest);
+            } catch (IOException e) {
+                log.error("파일 저장 중 오류 발생: {}", e.getMessage(), e);
+                throw new IOException("파일 저장에 실패했습니다.", e);
+            }
+
+            // 이미지 URL 생성
+            String url = urlPrefix + fileName;
+            log.info("url : {}", url);
+            savedUrls.add(url);
+        }
+
+        // 리뷰를 수정하는 경우 ( 리뷰에 이전에 첨부된 이미지가 있다면 삭제 처리)
+        if (reviewId != null) {
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
+            // 리뷰로부터 기존 이미지 List 받아옴
+            List<ReviewImage> existingImages = review.getImageUrls();
+            // 리뷰에 이전에 첨부한 이미지 있는지 확인
+            if (existingImages != null && !existingImages.isEmpty()) {
+                // 각
+                for(ReviewImage existingImage : existingImages){
+                    String oldImageUrl = existingImage.getImageUrl(); // ReviewImage URL
+                    String oldImagePath = oldImageUrl.replace(urlPrefix, ""); // URL에서 파일 경로 추출
+                    File oldFile = new File(uploadDir, oldImagePath);
+                    if (oldFile.exists() && oldFile.isFile()) {
+                        boolean deleted = oldFile.delete();
+                        log.info("이전 프로필 이미지 삭제 상태: {}", deleted ? "성공" : "실패");
+                    }
+                }
+            }
+        }
+
+        return savedUrls;
+
     }
 }
 

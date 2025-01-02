@@ -10,13 +10,27 @@ import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
 import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +43,12 @@ public class ReviewController {
     private final PagedResourcesAssembler<ReviewWithUserProfileDto> pagedResourcesAssemblerWithUser;
     private final PagedResourcesAssembler<ReviewWithLocationDto> pagedResourcesAssemblerWithLocation;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${file.review-upload-dir}")
+    private String uploadDir;
+
+//    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
+
 
     /**
      * 리뷰 생성
@@ -157,7 +177,7 @@ public class ReviewController {
      */
     @GetMapping("/getReviewsWithUser")
     public ResponseEntity<PagedModel<EntityModel<ReviewWithUserProfileDto>>> getReviewsWithUser(
-            @RequestHeader("Authorization")String authorization,
+            @RequestHeader(value = "Authorization", required = false)String authorization,
             @RequestParam(name = "locationId" , required = false) Long locationId,
             @RequestParam(name = "page" , defaultValue = "0") Integer page,
             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
@@ -169,10 +189,14 @@ public class ReviewController {
                 locationId, page,pageSize, sortValue, sortDirection);
         log.info("authorization : {} ",authorization);
         // token에서 userEmail 추출
-        String token = authorization.replace("Bearer ", "");
-        String userEmail = jwtTokenProvider.extractUserEmail(token);
 
-        log.info("userEmail : {} ",userEmail);
+        String userEmail = null;
+        if (authorization != null && !authorization.isEmpty()) {
+            String token = authorization.replace("Bearer ", "");
+            userEmail = jwtTokenProvider.extractUserEmail(token);
+            log.info("userEmail: {}", userEmail);
+        }
+
         // 외래키 id값들 null 체크
         if(locationId != null)
             ReviewContollerValidator.validateLocationId(locationId); // 여행지 ID 유효성 검사
@@ -245,6 +269,19 @@ public class ReviewController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    @PostMapping("/uploadReviewImage")
+    public ResponseEntity<List<String>> uploadProfileImage(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam(name = "reviewId", required = false) Long reviewId,
+            @RequestHeader("Authorization") String authorization
+    ) throws IOException {
+        log.info("GET /uploadReviewImage");
+
+        // 이미지 파일을 저장하고 경로를 얻음
+        List<String> savedImageUrls = reviewService.saveReviewImage(reviewId,files);
+        return ResponseEntity.ok(savedImageUrls);
+    }
+
     /**
      * 리뷰 평점 평균 계산
      * @param locationId 여행지 ID
@@ -259,5 +296,39 @@ public class ReviewController {
         // 계산된 해당지역에 대한 리뷰 평균을 반환함
         return ResponseEntity.ok(averageRating);
     }
+
+
+    /**
+     * 저장된 이미지 파일을 서빙합니다
+     * @param filename 파일이름
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) throws IOException {
+        // 실제 파일 경로 설정 (서버 내 경로)
+        Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
+
+        log.info("filename : {}",filename);
+        // 파일이 존재하지 않으면 FileNotFoundException 던짐
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("파일을 찾을 수 없습니다.");
+        }
+
+        // 파일을 UrlResource로 변환하여 반환
+        Resource resource = new UrlResource(filePath.toUri());
+        // 동적으로 MIME 타입 설정
+        String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE; // 기본 MIME 타입 설정
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))  // MIME 타입을 실제 이미지에 맞게 설정
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                .body(resource);
+    }
+
+
 }
 
