@@ -62,8 +62,8 @@ spring:
             scope:
               - profile
               - email
-            client-id: 621024947372-pphaarojd2nbej6bvjj0va6nt5hu85gn.apps.googleusercontent.com
-            client-secret: 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
+            client-id: #
+            client-secret: #
           naver:
             client-name: Naver
             scope:
