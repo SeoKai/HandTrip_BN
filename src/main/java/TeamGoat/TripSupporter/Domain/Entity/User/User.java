@@ -78,8 +78,8 @@ public class User {
         this.userCreatedAt = LocalDateTime.now();
     }
 
-    public void updatePassword(String newPassword) {
-        this.userPassword = newPassword;
+    public void updatePassword(String encodedPassword) {
+        this.userPassword = encodedPassword;
     }
 
     public void updatePhone(String newPhone) {

@@ -79,7 +79,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    // 나머지 메서드는 기존 로직 유지
     @Override
     @Transactional
     public void updateUser(String email, UserDto updatedData) {
@@ -123,6 +122,24 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUserEmail(email);
     }
 
+    @Override
+    @Transactional
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(currentPassword, user.getUserPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호 암호화 및 저장
+        user.updatePassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        log.info("사용자 [{}]의 비밀번호가 변경되었습니다.", userId);
+    }
     @Override
     public boolean isNicknameDuplicate(String nickname) {
         return userProfileRepository.existsByUserNickname(nickname);

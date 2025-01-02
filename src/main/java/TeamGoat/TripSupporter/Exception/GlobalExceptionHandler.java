@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("잘못된 요청: " + exception.getMessage());
+                .body(exception.getMessage());
     }
 
     /**
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("찾을 수 없는 엔티티: " + exception.getMessage());
+                .body(exception.getMessage());
     }
     /**
      * 모든 예외 처리
