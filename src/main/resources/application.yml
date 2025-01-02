@@ -3,24 +3,24 @@ server:
 
 file:
   userProfile-upload-dir: upload/images/profile/  # 운영 환경 파일 경로
-  userProfile-url-prefix: http://13.209.114.27:5050/api/userProfile/images/
+  userProfile-url-prefix: http://localhost:5050/api/userProfile/images/
   review-upload-dir: upload/images/review/
-  review-url-prefix: http://13.209.114.27:5050/reviews/images/
+  review-url-prefix: http://localhost:5050/reviews/images/
 
 spring:
   application:
     name: TripSupporter
   datasource:
     # 서버에 확인할 때 사용
-    url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb
-    username: admin
-    password: trip970708!
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    # 로컬에서 테스트 할 때 사용
-    # url: jdbc:mysql://localhost:3306/testdb
-    # username: root
-    # password: 1234
-    # driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb
+#    username: admin
+#    password: trip970708!
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#     로컬에서 테스트 할 때 사용
+     url: jdbc:mysql://localhost:3306/testdb
+     username: root
+     password: 1234
+     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: none
@@ -62,8 +62,9 @@ spring:
             scope:
               - profile
               - email
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: 621024947372-pphaarojd2nbej6bvjj0va6nt5hu85gn.apps.googleusercontent.com
+
+            client-secret: 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
           naver:
             client-name: Naver
             scope:
@@ -96,7 +97,7 @@ spring:
   data:
     redis:
       port: 6379
-      host: http://13.209.114.27:5050
+      host: localhost
 
 jwt:
   secret: 6lwIEEF7Hqg0PCO6KxHoGe6kVqPRdgvnmQp3KiN0RTj4E3dAfqQ2Yi4Ttr9MxlZT

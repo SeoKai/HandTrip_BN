@@ -50,9 +50,9 @@ public class ReviewServiceImpl{
     private final LocationMapper locationMapper;
     private final ReviewMapper reviewMapper;
 
-    @Value("${file.userProfile-upload-dir}")
+    @Value("${file.review-upload-dir}")
     private String uploadDir;
-    @Value("${file.userProfile-url-prefix}")
+    @Value("${file.review-url-prefix}")
     private String urlPrefix;
 
 //    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
