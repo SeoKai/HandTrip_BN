@@ -69,7 +69,8 @@ public class UserServiceImpl implements UserService {
         // 회원가입 후 로그인 처리
         AuthDto.LoginRequest loginRequest = new AuthDto.LoginRequest(
                 user.getUserEmail(),
-                userAndProfileDto.getUserDto().getUserPassword()
+                userAndProfileDto.getUserDto().getUserPassword(),
+                "default"
         );
 
         AuthDto.LoginResponse response = authService.login(loginRequest);
