@@ -6,13 +6,17 @@ import TeamGoat.TripSupporter.Domain.Dto.Location.LocationWithDistanceDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Tag;
+import TeamGoat.TripSupporter.Service.Location.Util.PhotoUrlGenerator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class LocationMapper {
+
     public LocationDto toLocationDto(Location location) {
         return LocationDto.builder()
                 .locationId(location.getLocationId())
@@ -23,14 +27,14 @@ public class LocationMapper {
                 .longitude(location.getLongitude())
                 .googleRating(location.getGoogleRating())
                 .userRatingsTotal(location.getUserRatingsTotal())
-                .placeImgUrl(location.getPlaceImgUrl())
+                .placeImgUrl(PhotoUrlGenerator.generatePhotoUrl(location.getPlaceImgUrl())) // 호출
                 .formattedAddress(location.getFormattedAddress())
                 .openingHours(location.getOpeningHours())
                 .website(location.getWebsite())
                 .phoneNumber(location.getPhoneNumber())
-                .regionName(location.getRegion().getRegionName()) // 지역 이름
+                .regionName(location.getRegion().getRegionName())
                 .tags(location.getTags().stream()
-                        .map(tag -> tag.getTagName()) // 태그 이름만 추출
+                        .map(tag -> tag.getTagName())
                         .collect(Collectors.toSet()))
                 .build();
     }
@@ -42,19 +46,19 @@ public class LocationMapper {
                 .description(location.getDescription())
                 .googleRating(location.getGoogleRating())
                 .userRatingsTotal(location.getUserRatingsTotal())
-                .placeImgUrl(location.getPlaceImgUrl())
+                .placeImgUrl(PhotoUrlGenerator.generatePhotoUrl(location.getPlaceImgUrl())) // 동적 URL 생성
                 .formattedAddress(location.getFormattedAddress())
                 .openingHours(location.getOpeningHours())
                 .website(location.getWebsite())
                 .phoneNumber(location.getPhoneNumber())
-                .regionName(location.getRegion().getRegionName()) // 지역 이름
+                .regionName(location.getRegion().getRegionName())
                 .tags(location.getTags().stream()
-                        .map(tag -> tag.getTagName()) // 태그 이름만 추출
+                        .map(Tag::getTagName)
                         .collect(Collectors.toSet()))
                 .build();
     }
 
-    public LocationResponseDto locationResponseDto(LocationWithDistanceDto locationWithDistanceDto){
+    public LocationResponseDto toResponseDtoWithDistance(LocationWithDistanceDto locationWithDistanceDto){
         Location location = locationWithDistanceDto.getLocation();
         Double distance = locationWithDistanceDto.getDistance();
 
@@ -64,7 +68,7 @@ public class LocationMapper {
                 .description(location.getDescription())
                 .googleRating(location.getGoogleRating())
                 .userRatingsTotal(location.getUserRatingsTotal())
-                .placeImgUrl(location.getPlaceImgUrl())
+                .placeImgUrl(PhotoUrlGenerator.generatePhotoUrl(location.getPlaceImgUrl()))
                 .formattedAddress(location.getFormattedAddress())
                 .openingHours(location.getOpeningHours())
                 .website(location.getWebsite())

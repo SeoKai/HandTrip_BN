@@ -7,6 +7,7 @@ import TeamGoat.TripSupporter.Domain.Dto.User.UserDto;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * 사용자 관련 비즈니스 로직을 정의하는 서비스 인터페이스.
@@ -33,7 +34,7 @@ public interface UserService {
      * @param phone 사용자 전화번호
      * @return 등록된 이메일 주소 (없을 경우 null)
      */
-    String findId(String phone);
+    List<String> findId(String phone);
 
     boolean isNicknameDuplicate(String nickname);
 
@@ -54,8 +55,12 @@ public interface UserService {
      */
     boolean isEmailDuplicate(String email);
 
-
-
+    /**
+     * 비밀번호 변경 메서드
+     * @param userId 사용자 Id
+     * @param newPassword 새로운 비밀번호
+     */
+    void changePassword(Long userId, String currentPassword, String newPassword);
 
 
 

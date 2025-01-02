@@ -18,4 +18,5 @@ public class PlannerDto {
     private Long regionId;            // 지역 ID
     private String regionName;       // 연결된 지역 이름
     private List<DailyPlanDto> dailyPlans; // 하루별 일정 목록
+    private String userEmail;              // 사용자 email
 }

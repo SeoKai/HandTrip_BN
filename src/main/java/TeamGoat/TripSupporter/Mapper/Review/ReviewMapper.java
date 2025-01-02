@@ -1,6 +1,8 @@
 package TeamGoat.TripSupporter.Mapper.Review;
 
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
+import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithUserProfileDto;
+import TeamGoat.TripSupporter.Domain.Dto.User.UserProfileDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Location;
 import TeamGoat.TripSupporter.Domain.Entity.Review.Review;
 import TeamGoat.TripSupporter.Domain.Entity.Review.ReviewImage;
@@ -27,14 +29,15 @@ public class ReviewMapper {
     public ReviewDto ReviewConvertToDto(Review review) {
         return ReviewDto.builder()
                 .reviewId(review.getReviewId())
-                .userId(review.getUser().getUserId()) // User 엔티티에서 User ID 추출
+                .userEmail(review.getUser().getUserEmail()) // User 엔티티에서 User Email 추출
                 .locationId(review.getLocation().getLocationId()) // Location 엔티티에서 Location ID 추출
+                .title(review.getTitle())
                 .rating(review.getRating())
                 .comment(review.getComment())
                 .reviewCreatedAt(review.getReviewCreatedAt())
                 .reviewUpdatedAt(review.getReviewUpdatedAt())
                 .reviewStatus(review.getReviewStatus())
-                .imageUrls(review.getImages().stream() // ReviewImage 리스트를 URL 리스트로 변환
+                .imageUrls(review.getImageUrls().stream() // ReviewImage 리스트를 URL 리스트로 변환
                         .map(ReviewImage::getImageUrl)
                         .toList())
                 .build();
@@ -47,8 +50,8 @@ public class ReviewMapper {
      */
     public Review ReviewDtoConvertToEntity(ReviewDto reviewDto) {
         // UserRepository에서 ID로 User 객체 조회
-        User user = userRepository.findById(reviewDto.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("해당 ID에 일치하는 User가 존재하지 않습니다: " + reviewDto.getUserId()));
+        User user = userRepository.findByUserEmail(reviewDto.getUserEmail())
+                .orElseThrow(() -> new UserNotFoundException("해당 ID에 일치하는 User가 존재하지 않습니다: " + reviewDto.getUserEmail()));
 
         // LocationRepository에서 ID로 Location 객체 조회
         Location location = locationRepository.findById(reviewDto.getLocationId())
@@ -59,6 +62,7 @@ public class ReviewMapper {
                 .reviewId(reviewDto.getReviewId())
                 .user(user) // User 객체 설정
                 .location(location) // Location 객체 설정
+                .title(reviewDto.getTitle())
                 .rating(reviewDto.getRating())
                 .comment(reviewDto.getComment())
                 .reviewCreatedAt(reviewDto.getReviewCreatedAt())
@@ -72,5 +76,22 @@ public class ReviewMapper {
         }
 
         return review;
+    }
+
+
+    // 새 메서드: Review를 ReviewWithUserProfileDto로 변환
+    public ReviewWithUserProfileDto ReviewConvertToWithUserProfileDto(Review review) {
+        UserProfileDto userProfileDto = UserProfileDto.builder()
+                .userNickname(review.getUser().getUserProfile().getUserNickname())
+                .profileImageUrl(review.getUser().getUserProfile().getProfileImageUrl())
+                .userBio(review.getUser().getUserProfile().getUserBio())
+                .build();
+
+        ReviewDto reviewDto = ReviewConvertToDto(review);
+
+        return ReviewWithUserProfileDto.builder()
+                .reviewDto(reviewDto)
+                .userProfileDto(userProfileDto)
+                .build();
     }
 }

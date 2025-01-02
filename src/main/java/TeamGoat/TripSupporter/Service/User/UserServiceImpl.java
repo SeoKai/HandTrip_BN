@@ -10,6 +10,7 @@ import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Entity.User.UserProfile;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
 import TeamGoat.TripSupporter.Repository.Auth.AuthTokenRepository;
 import TeamGoat.TripSupporter.Repository.User.UserProfileRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
@@ -24,7 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +47,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public AuthDto.LoginResponse register(UserAndProfileDto userAndProfileDto) {
         // 중복 체크
-        if (userRepository.existsByUserEmail(userAndProfileDto.getUserDto().getUserEmail()) ||
-                userProfileRepository.existsByUserNickname(userAndProfileDto.getUserProfileDto().getUserNickname())) {
+        log.info("userServiceImpl register invoke, 파라미터 확인 UserAndProfileDto : {}", userAndProfileDto);
+        if (userRepository.existsByUserEmail(userAndProfileDto.getUserDto().getUserEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일 또는 닉네임입니다.");
         }
 
@@ -69,14 +72,16 @@ public class UserServiceImpl implements UserService {
         // 회원가입 후 로그인 처리
         AuthDto.LoginRequest loginRequest = new AuthDto.LoginRequest(
                 user.getUserEmail(),
-                userAndProfileDto.getUserDto().getUserPassword()
+                userAndProfileDto.getUserDto().getUserPassword(),
+                "default"
         );
 
-        return authService.login(loginRequest); // AuthService를 통해 로그인 처리
+        AuthDto.LoginResponse response = authService.login(loginRequest);
+        log.info("userServiceImpl register invoke, 반환 데이터 확인 , response : {} ",response);
+        return response; // AuthService를 통해 로그인 처리
     }
 
 
-    // 나머지 메서드는 기존 로직 유지
     @Override
     @Transactional
     public void updateUser(String email, UserDto updatedData) {
@@ -121,15 +126,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(currentPassword, user.getUserPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호 암호화 및 저장
+        user.updatePassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        log.info("사용자 [{}]의 비밀번호가 변경되었습니다.", userId);
+    }
+    @Override
     public boolean isNicknameDuplicate(String nickname) {
         return userProfileRepository.existsByUserNickname(nickname);
     }
 
     @Override
-    public String findId(String phone) {
-        return userRepository.findByUserPhone(phone)
+    public List<String> findId(String phoneNumber) {
+
+        List<String> emails = userRepository.findByUserPhone(phoneNumber)
+                .stream()
                 .map(User::getUserEmail)
-                .orElse(null);
+                .collect(Collectors.toList());
+        if (emails.isEmpty()) {
+            throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
+        }
+        return emails;
     }
 
     private String generateTempPassword() {

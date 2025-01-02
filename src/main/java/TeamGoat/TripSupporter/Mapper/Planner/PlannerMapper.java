@@ -5,6 +5,7 @@ import TeamGoat.TripSupporter.Domain.Dto.Planner.PlannerDto;
 import TeamGoat.TripSupporter.Domain.Dto.Planner.ToDoDto;
 import TeamGoat.TripSupporter.Domain.Entity.Location.Region;
 import TeamGoat.TripSupporter.Domain.Entity.Planner.Planner;
+import TeamGoat.TripSupporter.Service.Location.Util.PhotoUrlGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,7 @@ public class PlannerMapper {
                 .plannerEndDate(planner.getPlannerEndDate()) // 종료일
                 .regionId(planner.getRegion().getRegionId()) // 지역 ID
                 .regionName(planner.getRegion().getRegionName()) // 지역 이
+                .userEmail(planner.getEmail()) // 이메일
                 .dailyPlans(planner.getDailyPlans().stream()
                         .map(dailyPlan -> {
                             DailyPlanDto dailyPlanDto = new DailyPlanDto();
@@ -44,7 +46,9 @@ public class PlannerMapper {
                                         toDoDto.setFormattedAddress(toDo.getLocation().getFormattedAddress());
                                         toDoDto.setLatitude(toDo.getLocation().getLatitude());
                                         toDoDto.setLongitude(toDo.getLocation().getLongitude());
-                                        toDoDto.setPlaceImgUrl(toDo.getLocation().getPlaceImgUrl()); // 이미지 URL 매핑
+                                        // 이미지 URL 동적 생성
+                                        String dynamicPhotoUrl = PhotoUrlGenerator.generatePhotoUrl(toDo.getLocation().getPlaceImgUrl());
+                                        toDoDto.setPlaceImgUrl(dynamicPhotoUrl);
                                         return toDoDto;
                                     })
                                     .toList());
@@ -68,7 +72,7 @@ public class PlannerMapper {
                 .plannerTitle(plannerDto.getPlannerTitle()) // 플래너 제목
                 .plannerStartDate(plannerDto.getPlannerStartDate()) // 시작일
                 .plannerEndDate(plannerDto.getPlannerEndDate()) // 종료일
-                .email("test@example.com") // 예시 사용자 이메일
+                .email(plannerDto.getUserEmail()) // 예시 사용자 이메일
                 .region(region) // 연결된 Region 엔티티
                 .build();
 

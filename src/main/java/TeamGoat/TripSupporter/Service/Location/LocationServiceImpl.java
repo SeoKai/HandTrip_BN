@@ -9,6 +9,7 @@ import TeamGoat.TripSupporter.Exception.Location.LocationNotFoundException;
 import TeamGoat.TripSupporter.Mapper.Location.LocationMapper;
 import TeamGoat.TripSupporter.Repository.Location.LocationRepository;
 import TeamGoat.TripSupporter.Service.Location.Util.LocationServiceValidator;
+import TeamGoat.TripSupporter.Service.Location.Util.PhotoUrlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,58 +36,60 @@ public class LocationServiceImpl {
     }
 
     // regionId를 기반으로 장소 조회
-    public List<LocationDto> getLocationsByRegion(Long regionId) {
-        List<Location> locations = locationRepository.findByRegionRegionId(regionId); // Repository 메서드 호출
-        return locations.stream()
-                .map(locationMapper::toLocationDto) // 엔티티를 DTO로 변환
-                .collect(Collectors.toList());
+    public LocationDto getLocation(Long locationId) {
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new LocationNotFoundException("해당 위치를 찾을 수 없습니다."));
+
+        // Location -> DTO 변환
+        LocationDto locationDto = locationMapper.toLocationDto(location);
+
+        // placeImgUrl 동적 생성
+        String dynamicPhotoUrl = PhotoUrlGenerator.generatePhotoUrl(location.getPlaceImgUrl());
+        locationDto.setPlaceImgUrl(dynamicPhotoUrl);
+
+        return locationDto;
     }
 
 
-    public Page<LocationDto> searchLocations(Long regionId,String keyword ,Set<String> tagNames, int page,int pageSize, String sortValue, String sortDirection) {
-
-        //입력받은 페이징정보들로 페이징 객체 생성
-        Pageable pageable = getPageable(page,pageSize,sortValue,sortDirection);
+    public Page<LocationDto> searchLocations(Long regionId, String keyword, Set<String> tagNames, int page, int pageSize, String sortValue, String sortDirection) {
+        Pageable pageable = getPageable(page, pageSize, sortValue, sortDirection);
         Page<Location> locations;
 
-        //페이징객체와 tagName리스트를 입력받아 페이징처리된 location객체를 받고 유효성 검사
-        // regionId 정보가 없으면 regionId를 무시하고 검색
+        // 검색 조건에 따라 Location 가져오기
         if (regionId == null) {
-            if(tagNames.isEmpty()){
-                // regionId 정보 없고 tagNames 정보 없음
+            if (tagNames.isEmpty()) {
                 log.info("searchWithoutRegionAndTagNames Run");
-                // 키워드가 있다면 키워드기준 검색, 키워드가 없다면 모든 Location
                 locations = searchWithoutRegionAndTagNames(keyword, pageable);
-            }else{
-                // regionId 정보 없고 tagNames 정보 있음
+            } else {
                 log.info("searchTagNamesWithoutRegion Run");
-                // 키워드가 있다면 키워드+태그 기준 검색, 키워드가 없다면 태그기준 검색
                 locations = searchTagNamesWithoutRegion(tagNames, keyword, pageable);
             }
-        }else{
-            if(tagNames.isEmpty()){
-                //regionId 정보 있고 tagNames 정보 없음
+        } else {
+            if (tagNames.isEmpty()) {
                 log.info("searchRegionWithoutTagNames Run");
-                // 키워드가 있다면 키워드+지역Id 기준 검색, 키워드가 없다면 지역Id기준 검색
                 locations = searchRegionWithoutTagNames(regionId, keyword, pageable);
-            }else{
-                //regionId 정보 있고 tagName 정보 있음
+            } else {
                 log.info("searchTagNamesAndRegion Run");
-                // 키워드가 있다면 키워드+지역Id+태그 기준 검색, 키워드가 없다면 지역Id + 태그기준 검색
                 locations = searchTagNamesAndRegion(regionId, tagNames, keyword, pageable);
             }
         }
-        // 검색결과값 유효성 검사
+
+        // 검색 결과값 유효성 검사
         LocationServiceValidator.validateLocationEntity(locations);
 
-        //페이징처리된 location객체들을 반환용Dto로 변환하고 변환이 잘 되었는지 확인
+        // DTO 변환 및 placeImgUrl 동적 생성
+        Page<LocationDto> locationDtos = locations.map(location -> {
+            LocationDto locationDto = locationMapper.toLocationDto(location);
+            String dynamicPhotoUrl = PhotoUrlGenerator.generatePhotoUrl(location.getPlaceImgUrl());
+            locationDto.setPlaceImgUrl(dynamicPhotoUrl);
+            return locationDto;
+        });
 
-        Page<LocationDto> LocationDto = locations.map(locationMapper::toLocationDto);
-        LocationServiceValidator.validateLocationDto(LocationDto);
+        LocationServiceValidator.validateLocationDto(locationDtos);
         log.info("get Location by TagNames tagNames: " + tagNames);
-        return LocationDto;
-
+        return locationDtos;
     }
+
 
     // region과 tagnames 둘다 없을때 keyword유무에 따라 검색
     private Page<Location> searchWithoutRegionAndTagNames(String keyword, Pageable pageable) {
@@ -135,7 +138,7 @@ public class LocationServiceImpl {
 
         // location에서 targetTagName에 따라 분리
         for (LocationWithDistanceDto locationDto : location) {
-            LocationResponseDto locationResponseDto = locationMapper.locationResponseDto(locationDto);
+            LocationResponseDto locationResponseDto = locationMapper.toResponseDtoWithDistance(locationDto);
 
             boolean hasTargetTag = locationDto.getLocation().getTags().stream()
                     .anyMatch(tag -> tag.getTagName().equalsIgnoreCase(targetTagName));
@@ -146,9 +149,6 @@ public class LocationServiceImpl {
                 locationWithoutTag.add(locationResponseDto);
             }
         }
-        // 분리된 Dto들 유효성 검사
-        LocationServiceValidator.validateLocationDto(locationWithTag);
-        LocationServiceValidator.validateLocationDto(locationWithoutTag);
 
         // LocationSplitByTagDto로 묶어 반환
         return LocationSplitByTagDto.builder()

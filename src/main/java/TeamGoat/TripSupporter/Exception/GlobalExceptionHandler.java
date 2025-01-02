@@ -3,8 +3,12 @@ package TeamGoat.TripSupporter.Exception;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,7 +23,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("잘못된 요청: " + exception.getMessage());
+                .body(exception.getMessage());
     }
 
     /**
@@ -32,9 +36,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("찾을 수 없는 엔티티: " + exception.getMessage());
+                .body(exception.getMessage());
     }
-
     /**
      * 모든 예외 처리
      *
@@ -47,4 +50,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("서버 내부 오류가 발생했습니다. 메시지: " + exception.getMessage());
     }
+
+    @ExceptionHandler(MailSendException.class)
+    public ResponseEntity<String> handleMailSendException(MailSendException exception) {
+        return ResponseEntity
+               .status(HttpStatus.INTERNAL_SERVER_ERROR)
+               .body("메일 전송 실패: " + exception.getMessage());
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(MalformedURLException.class)
+    public ResponseEntity<String> handleMalformedURLException(MalformedURLException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 URL 처리 오류");
+    }
+
 }
