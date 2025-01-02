@@ -13,6 +13,7 @@ public class AuthDto {
         private String userEmail; // 사용자 이메일
         private String userPassword;  // 사용자 비밀번호
         private String provider; // OAuth2 제공자 (예: Google, Kakao, Naver)
+
     }
 
     @Data

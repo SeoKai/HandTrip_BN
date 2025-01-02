@@ -43,6 +43,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+
     public String generateAccessToken(String userEmail) {
         return generateAccessToken(userEmail, null);
     }

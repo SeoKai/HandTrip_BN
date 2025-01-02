@@ -39,12 +39,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthDto.LoginResponse login(AuthDto.LoginRequest loginRequest) {
-        log.info("AuthServiceImpl login invoked, loginRequest: {}", loginRequest);
 
+        log.info("AuthServiceImpl login invoke 파라미터 확인, loginRequest: {}", loginRequest);
         if (loginRequest.getUserPassword() == null) {
             throw new IllegalArgumentException("비밀번호가 null입니다.");
         }
 
+
+        // 사용자 인증
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUserEmail(), loginRequest.getUserPassword())
         );
@@ -66,9 +68,9 @@ public class AuthServiceImpl implements AuthService {
         authTokenRepository.save(authToken);
 
         long accessTokenExpiry = System.currentTimeMillis() + jwtTokenProvider.getAccessExpiration();
+        log.info("accessTokenExpiry 만료 시간 계산 확인 accessTokenExpiry : {}",accessTokenExpiry);
         return new AuthDto.LoginResponse(accessToken, refreshToken, accessTokenExpiry);
     }
-
 
 
     @Override
@@ -102,6 +104,7 @@ public class AuthServiceImpl implements AuthService {
         AuthToken authToken = authTokenRepository.findByRefreshToken(refreshRequest.getRefreshToken())
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 Refresh 토큰입니다."));
 
+
         if (!jwtTokenProvider.isTokenValid(authToken.getRefreshToken(), authToken.getUserEmail())) {
             authTokenRepository.delete(authToken);
             throw new IllegalArgumentException("Refresh 토큰이 만료되었습니다.");
@@ -109,12 +112,12 @@ public class AuthServiceImpl implements AuthService {
 
         String newAccessToken = jwtTokenProvider.generateAccessToken(authToken.getUserEmail(), "OAuth2");
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(authToken.getUserEmail());
-
         authToken.setRefreshToken(newRefreshToken);
         authTokenRepository.save(authToken);
 
         return new TokenInfo(newAccessToken, newRefreshToken);
     }
+
 
 
 
