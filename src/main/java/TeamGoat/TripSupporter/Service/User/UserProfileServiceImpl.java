@@ -25,13 +25,13 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
 
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-//    @Value("${file.url-prefix}")
-//    private String urlPrefix;
+    @Value("${file.userProfile-upload-dir}")
+    private String uploadDir;
+    @Value("${file.userProfile-url-prefix}")
+    private String urlPrefix;
 
-    private final String uploadDir = "upload/images/profile/";  // 업로드 디렉토리 경로
-    private final String urlPrefix = "http://localhost:5050/api/userProfile/images/";  // 이미지 접근 URL
+//    private final String uploadDir = "upload/images/profile/";  // 업로드 디렉토리 경로
+//    private final String urlPrefix = "http://localhost:5050/api/userProfile/images/";  // 이미지 접근 URL
 
     @Override
     public UserProfileDto getProfileByUserEmail(String email) {

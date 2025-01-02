@@ -100,9 +100,11 @@ server:
       max-request-size: 5MB
       # 임시 파일을 저장할 경로
       location: /tmp/uploads
-  file:
-    upload-dir: upload/images/  # 운영 환경 파일 경로
-    url-prefix: http://localhost:5050/images/
+file:
+  userProfile-upload-dir: upload/images/profile/  # 운영 환경 파일 경로
+  userProfile-url-prefix: http://localhost:5050/api/userProfile/images/
+  review-upload-dir: upload/images/review/
+  review-url-prefix: http://localhost:5050/reviews/images/
   # static 리소스 경로 설정 추가
   resources:
     static-locations: classpath:/static/

@@ -30,12 +30,12 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
 //    환경변수 셋업이 잘안되..
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-//    @Value("${file.url-prefix}")
-//    private String urlPrefix;
+    @Value("${file.userProfile-upload-dir}")
+    private String uploadDir;
+    @Value("${file.userProfile-url-prefix}")
+    private String urlPrefix;
 
-    private final String uploadDir = "upload/images/profile/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
+//    private final String uploadDir = "upload/images/profile/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
 
 
     /**
