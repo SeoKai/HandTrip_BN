@@ -10,6 +10,7 @@ import TeamGoat.TripSupporter.Domain.Entity.User.User;
 import TeamGoat.TripSupporter.Domain.Entity.User.UserProfile;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
+import TeamGoat.TripSupporter.Exception.UserNotFoundException;
 import TeamGoat.TripSupporter.Repository.Auth.AuthTokenRepository;
 import TeamGoat.TripSupporter.Repository.User.UserProfileRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
@@ -24,7 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -145,10 +148,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String findId(String phone) {
-        return userRepository.findByUserPhone(phone)
+    public List<String> findId(String phoneNumber) {
+
+        List<String> emails = userRepository.findByUserPhone(phoneNumber)
+                .stream()
                 .map(User::getUserEmail)
-                .orElse(null);
+                .collect(Collectors.toList());
+        if (emails.isEmpty()) {
+            throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
+        }
+        return emails;
     }
 
     private String generateTempPassword() {

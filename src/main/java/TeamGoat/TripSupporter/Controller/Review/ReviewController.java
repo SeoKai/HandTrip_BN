@@ -10,6 +10,7 @@ import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
 import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,10 @@ public class ReviewController {
     private final PagedResourcesAssembler<ReviewWithLocationDto> pagedResourcesAssemblerWithLocation;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
+    @Value("${file.review-upload-dir}")
+    private String uploadDir;
+
+//    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
 
 
     /**

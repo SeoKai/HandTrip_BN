@@ -1,5 +1,7 @@
 package TeamGoat.TripSupporter.Controller.Certification;
 
+import TeamGoat.TripSupporter.Service.Certification.PhoneService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
@@ -28,11 +30,14 @@ import java.util.Map;
 
 @RestController
 @Slf4j
+@RequestMapping("/api/phone")
 public class PhoneController {
 
     final DefaultMessageService messageService;
+    private final PhoneService phoneService;
 
-    public PhoneController() {
+    public PhoneController(PhoneService phoneService) {
+        this.phoneService = phoneService;
         // 반드시 계정 내 등록된 유효한 API 키, API Secret Key를 입력해주셔야 합니다!
         this.messageService = NurigoApp.INSTANCE.initialize("NCSJ7PHIL4JTAIDF", "IXH9ESQX64SUXCOBNB4HJQ4GPBGMOWXG", "https://api.coolsms.co.kr");
     }
@@ -89,6 +94,18 @@ public class PhoneController {
         return this.messageService.getMessageList(request);
     }
 
+    @PostMapping("/verify")
+    public String verifyCode(@RequestBody Map<String, String> payload) {
+        String phoneNumber = payload.get("phoneNumber");
+        String code = payload.get("code");
+        boolean isVerified = phoneService.verifyCode(phoneNumber, code);
+        if (isVerified) {
+            return "인증에 성공했습니다.";
+        } else {
+            return "인증에 실패했습니다.";
+        }
+    }
+
     /**
      * 단일 메시지 발송 예제
      */
@@ -99,12 +116,7 @@ public class PhoneController {
         String phoneNumber = ((Map<String, String>) requestBody.get("params")).get("phoneNumber");
         System.out.println("Received phone number: " + phoneNumber);
 
-        Message message = new Message();
-        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
-        message.setFrom("010-5045-0503");
-        message.setTo(phoneNumber);
-        message.setText("인증번호 난수 생성");
-        // 생성한 난수 저장 후 비교로직으로 마무리하면 되겠다
+        Message message = phoneService.sendVerificationMail(phoneNumber);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println(response);

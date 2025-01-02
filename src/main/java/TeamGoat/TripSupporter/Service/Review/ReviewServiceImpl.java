@@ -23,6 +23,7 @@ import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,8 +50,13 @@ public class ReviewServiceImpl{
     private final LocationMapper locationMapper;
     private final ReviewMapper reviewMapper;
 
-    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
-    private final String urlPrefix = "http://localhost:5050/reviews/images/";  // 이미지 접근 URL
+    @Value("${file.userProfile-upload-dir}")
+    private String uploadDir;
+    @Value("${file.userProfile-url-prefix}")
+    private String urlPrefix;
+
+//    private final String uploadDir = "upload/images/review/";  // 업로드 디렉토리 경로 (절대 경로 또는 상대 경로로 설정 가능)
+//    private final String urlPrefix = "http://localhost:5050/reviews/images/";  // 이미지 접근 URL
 
 
 
