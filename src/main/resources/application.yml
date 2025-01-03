@@ -3,9 +3,9 @@ server:
 
 file:
   userProfile-upload-dir: upload/images/profile/  # 운영 환경 파일 경로
-  userProfile-url-prefix: http://localhost:5050/api/userProfile/images/
+  userProfile-url-prefix: http://13.209.114.27:5050/api/userProfile/images/
   review-upload-dir: upload/images/review/
-  review-url-prefix: http://localhost:5050/reviews/images/
+  review-url-prefix: http://13.209.114.27:5050/reviews/images/
 
 spring:
   application:
