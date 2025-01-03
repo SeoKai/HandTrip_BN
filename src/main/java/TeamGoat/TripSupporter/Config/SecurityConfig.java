@@ -4,9 +4,11 @@ import TeamGoat.TripSupporter.Config.auth.JwtAuthenticationFilter;
 import TeamGoat.TripSupporter.Config.auth.JwtTokenProvider;
 import TeamGoat.TripSupporter.Domain.Entity.Auth.AuthToken;
 import TeamGoat.TripSupporter.Domain.Entity.User.User;
+import TeamGoat.TripSupporter.Domain.Entity.User.UserProfile;
 import TeamGoat.TripSupporter.Domain.Enum.UserRole;
 import TeamGoat.TripSupporter.Domain.Enum.UserStatus;
 import TeamGoat.TripSupporter.Repository.Auth.AuthTokenRepository;
+import TeamGoat.TripSupporter.Repository.User.UserProfileRepository;
 import TeamGoat.TripSupporter.Repository.User.UserRepository;
 import TeamGoat.TripSupporter.Service.Auth.CustomOAuth2User;
 import TeamGoat.TripSupporter.Service.Auth.CustomOAuth2UserService;
@@ -48,13 +50,15 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final AuthTokenRepository authTokenRepository;
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService, CustomOAuth2UserService customOAuth2UserService, AuthTokenRepository authTokenRepository, UserRepository userRepository) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService, CustomOAuth2UserService customOAuth2UserService, AuthTokenRepository authTokenRepository, UserRepository userRepository, UserProfileRepository userProfileRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
         this.customOAuth2UserService = customOAuth2UserService;
         this.authTokenRepository = authTokenRepository;
         this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Bean
@@ -80,8 +84,9 @@ public class SecurityConfig {
                             String providerId = customUser.getProviderId(); // Google의 sub 또는 Naver의 id
                             String name = customUser.getName();         // 사용자 이름
                             String phone = customUser.getPhone();       // 전화번호 (Google은 없을 수 있음)
+                            String userNickname = customUser.getAttributes().get("userNickname").toString();
 
-                            if (phone == null) {
+                            if (phone == null || phone.trim().isEmpty()) {
                                 phone = "번호 제공 안 함"; // 기본값 설정
                             }
 
@@ -92,22 +97,46 @@ public class SecurityConfig {
                             log.info("Phone: " + phone);
 
                             // 사용자 저장 로직
-                            Optional<User> optionalUser = userRepository.findByUserEmail(email);
-                            if (optionalUser.isPresent()) {
-                                User existingUser = optionalUser.get();
-                                log.info("DB 에 존재하는 회원 : " + existingUser.getUserEmail());
-                            } else {
-                                User newUser = User.builder()
-                                        .userEmail(email)
-                                        .userPassword("") // 비밀번호 없음
-                                        .userPhone(phone) // 전화번호 저장
-                                        .userRole(UserRole.USER)
-                                        .userStatus(UserStatus.ACTIVE)
-                                        .provider(provider)
-                                        .providerId(providerId)
+//                            User user = userRepository.findByUserEmail(email)
+//                                            .orElseGet(() -> {
+//                                log.info("DB 에 존재하는 회원 : " + user.getUserEmail());
+//
+//                                User newUser = User.builder()
+//                                        .userEmail(email)
+//                                        .userPassword("") // 비밀번호 없음
+//                                        .userPhone(phone) // 전화번호 저장
+//                                        .userRole(UserRole.USER)
+//                                        .userStatus(UserStatus.ACTIVE)
+//                                        .provider(provider)
+//                                        .providerId(providerId)
+//                                        .build();
+//                                return userRepository.save(newUser);
+//                                log.info("새로운 유저 : " + newUser.getUserEmail();
+//                                            });
+
+                            final String finalPhone = (phone == null || phone.trim().isEmpty())? "번호 제공 안 함" : phone;
+
+                            User user = userRepository.findByUserEmail(email)
+                                    .orElseGet(() -> {
+                                        log.info("DB에 존재하지 않는 사용자, 새로 생성");
+                                        User newUser = User.builder()
+                                                .userEmail(email)
+                                                .userPassword("") // 비밀번호 없음
+                                                .userPhone(finalPhone)
+                                                .userRole(UserRole.USER)
+                                                .userStatus(UserStatus.ACTIVE)
+                                                .provider(provider)
+                                                .providerId(providerId)
+                                                .build();
+                                        return userRepository.save(newUser); // 저장 후 반환
+                                    });
+
+                            if (user.getUserProfile() == null) {
+                                UserProfile userProfile = UserProfile.builder()
+                                        .userNickname(userNickname)
+                                        .user(user)
                                         .build();
-                                userRepository.save(newUser);
-                                log.info("새로운 유저 : " + newUser.getUserEmail());
+                                userProfileRepository.save(userProfile);
                             }
 
                             // JWT 토큰 생성 및 저장
