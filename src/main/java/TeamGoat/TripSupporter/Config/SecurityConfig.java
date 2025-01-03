@@ -65,8 +65,8 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 활성화
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**").permitAll() // 인증 없이 접근 가능 경로
-                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                         // 인증 없이 접근 가능 경로
+                        .anyRequest().permitAll() // 나머지 요청은 인증 필요
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth

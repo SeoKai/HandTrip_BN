@@ -113,7 +113,7 @@ public class PhoneController {
     public SingleMessageSentResponse sendOne(@RequestBody Map<String, Object> requestBody) {
 
         log.info("Post /send-one requestBody : {}",requestBody);
-        String phoneNumber = ((Map<String, String>) requestBody.get("params")).get("phoneNumber");
+        String phoneNumber = (String) requestBody.get("phoneNumber");
         System.out.println("Received phone number: " + phoneNumber);
 
         Message message = phoneService.sendVerificationMail(phoneNumber);
