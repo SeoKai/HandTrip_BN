@@ -1,7 +1,6 @@
 package TeamGoat.TripSupporter.Service.Location;
 
 import TeamGoat.TripSupporter.Domain.Dto.Location.TagDto;
-import TeamGoat.TripSupporter.Domain.Entity.Location.Tag;
 import TeamGoat.TripSupporter.Mapper.Location.TagMapper;
 import TeamGoat.TripSupporter.Repository.Location.TagRepository;
 import lombok.RequiredArgsConstructor;

@@ -2,10 +2,12 @@ package TeamGoat.TripSupporter.Controller.Review;
 
 import TeamGoat.TripSupporter.Config.auth.JwtTokenProvider;
 import TeamGoat.TripSupporter.Controller.Review.Util.ReviewContollerValidator;
+import TeamGoat.TripSupporter.Domain.Dto.Ai.AiUserDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithLocationDto;
 import TeamGoat.TripSupporter.Domain.Dto.Review.ReviewWithUserProfileDto;
 import TeamGoat.TripSupporter.Exception.Review.*;
+import TeamGoat.TripSupporter.Service.Ai.AiRecommendationService;
 import TeamGoat.TripSupporter.Service.Review.ReviewServiceImpl;
 import TeamGoat.TripSupporter.Service.Review.Util.ReviewServiceValidator;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,7 @@ public class ReviewController {
     private final PagedResourcesAssembler<ReviewWithUserProfileDto> pagedResourcesAssemblerWithUser;
     private final PagedResourcesAssembler<ReviewWithLocationDto> pagedResourcesAssemblerWithLocation;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AiRecommendationService aiRecommendationService;
 
     @Value("${file.review-upload-dir}")
     private String uploadDir;
@@ -78,6 +81,21 @@ public class ReviewController {
         ReviewContollerValidator.validateComment(reviewDto.getComment());
         // 유효성 검사 완료 후 서비스로 넘김
         reviewService.createReview(reviewDto);
+
+        // AI 데이터 저장
+        Long userId = aiRecommendationService.getUserIdByEmail(userEmail);
+        if (userId != null) {
+            AiUserDto aiUserDto = AiUserDto.builder()
+                    .userId(userId)
+                    .locationId(reviewDto.getLocationId())
+                    .rating(reviewDto.getRating())
+                    .build();
+            aiRecommendationService.saveRecommendations(List.of(aiUserDto));
+        }
+        else {
+            log.warn("AI 데이터 저장 실패 : userId를 찾을 수 없습니다.");
+        }
+
         // 서비스에서 처리 후 처리 결과 반환
         return ResponseEntity.ok("리뷰를 성공적으로 작성하였습니다.");
     }

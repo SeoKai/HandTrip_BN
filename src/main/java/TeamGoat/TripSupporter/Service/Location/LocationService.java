@@ -20,17 +20,16 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class LocationServiceImpl {
+public class LocationService {
 
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
 
     // 생성자 주입
-    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper) {
+    public LocationService(LocationRepository locationRepository, LocationMapper locationMapper) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
     }
