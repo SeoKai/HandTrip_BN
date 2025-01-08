@@ -12,15 +12,15 @@ spring:
     name: TripSupporter
   datasource:
     # 서버에 확인할 때 사용
-    url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb
-    username: admin
-    password: trip970708!
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com:3306/tripdb
+#    username: admin
+#    password: trip970708!
+#    driver-class-name: com.mysql.cj.jdbc.Driver
 #     로컬에서 테스트 할 때 사용
-#     url: jdbc:mysql://localhost:3306/testdb
-#     username: root
-#     password: 1234
-#     driver-class-name: com.mysql.cj.jdbc.Driver
+     url: jdbc:mysql://localhost:3306/testdb
+     username: root
+     password: 1234
+     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: none

@@ -20,8 +20,7 @@ public class AiModelIntegrationService {
     }
 
     public List<String> getRecommendationsFromFlask(Long userId) {
-        String flaskUrl = "http://13.209.114.27:5000/recommend";
-//        String flaskUrl = "http://localhost:5000/recommend";
+        String flaskUrl = "http://localhost:5000/recommend";
 
         // 요청 본문 (JSON 데이터)
         Map<String, Object> requestBody = new HashMap<>();

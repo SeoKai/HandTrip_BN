@@ -3,25 +3,19 @@ package TeamGoat.TripSupporter.Controller.Location;
 
 import TeamGoat.TripSupporter.Controller.Location.Util.LocationControllerValidator;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationDto;
-import TeamGoat.TripSupporter.Domain.Dto.Location.LocationResponseDto;
 import TeamGoat.TripSupporter.Domain.Dto.Location.LocationSplitByTagDto;
-import TeamGoat.TripSupporter.Service.Location.LocationServiceImpl;
+import TeamGoat.TripSupporter.Service.Location.LocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationController {
 
-    private final LocationServiceImpl locationServiceImpl;
+    private final LocationService locationService;
     private static final String DEFAULT_SORT_VALUE = "googleRating";
     private static final String DEFAULT_SORT_DIRECTION = "desc";
 
@@ -39,7 +33,7 @@ public class LocationController {
     public LocationDto getLocation(@RequestParam("locationId") Long locationId) {
         log.info("GET /getLocation with locationId: {}", locationId);
         LocationControllerValidator.validateLocationId(locationId);
-        return locationServiceImpl.getLocation(locationId);
+        return locationService.getLocation(locationId);
     }
 
     /**
@@ -80,7 +74,7 @@ public class LocationController {
         }
         LocationControllerValidator.validatePageRequest(page,sortValue,sortDirection);
 
-        return locationServiceImpl.searchLocations(regionId, keyword, tagNameSet, page, pageSize , sortValue, sortDirection);
+        return locationService.searchLocations(regionId, keyword, tagNameSet, page, pageSize , sortValue, sortDirection);
     }
 
     @GetMapping("/{locationId}")
@@ -88,7 +82,7 @@ public class LocationController {
         //locationId 유효성 검사
         LocationControllerValidator.validateLocationId(locationId);
 
-        return locationServiceImpl.getLocationById(locationId);
+        return locationService.getLocationById(locationId);
     }
 
     /**
@@ -116,7 +110,7 @@ public class LocationController {
         LocationControllerValidator.validateDistance(distance);
         LocationControllerValidator.validateSortRequest(sortValue, sortDirection);
 
-        return locationServiceImpl.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection, targetTagName);
+        return locationService.getLocationWithinDistance(latitude, longitude, distance, sortValue, sortDirection, targetTagName);
     }
 
 }
