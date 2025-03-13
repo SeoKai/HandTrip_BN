@@ -1,15 +1,32 @@
-# HandTrip
+<p>
+  <img src="https://github.com/user-attachments/assets/677f1811-1730-4da3-93dd-3422d94a6b4f">
+</p>
+
+### 플래너 서비스
+- 여행지 검색, 마커를 통해 상세 일정 순서 및 동선 확인
+- 작성한 플래너를 프로필에서 확인, 수정 및 삭제 가능
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7db17fd3-2875-42ee-a929-ce6f7f8fe20d">
+</p>
+
+### 사용자 서비스
+- 프로필 변경, 비밀번호 변경, 회원 탈퇴 등의 기능 제공
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4a18b669-1b16-44f8-8bf7-d9b994a032a4">
+</p>
+
+### AI 여행지 추천
+- 사용자의 과거 여행 기록과 선호 데이터를 바탕으로 협업 필터링(CF)과 콘텐츠 기반 필터링(CBF) 기법을 활용하여 추천 여행지를 제공
+- 초기 추천 데이터가 부족한 경우 Google Places API의 상위 평점 여행지를 랜덤 추천
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/df87f7e2-f990-4c16-b8e5-0c48e6720ce4">
+</p>
 
 ## WORKSPACE
-
 - [**Notion**](https://seong-kai.notion.site/PROJECT-14dfcab0377c80ae8e20e6d8f35d869c?pvs=4)
 - [**FN**](https://github.com/SeoKai/HandTrip_FN)
 - [**AI**](https://github.com/SeoKai/TripChoseAI)
 - [**DataCollector**](https://github.com/SeoKai/TripDataCollector)
-
-## **목표**
-
-사용자들이 여행지 정보를 손쉽게 탐색하고 리뷰를 작성하며, 이를 기반으로 개인 맞춤형 여행 플래너를 생성할 수 있는 플랫폼 개발.
 
 ---
 
