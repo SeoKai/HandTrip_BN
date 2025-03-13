@@ -9,18 +9,36 @@
   <img src="https://github.com/user-attachments/assets/7db17fd3-2875-42ee-a929-ce6f7f8fe20d">
 </p>
 
-### 사용자 서비스
-- 프로필 변경, 비밀번호 변경, 회원 탈퇴 등의 기능 제공
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/4a18b669-1b16-44f8-8bf7-d9b994a032a4">
-</p>
-
 ### AI 여행지 추천
 - 사용자의 과거 여행 기록과 선호 데이터를 바탕으로 협업 필터링(CF)과 콘텐츠 기반 필터링(CBF) 기법을 활용하여 추천 여행지를 제공
 - 초기 추천 데이터가 부족한 경우 Google Places API의 상위 평점 여행지를 랜덤 추천
 <p align="center">
   <img src="https://github.com/user-attachments/assets/df87f7e2-f990-4c16-b8e5-0c48e6720ce4">
 </p>
+
+### 사용자 서비스
+- 프로필 변경, 비밀번호 변경, 회원 탈퇴
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4a18b669-1b16-44f8-8bf7-d9b994a032a4">
+</p>
+
+- 별점(1~5점)과 텍스트 리뷰 작성 가능
+- 최대 3장까지의 사진 첨부 가능
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/01cad4e4-68d7-4a07-b9f7-ef68b9d5c48a">
+</p>
+
+### 복합 키워드 기반 탐색
+- 키워드 기반 탐색
+  - 검색어를 통한 여행지 검색
+- 카테고리별 분류
+  - 관광명소, 랜드마크, 음식등, 최대 3가지 카테고리를 통한 검색
+- 위치 기반 탐색, 도시별 여행지 검색
+- 모든 조건을 사용한 복합적 탐색
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4e3ef583-353b-483a-92a1-7a95019057f5">
+</p>
+
 
 ## WORKSPACE
 - [**Notion**](https://seong-kai.notion.site/PROJECT-14dfcab0377c80ae8e20e6d8f35d869c?pvs=4)
