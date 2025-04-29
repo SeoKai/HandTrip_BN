@@ -80,6 +80,12 @@ public class AiController {
                 locationDtos = randomLocations.stream()
                         .map(locationMapper::toLocationDto)
                         .collect(Collectors.toList());
+
+                log.info("가져온 랜덤 장소 수: {}", randomLocations.size());
+                for (Location loc : randomLocations) {
+                    log.info("장소: {}, 태그들: {}", loc.getLocationName(), loc.getTags());
+                }
+
             } else {
                 String email = jwtTokenProvider.extractUserEmail(token.replace("Bearer ", ""));
                 Long userId = aiRecommendationService.getUserIdByEmail(email);
