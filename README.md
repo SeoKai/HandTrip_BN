@@ -181,7 +181,6 @@
 <img src="https://img.shields.io/badge/CI%2FCD-Jenkins%20%2B%20GitHub-2C3E50?style=for-the-badge&logo=GitHubActions&logoColor=white"><br>
 
 **인증-**
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
 <img src="https://img.shields.io/badge/OAuth-3EAAAF?style=for-the-badge&logo=oauth&logoColor=white">
 <img src="https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=google&logoColor=white">
 <img src="https://img.shields.io/badge/Kakao-FFCD00?style=for-the-badge&logo=kakaotalk&logoColor=black">
