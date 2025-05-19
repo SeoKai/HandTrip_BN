@@ -203,6 +203,10 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      */
     Optional<Location> findByLocationName(String locationName);
 
+
+    /*
+    * 음식 태그가 제외된 랜덤 관광지를 반환합니다.
+    * */
     @Query(value = """
                 SELECT DISTINCT l.* 
                 FROM tbl_location l
